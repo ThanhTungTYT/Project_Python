@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aroma Café Cà phê rang số 1 Việt Nam</title>
+    <link rel="stylesheet" href= "{% static 'main/css/aboutUs.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+</head>
+<body>
+<header>
+    <div class="top">
+        <div class="logo">
+            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Tìm kiếm...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="mini-menu">
+            <div class="cart">
+                <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
+                <span id="num-cart-label">0</span>
+            </div>
+            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+        </div>
+    </div>
+    <div class="bottom">
+        <a href="{% url 'index' %}">Trang chủ</a>
+        <a href="{% url 'catalog' %}">Sản phẩm</a>
+        <a href="help.html">Liên hệ</a>
+        <a href="{% url 'aboutUs' %}">Giới thiệu</a>
+    </div>
+</header>
+
+<main class="about-wrapper">
+    <!-- Banner -->
+    <section class="about-banner">
+        <img src="/static/main/img/about06.png" alt="Banner" class="banner-img" />
+        <div class="banner-text">
+            <h1>VỀ CHÚNG TÔI</h1>
+        </div>
+    </section>
+
+    <!-- Section 1 -->
+    <section class="about-section fade-in">
+        <h2>ĐỒNG HÀNH ĐỂ ĐI XA</h2>
+        <p>
+            Trong hành trình phát triển của mình, Aroma Café luôn xem trọng mối quan hệ hợp tác bền vững cùng đối tác,
+            đồng hành cùng khách hàng và nông dân trồng cà phê để lan tỏa tinh thần cà phê sạch, chất lượng và khác biệt.
+        </p>
+        <div class="about-imgs">
+            <img src="/static/main/img/about01.png" alt="Hình ảnh 1" />
+        </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="about-section slide-up">
+        <div class="about-content reverse">
+            <div class="about-text">
+                <h2>TÔN VINH GIÁ TRỊ THẬT CỦA CÀ PHÊ VIỆT</h2>
+                <p>
+                    Aroma Café được tạo ra từ niềm đam mê “Tận hưởng cà phê Việt” – nơi mọi người được thưởng thức hương vị nguyên bản,
+                    phong phú và chân thật nhất. Chúng tôi không ngừng tìm kiếm, chọn lọc và hợp tác cùng những nông hộ để xây dựng vùng trồng bền vững.
+                </p>
+            </div>
+            <div class="about-imgs">
+                <img src="/static/main/img/about02.png" alt="Hình ảnh 2" />
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="about-section fade-in">
+        <div class="about-content">
+            <div class="about-imgs">
+                <img src="/static/main/img/about04.png" alt="Hình ảnh 3" />
+            </div>
+            <div class="about-text">
+                <h2>NHỮNG HẠT CÀ PHÊ NGUYÊN CHẤT</h2>
+                <p>
+                    Từ những hạt cà phê được chọn lọc kỹ lưỡng, quy trình khép kín và rang xay chuẩn mực,
+                    Aroma Café mang đến trải nghiệm tinh tế trong từng tách cà phê – để mỗi giây phút bên ly cà phê là một niềm vui nhỏ của cuộc sống.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="about-section slide-up">
+        <div class="about-content reverse">
+            <div class="about-text">
+                <h2>CHÚNG TÔI LUÔN HƯỚNG ĐẾN TƯƠNG LAI BỀN VỮNG</h2>
+                <p>
+                    Mục tiêu của chúng tôi không chỉ là sản xuất cà phê ngon mà còn góp phần phát triển cộng đồng và bảo vệ môi trường.
+                    Mỗi sản phẩm của Aroma Café đều là cam kết về chất lượng và trách nhiệm xã hội.
+                </p>
+            </div>
+            <div class="about-imgs">
+                <img src="/static/main/img/about05.png" alt="Hình ảnh 4" />
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-top">
+        <div class="foot-content left">
+            <h3>Aroma Café</h3>
+            <p>Địa chỉ: xxx, xxx, xxx.</p>
+            <p>Điện thoại: xxx-xxx-xxxx.</p>
+            <p>Email: example@gmail.com</p>
+        </div>
+
+        <div class="foot-content footer-links">
+            <h3>Quy định & Chính sách</h3>
+            <ul>
+                <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
+                <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+            </ul>
+        </div>
+
+        <div class="foot-content right">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Aroma Café. All rights reserved.</p>
+    </div>
+</footer>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+    <script src="{% static '/main/js/aboutUs.js' %}"></script>
+    <script src="{% static 'main/js/script.js' %}""></script>
+</body>
+</html>
