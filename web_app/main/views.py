@@ -16,3 +16,6 @@ def get_payment(request):
 
 def get_login(request):
     return render(request, 'main/login.html')
+
+def get_register(request):
+    return render(request, 'main/register.html')
