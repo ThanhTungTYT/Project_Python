@@ -1,0 +1,218 @@
+.back-link {
+    margin-bottom: 10px;
+}
+
+.back-link a {
+    color: #cd764d;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    display: block;
+    font-size: 0.85em;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    color: red;
+}
+
+.checkout-container {
+    display: flex;
+    gap: 40px;
+    max-width: 1200px;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+/* ========== CỘT TRÁI ========== */
+.checkout-left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.checkout-left h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #c76739;
+}
+
+.account-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar-icon {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #000; /* viền đen */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff; /* nền trắng */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.avatar-icon i {
+    font-size: 28px;
+    color: #000;
+}
+
+.avatar-icon:hover {
+    background-color: #000;
+}
+
+.avatar-icon:hover i {
+    color: #fff;
+}
+
+.shipping-form input,
+.note-box textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.note-box textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.radio-item {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="radio"] {
+    accent-color: black;
+}
+
+/* ========== CỘT PHẢI ========== */
+.checkout-right {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.checkout-right h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #c76739;
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.cart-item img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.cart-info {
+    flex: 1;
+}
+
+.cart-info p {
+    margin: 2px 0;
+    font-size: 13px;
+}
+.cart-info .product-name{
+    color: #c76739;
+    font-weight: 600;
+}
+
+.cart-info .weight {
+    font-size: 13px;
+    color: #333;
+    margin-top: 2px;
+}
+.cart-info .weight span {
+    color: #c76739;
+    font-weight: 600;
+}
+
+.discount-box select{
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.discount-box input {
+    width: 73%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.apply-row {
+    display: flex;
+    gap: 10px;
+}
+.apply-row input[type='text'] {
+    height: 40px;
+    margin-top: 10px;
+}
+
+.apply-row .apply-btn {
+    padding: 10px 16px;
+    background: #c76739;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.summary-row.total {
+    font-weight: 600;
+    font-size: 1.1em;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 14px;
+    background: #c76739;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 12px;
+}
+.checkout-btn:hover{
+    background: #b45c33;
+}

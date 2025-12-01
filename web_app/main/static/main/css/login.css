@@ -1,0 +1,71 @@
+
+
+/* container */
+.container {
+    margin: 80px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* thêm bóng mờ */
+    border-radius: 8px;
+    min-height: 420px; /* chiều cao tối thiểu */
+    width: 400px;
+}
+/* Tiêu đề đăng nhập */
+.container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: 	#c76739;
+    font-size: 24px;/* kích thước font */
+}
+
+/*Chỉnh sửa các label */
+.container label {
+    display: block; /* đảm bảo label là khối */
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+/* các input trong container */
+.container input[type="text"],.container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* đảm bảo padding và border được tính vào tổng chiều rộng */
+}
+/* Quên mật khẩu */
+.container .forgot-password {
+    margin-bottom: 25px;
+    text-align: left;
+    opacity: 0.8;
+    font-size: 14px;
+    color: #666;
+}
+.container .forgot-password a {
+    color: #cd764d;
+    text-decoration: none; /* không gạch chân */
+}
+.container #b-login {
+    width: 100%;
+    padding: 10px;
+    background-color: #c76739;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;    /* con trỏ chuột biến thành tay khi hover qua nút đăng nhập */
+}
+.container #b-login:hover {
+    background: #8c4828;
+}
+.register-link {
+    margin-top: 30px;
+    text-align: left;
+    opacity: 0.8;
+    font-size: 14px;
+    text-align: center;
+    color: #666;
+}
+.register-link a {
+    color: #cd764d;
+    text-decoration: none;
+}

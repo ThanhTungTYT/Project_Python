@@ -1,0 +1,238 @@
+/* Ẩn mũi tên trong input number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Container giỏ hàng */
+.cart-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Tiêu đề giỏ hàng */
+.cart-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color:  #c76739;
+}
+
+/* Xoá tất cả sản phẩm */
+.clear-all-container {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+/* Nút chọn tất cả */
+.select-all-cart {
+    color: black;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Hover giống nút xoá tất cả */
+.select-all-cart:hover {
+    text-decoration: underline;
+}
+
+/* Nút xoá tất cả sản phẩm */
+.clear-all-cart {
+    color: black;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Hiệu ứng hover cho nút xoá tất cả sản phẩm */
+.clear-all-cart:hover {
+    text-decoration: underline;
+}
+
+/* Sản phẩm trong giỏ */
+.cart-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #999;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+}
+
+/* Nút xoá sản phẩm */
+.product-remove {
+    color: #c76739;
+    font-size: 22px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* Chi tiết sản phẩm */
+.product-thumbnail img {
+    width: 80px;
+    height: 100px;
+    object-fit: contain;
+    margin-right: 20px;
+}
+
+/* Phần Chi tiết sản phẩm */
+.product-details {
+    flex: 1;
+}
+
+/* Tên sản phẩm */
+.product-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Loại sản phẩm */
+.product-type {
+    font-size: 15px;
+    color: #333;
+}
+
+/* Khối lượng sản phẩm */
+.product-weight {
+    font-size: 15px;
+    color: #333;
+    margin-top: 4px;
+}
+.product-weight span {
+    font-weight: 600;
+    color: #c76739;
+}
+
+/* Giá và Tổng tiền sản phẩm */
+.product-price,
+.product-subtotal {
+    color: #c76739;
+    font-weight: 700;
+    font-size: 18px;
+    width: 120px;
+    text-align: right;
+}
+
+/* Số lượng sản phẩm */
+.product-quantity {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 15px;
+}
+
+/* Nút tăng giảm số lượng */
+.product-quantity button {
+    width: 32px;
+    height: 32px;
+    background: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 18px;
+}
+/* Hiệu ứng hover cho nút tăng giảm số lượng */
+.product-quantity button:hover {
+    background: #ddd;
+}
+/* Input số lượng sản phẩm */
+.product-quantity input {
+    width: 40px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* Tổng tiền giỏ hàng */
+.cart-totals{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+/* Tiêu đề tổng tiền giỏ hàng */
+.cart-totals h3{
+    font-size: 25px;
+    color:  #c76739;
+}
+
+/* Số tổng tiền giỏ hàng */
+.cart-totals span{
+    font-size: 30px;
+    font-weight: bold;
+    color:  #c76739;
+    margin: auto;
+}
+
+/* VAT */
+.cart-totals p {
+    font-size: 13px;
+    font-weight: 400;
+    color: #555;
+    margin-left: 10px;
+
+}
+
+/* Nút Thanh toán */
+.checkout-button {
+    text-decoration:none;
+    text-align: center;
+    display: block;
+    width: 100%;
+    background-color: #c76739;
+    color: white ;
+    border: none;
+    padding: 18px 0;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+/* Hiệu ứng hover cho nút Thanh toán */
+.checkout-button:hover {
+    background-color: #8c4828;
+    color: #fff3e0;
+}
+
+/* Phương thức thanh toán */
+.payment-methods {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 60px;
+}
+
+/* Tiêu đề phương thức thanh toán */
+.payment-methods h4 {
+    font-size: 25px;
+    margin-bottom: 20px;
+}
+
+/* Biểu tượng các thức thanh toán */
+.payment-methods i {
+    font-size: 18px;
+    margin-right: 15px;
+    padding-left: 15px;
+}
+
+/* Chữ các phương thức thanh toán */
+.payment-methods span {
+    margin-right: 20px;
+    font-size: 18px;
+    padding-right: 15px;
+}
+
+/* Checkbox chọn sản phẩm */
+.product-select {
+    margin-right: 15px;
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+/* Đảm bảo nút X không dính sát */
+.product-remove {
+    margin-right: 15px;
+}

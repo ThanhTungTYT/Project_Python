@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/payment.css' %}">
+</head>
+<body>
+    <header>
+    <div class="top">
+        <div class="logo">
+            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Tìm kiếm...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="mini-menu">
+            <div class="cart">
+                <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
+                <span id="num-cart-label">0</span>
+            </div>
+            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+        </div>
+    </div>
+    <div class="bottom">
+        <a href="{% url 'index' %}">Trang chủ</a>
+        <a href="{% url 'catalog' %}">Sản phẩm</a>
+        <a href="help.html">Liên hệ</a>
+        <a href="aboutUs.html">Giới thiệu</a>
+    </div>
+</header>
+<div class="checkout-container">
+    <!-- Nút quay lại -->
+    <div class="back-link">
+        <a href="{% url 'cart' %}"><i class="fas fa-arrow-left"></i> Quay lại giỏ hàng</a>
+    </div>
+
+    <!-- CỘT TRÁI -->
+    <div class="checkout-left">
+        <!-- Tài khoản -->
+        <section class="account-box">
+            <h3>Tài khoản</h3>
+            <div class="account-info">
+                <div class="avatar-icon" id="account-btn">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <p class="name"></p>
+                    <p class="email"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Thông tin giao hàng -->
+        <section class="shipping-box">
+            <h3>Thông tin giao hàng</h3>
+            <form class="shipping-form" id="shipping-form">
+                <input type="text" id="fullname" placeholder="Họ và tên" required>
+                <small class="error"></small>
+
+                <input type="text" id="phone" placeholder="Số điện thoại" required>
+                <small class="error"></small>
+
+                <input type="text" id="country" placeholder="Quốc gia" value="Vietnam" required>
+                <small class="error"></small>
+
+                <input type="text" id="province" placeholder="Tỉnh/TP" required>
+                <small class="error"></small>
+
+                <input type="text" id="ward" placeholder="Quận/Huyện, Phường/Xã" required>
+                <small class="error"></small>
+
+                <input type="text" id="address" placeholder="Đường, Số nhà" required>
+                <small class="error"></small>
+
+            </form>
+        </section>
+        <!-- Phương thức thanh toán -->
+        <section class="payment-method">
+            <h3>Phương thức thanh toán</h3>
+            <label class="radio-item">
+                <input type="radio" name="payment" value="cod" checked> Thanh toán khi nhận hàng
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="payment" value="bank"> Chuyển khoản qua ngân hàng
+            </label>
+        </section>
+
+        <!-- Ghi chú -->
+        <section class="note-box">
+            <h3>Ghi chú</h3>
+            <textarea placeholder="Nhập ghi chú cho đơn hàng (nếu có)"></textarea>
+        </section>
+    </div>
+
+    <!-- CỘT PHẢI -->
+    <div class="checkout-right">
+        <!-- Giỏ hàng -->
+        <section class="cart-box">
+            <h3>Giỏ hàng</h3>
+            <div id="cart-list">
+            </div>
+        </section>
+
+
+        <!-- Mã khuyến mãi -->
+        <section class="discount-box">
+            <h3>Mã khuyến mãi</h3>
+            <select id="discount-select">
+                <option value="">Chọn mã</option>
+                <option value="10">Giảm 10% (≥ 500k)</option>
+                <option value="15">Giảm 15% (≥ 1tr)</option>
+                <option value="20">Giảm 20% (≥ 1tr5)</option>
+            </select>
+            <div class="apply-row">
+                <input type="text" placeholder="Nhập mã khuyến mãi" id="discount-code">
+                <button class="apply-btn">Áp dụng</button>
+            </div>
+        </section>
+
+        <!-- Tóm tắt đơn hàng -->
+        <section class="summary-box">
+            <h3>Tóm tắt đơn hàng</h3>
+            <div class="summary-row">
+                <span>Tổng tiền hàng</span>
+                <span id="total-price">0₫</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí vận chuyển</span>
+                <span>Miễn phí</span>
+            </div>
+            <div class="summary-row total">
+                <span>Tổng thanh toán</span>
+                <span id="final-total">0₫</span>
+            </div>
+            <button class="checkout-btn" id="checkout-btn">Đặt hàng</button>
+        </section>
+    </div>
+</div>
+<footer class="footer">
+        <div class="footer-top">
+            <div class="foot-content left">
+                <h3>Aroma Café</h3>
+                <p>Địa chỉ: xxx, xxx, xxx.</p>
+                <p>Điện thoại: xxx-xxx-xxxx.</p>
+                <p>Email: example@gmail.com</p>
+            </div>
+
+            <div class="foot-content footer-links">
+                <h3>Quy định & Chính sách</h3>
+                <ul>
+                    <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
+                    <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
+                    <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+                </ul>
+            </div>
+
+            <div class="foot-content right">
+                <h3>Kết nối với chúng tôi</h3>
+                <div class="social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Aroma Café. All rights reserved.</p>
+        </div>
+    </footer>
+    <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
+
+    <script src="{% static 'main/js/script.js' %}"></script>
+</body>
+</html>

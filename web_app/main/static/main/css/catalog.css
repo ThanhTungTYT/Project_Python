@@ -1,0 +1,223 @@
+.catalog {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 20px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    height: auto;
+}
+.catalog-list {
+    width: 100%;
+    height: fit-content;
+    padding: 0 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+.catalog-list .head-catalog {
+    font-size: 40px;
+    font-weight: 600;
+    color: #c76739;
+    display: flex;
+    align-items: center;
+}
+.catalog-list .head-catalog:after {
+    content: "";
+    flex-grow: 1;
+    margin-left: 15px;
+    height: 3px;
+    background-color: #c76739;
+}
+.catalog-list .list-catalog {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+.catalog-list .list-catalog .catalog-item {
+    font-size: 18px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #040404;
+    border: 2px darkgray solid;
+    padding: 15px 25px;
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
+}
+.catalog-list .list-catalog .catalog-item.active {
+    border-color: #8c4827;
+    background-color: #c76739;
+    color: #fff;
+}
+.catalog-list .list-catalog .catalog-item:hover {
+    border-color: #8c4827;
+    background-color: #c76739;
+    color: #fff;
+}
+.catalog-list hr{
+    height: 4px;
+    background-color: #c76739;
+}
+.catalog-list .filter{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+.catalog-list .filter select{
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 0 10px;
+    background: linear-gradient(180deg, white, #f1f1f1);
+}
+.catalog-list .filter select:hover{
+    background: transparent;
+}
+.product-area {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+.product-area .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 32px;
+    padding: 50px;
+    width: 100%;
+    overflow: visible;
+}
+.product-area .product-list .product{
+    width: 250px;
+    max-height: 350px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+.product-area .product-list .product:hover{
+    scale: 1.05;
+    cursor: pointer;
+}
+.product-area .product-list .product img{
+    width: 100%;
+    height: 230px;
+    border-radius: 8px 8px 0 0;
+}
+.product-area .product-list .product p{
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    margin-top: 10px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 80%;
+}
+.product-area .product-list .product span{
+    font-size: 16px;
+    color: green;
+    margin-top: 15px;
+}
+.product-area .product-list .product label{
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: gray;
+}
+.product-area .product-page {
+    text-align: center;
+}
+
+.product-area .product-page button {
+    margin: 0 5px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.product-area .product-page button:hover {
+    background-color: #f2f2f2;
+}
+
+.product-area .product-page button.active {
+    background-color: #c76739;
+    color: white;
+    border-color: #8c4827;
+}
+/* ==== PHÂN TRANG (cập nhật) ==== */
+.product-area .product-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 30px auto 10px;
+}
+
+.product-area .product-page button {
+    margin: 0 5px;
+    padding: 8px 14px;
+    border: 1px solid #8c4827;
+    background-color: #c76739;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+.product-area .product-page button:hover {
+    background-color: #8c4827;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.product-area .product-page button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Ô nhập số trang */
+.product-area .product-page input[type="number"] {
+    width: 60px;
+    height: 36px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.product-area .product-page input[type="number"]:focus {
+    border-color: #c76739;
+    box-shadow: 0 0 3px #c76739;
+}
+
+/* Ẩn mũi tên trong input number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

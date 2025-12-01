@@ -1,0 +1,320 @@
+.img-home{
+    width: 100%;
+    height: 80%;
+    background-image: url("../img/img_1.jpg");
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.5s ease-in-out;
+    margin-bottom: 50px;
+}
+.img-home button{
+    position: absolute;
+    display: none;
+    top: 450px;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 10px;
+    cursor: pointer;
+}
+.img-home:hover button{
+    display: block;
+}
+.img-home .left{
+    left: 20px;
+}
+.img-home .right{
+    right: 20px;
+}
+.hot-item{
+    width: 100%;
+    background-color: #FAF6F1;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 50px 20px;
+    margin-bottom: 50px;
+    color: #840500;
+}
+.hot-item .hot-title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 50px;
+    color: #c76739;
+}
+.hot-item h2{
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0 30px;
+    white-space: nowrap;
+}
+.hot-item .hot-title .line {
+    height: 1px;
+    width: 100%;
+    max-width: 200px;
+    background-color: #D3C1C1;
+}
+.hot-item .product-list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 10px;
+    width: 100%;
+    overflow: visible;
+}
+.hot-item .product-list .product{
+    width: 250px;
+    max-height: 350px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+.hot-item .product-list .product:hover{
+    transform: scale(1.05);
+}
+.hot-item .product-list .product img{
+    width: 100%;
+    height: 230px;
+    border-radius: 8px 8px 0 0;
+}
+.hot-item .product-list .product p{
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    margin-top: 10px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 80%;
+}
+.hot-item .product-list .product span{
+    font-size: 16px;
+    color: green;
+    margin-top: 10px;
+}
+.hot-item .product-list .product label{
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: gray;
+}
+.video-1{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding: 0 50px;
+    margin-bottom: 50px;
+}
+.video-1 .intro-video-1{
+    width: 50%;
+    box-shadow: 0 8px 10px rgba(49, 49, 49, 0.5);
+    border-radius: 20px;
+    padding: 100px 30px;
+}
+.video-1 .intro-video-1 p{
+    text-align: center;
+    color: #c76739;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+.video-1 .intro-video-1 .content{
+    text-align: center;
+    color: #000000;
+    font-weight: normal;
+    font-size: 20px;
+}
+.video-1 .intro-video-1 button{
+    position: relative;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    font-size: 15px;
+    background: transparent;
+    border: 1px orange solid;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+}
+.video-1 .intro-video-1 button:hover{
+    background: orange;
+    color: white;
+}
+.video-1 video{
+    width: 50%;
+    border-radius: 20px;
+}
+.why-choose-us {
+    width: 100%;
+    background-color: #FAF6F1;
+    padding: 60px 30px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 50px;
+    color: #c76739;
+}
+.section-title h2 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0 30px;
+    white-space: nowrap;
+}
+.section-title .line {
+    height: 1px;
+    width: 100%;
+    max-width: 200px;
+    background-color: #D3C1C1;
+}
+.features-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    flex: 1;
+    min-width: 300px;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.feature-item .feature-icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 25px;
+}
+.feature-item h3 {
+    color: #cd764d;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    min-height: 3em;
+}
+.feature-item p {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+.approach-section {
+    padding: 60px 20px;
+    box-sizing: border-box;
+    margin-bottom: 50px;
+}
+.approach-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    align-items: stretch;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.text-content-box, .video-content-box {
+    flex: 1;
+    min-width: 300px;
+}
+.text-content-box {
+    border-radius: 10px;
+    padding: 100px 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.text-content-box h2 {
+    text-align: center;
+    color: #c76739;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+.text-content-box p {
+    text-align: center;
+    color: #000000;
+    font-size: 20px;
+}
+.text-content-box button {
+    position: relative;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 50px;
+    font-size: 15px;
+    background: transparent;
+    border: 1px orange solid;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+}
+.text-content-box button:hover {
+    background: orange;
+    color: white;
+}
+.video-content-box {
+    display: flex;
+    align-items: center;
+}
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.fade-in, .slide-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
