@@ -1,0 +1,21 @@
+<div class="info-content">
+    <h2>Thông tin cá nhân</h2>
+    
+    <form>
+        <div class="form-group">
+            <label>Họ và tên:</label>
+            <input type="text" value="{{ user.full_name }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="text" value="{{ user.email }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Số điện thoại:</label>
+            <input type="text" value="{{ user.phone }}" readonly>
+        </div>
+        
+    </form>
+</div>

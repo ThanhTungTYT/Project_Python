@@ -24,39 +24,69 @@
         <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
         <span id="num-cart-label">0</span>
       </div>
-      <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+       {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
     </div>
   </div>
   <div class="bottom">
     <a href="{% url 'index' %}">Trang chủ</a>
     <a href="{% url 'catalog' %}">Sản phẩm</a>
     <a href="help.html">Liên hệ</a>
-    <a href="aboutUs.html">Giới thiệu</a>
+    <a href="{% url 'aboutUs' %}">Giới thiệu</a>
   </div>
 </header>
   <div class="catalog">
     <div class="catalog-list" id="catalog-list">
       <p class="head-catalog">Danh mục sản phẩm</p>
       <ul class="list-catalog" id="list-catalog">
-        <li><a href="#" class="catalog-item active">Tất cả</a></li>
-        <li><a href="#" class="catalog-item">Cà phê hữu cơ</a></li>
-        <li><a href="#" class="catalog-item">Cà phê nguyên hạt rang</a></li>
-        <li><a href="#" class="catalog-item">Cà phê xay nguyên chất</a></li>
-        <li><a href="#" class="catalog-item">Các sản phẩm đặc biệt</a></li>
+        <li>
+          <a href="{% url 'catalog' %}"{% if not active_category %} class=" catalog-item active"{% endif %} class="catalog-item">
+            Tất cả sản phẩm
+          </a>
+        </li>
+        {% for category in categories %}
+          <li>
+            <a href="?category={{ category.id }}"{% if category.id|stringformat:"s" == active_category %} class=" catalog-item active"{% endif %} class="catalog-item">
+              {{ category.name }}
+            </a>
+          </li>
+        {% endfor %}
       </ul>
       <hr>
       <div class="filter">
-        <select>
-          <option>-Chọn lựa-</option>
-          <option>Giá cao đến thấp</option>
-          <option>Giá thấp đến cao</option>
-          <option>Lượt mua nhiều nhất</option>
-          <option>Lượt đánh giá</option>
+        <select id="sort-select" name="sort" onchange="applySort()">
+        <option value="" {% if not active_sort %}selected{% endif %}>-Chọn lựa-</option>
+        <option value="price_desc" {% if active_sort == 'price_desc' %}selected{% endif %}>
+            Giá cao đến thấp
+        </option>
+        <option value="price_asc" {% if active_sort == 'price_asc' %}selected{% endif %}>
+            Giá thấp đến cao
+        </option>
+        <option value="sold" {% if active_sort == 'sold' %}selected{% endif %}>
+            Lượt mua nhiều nhất
+        </option>
+        <option value="newest" {% if active_sort == 'newest' %}selected{% endif %}>
+            Sản phẩm mới nhất
+        </option>
         </select>
       </div>
     </div>
     <div class="product-area" id="product-area">
-      <div class="product-list" id="product-list"></div>
+      <div class="product-list" id="product-list">
+        {% for product in products %}
+                <a class="product" href="{% url 'product' product.id %}">
+                    {% with image_object=product.productimages_set.first %}
+                    <img src="{{ image_object.image_url }}" alt="{{ product.name }}">
+                    {% endwith %}
+                    <p>{{ product.name }}</p>
+                    <span>{{ product.price }} VND</span>
+                    <label>Loại: {{ product.category.name }}</label>
+                </a>
+            {% endfor %}
+      </div>
         <div class="product-page" id="pagination">
             <button id="prev-page"><i class="fas fa-chevron-left"></i></button>
             <input type="number" id="page-input" min="1" value="1" />
@@ -97,8 +127,26 @@
   </div>
 </footer>
   <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
-
-  <script src="{% static 'main/js/catalog.js' %}"></script>
+<div style="display:none;">
+    <form>
+        {% csrf_token %}
+    </form>
+</div>
   <script src="{% static 'main/js/script.js' %}"></script>
+  <script>
+    function applySort() {
+        var sortValue = document.getElementById("sort-select").value;
+        
+        var currentUrl = new URL(window.location.href);
+        
+        if (sortValue) {
+            currentUrl.searchParams.set('sort', sortValue);
+        } else {
+            currentUrl.searchParams.delete('sort');
+        }
+      
+        window.location.href = currentUrl.toString();
+    }
+  </script>
 </body>
 </html>

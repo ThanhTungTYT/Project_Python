@@ -24,14 +24,18 @@
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
                 <span id="num-cart-label">0</span>
             </div>
-            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
         </div>
     </div>
     <div class="bottom">
         <a href="{% url 'index' %}">Trang chủ</a>
         <a href="{% url 'catalog' %}">Sản phẩm</a>
         <a href="help.html">Liên hệ</a>
-        <a href="aboutUs.html">Giới thiệu</a>
+        <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>
     <div class="img-home" id="img-home">
@@ -45,7 +49,16 @@
             <span class="line"></span>
         </div>
         <div class="product-list" id="product-list">
-            
+            {% for product in products %}
+                <a class="product" href="{% url 'product' product.id %}">
+                    {% with image_object=product.productimages_set.first %}
+                    <img src="{{ image_object.image_url }}" alt="{{ product.name }}">
+                    {% endwith %}
+                    <p>{{ product.name }}</p>
+                    <span>{{ product.price }} VND</span>
+                    <label><i class="fa-solid fa-fire"></i>{{ product.sold}}</label>
+                </a>
+            {% endfor %}
         </div>
     </div>
     <div class="video-1 fade-in">
@@ -137,7 +150,12 @@
         </div>
     </footer>
     <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
-
+<div style="display:none;">
+    <form>
+        {% csrf_token %}
+    </form>
+</div>
     <script src="{% static 'main/js/index.js' %}"></script>
     <script src="{% static 'main/js/script.js' %}"></script>
+</body>
 </html>

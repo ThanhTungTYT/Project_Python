@@ -11,6 +11,7 @@
 </head>
 <body>
 <header>
+    <!-- Giữ nguyên phần Header của bạn -->
     <div class="top">
         <div class="logo">
             <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
@@ -31,58 +32,80 @@
         <a href="{% url 'index' %}">Trang chủ</a>
         <a href="{% url 'catalog' %}">Sản phẩm</a>
         <a href="help.html">Liên hệ</a>
-        <a href="aboutUs.html">Giới thiệu</a>
+        <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>
-<div class = "container">
-        <h2 id = "Login">Đăng nhập</h2>
-        <form id="f-login" action="javascrip:void(0);" method="post">
-            <label class="lbu" for="username">Tên đăng nhập:</label>
-            <input type="text" id="username" name="username" placeholder="Tên đăng nhập hoặc email" required><br><br>
+
+<div class="container">
+        <h2 id="Login">Đăng nhập</h2>
+
+        <!-- FORM ĐÃ SỬA -->
+        <form id="f-login" action="{% url 'login' %}" method="post">
+            
+            <!-- BẮT BUỘC: Token bảo mật của Django -->
+            {% csrf_token %}
+
+            <label class="lbu" for="username">Email:</label>
+            <!-- QUAN TRỌNG: name="email" để khớp với logic trong views.py -->
+            <input type="text" id="username" name="email" placeholder="Nhập email của bạn" required><br><br>
+
             <label class="lbpw" for="password">Mật khẩu:</label>
+            <!-- name="password" đã đúng -->
             <input type="password" id="password" name="password" placeholder="Mật khẩu" required><br><br>
+                    <!-- KHỐI HIỂN THỊ LỖI (VÍ DỤ: SAI MẬT KHẨU) -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+        {% endif %}
+
             <div class="forgot-password">
                 <p>Quên mật khẩu? <a href="forgotpassword.html">Click vào đây</a></p>
             </div>
-            <button type="button" id="b-login">Đăng nhập</button>
+            
+            <!-- QUAN TRỌNG: type="submit" để gửi form đi -->
+            <button type="submit" id="b-login">Đăng nhập</button>
         </form>
+
         <div class="register-link">
-            <p>Bạn chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ở đây</a></p>         </div>
+            <p>Bạn chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ở đây</a></p>
+        </div>
 </div>
+
+<!-- Giữ nguyên phần Footer của bạn -->
 <footer class="footer">
-        <div class="footer-top">
-            <div class="foot-content left">
-                <h3>Aroma Café</h3>
-                <p>Địa chỉ: xxx, xxx, xxx.</p>
-                <p>Điện thoại: xxx-xxx-xxxx.</p>
-                <p>Email: example@gmail.com</p>
-            </div>
-
-            <div class="foot-content footer-links">
-                <h3>Quy định & Chính sách</h3>
-                <ul>
-                    <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
-                    <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
-                    <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
-                </ul>
-            </div>
-
-            <div class="foot-content right">
-                <h3>Kết nối với chúng tôi</h3>
-                <div class="social">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+    <div class="footer-top">
+        <div class="foot-content left">
+            <h3>Aroma Café</h3>
+            <p>Địa chỉ: xxx, xxx, xxx.</p>
+            <p>Điện thoại: xxx-xxx-xxxx.</p>
+            <p>Email: example@gmail.com</p>
+        </div>
+        <div class="foot-content footer-links">
+            <h3>Quy định & Chính sách</h3>
+            <ul>
+                <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
+                <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+            </ul>
+        </div>
+        <div class="foot-content right">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Aroma Café. All rights reserved.</p>
-        </div>
-    </footer>
-    <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
-
-    <script src="{% static 'main/js/script.js' %}"></script>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Aroma Café. All rights reserved.</p>
+    </div>
+</footer>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
+<script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

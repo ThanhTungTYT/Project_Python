@@ -5,9 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aroma Café Cà phê rang số 1 Việt Nam</title>
-    <link rel="stylesheet" href= "{% static 'main/css/aboutUs.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'main/css/aboutUs.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
 </head>
 <body>
 <header>
@@ -24,7 +24,11 @@
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
                 <span id="num-cart-label">0</span>
             </div>
-            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+             {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
         </div>
     </div>
     <div class="bottom">
@@ -38,12 +42,11 @@
 <main class="about-wrapper">
     <!-- Banner -->
     <section class="about-banner">
-        <img src="/static/main/img/about06.png" alt="Banner" class="banner-img" />
+        <img src="{% static 'main/img/about06.png' %}" alt="Banner" class="banner-img" />
         <div class="banner-text">
             <h1>VỀ CHÚNG TÔI</h1>
         </div>
     </section>
-
     <!-- Section 1 -->
     <section class="about-section fade-in">
         <h2>ĐỒNG HÀNH ĐỂ ĐI XA</h2>
@@ -138,7 +141,7 @@
     </div>
 </footer>
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static '/main/js/aboutUs.js' %}"></script>
-    <script src="{% static 'main/js/script.js' %}""></script>
+    <script src="{% static 'main/js/aboutUs.js' %}"></script>
+    <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

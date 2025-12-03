@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
+    <title>Trang chủ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/account.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 </head>
 <body>
 <header>
@@ -24,7 +26,12 @@
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
                 <span id="num-cart-label">0</span>
             </div>
-            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            
+            {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
         </div>
     </div>
     <div class="bottom">
@@ -34,43 +41,24 @@
         <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>
-<div class="container">
-    <h2 id="register">Đăng ký</h2>
 
-    {% if messages %}
-        <ul class="messages" style="color: red; list-style: none; text-align: center;">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+<div class="dashboard-container">
 
-    <form id="register-form" action="{% url 'register' %}" method="post">
-        
-        {% csrf_token %}
+    <div class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="{% url 'info' %}" class="sidebar-link active">Thông tin cá nhân</a></li>
+                <li><a href="{% url 'history' %}" class="sidebar-link">Lịch sử mua hàng</a></li>
+                <li><a href="{% url 'changepw' %}" class="sidebar-link">Đổi mật khẩu</a></li>
+            </ul>
+            <button id="logout-button" class="logout-button" onclick="location.href='{% url 'logout' %}'">Đăng xuất</button>
+        </nav>
+    </div>
 
-        <label class="lbn" for="yourname">Họ và Tên</label>
-        <input type="text" id="yourname" name="yourname" placeholder="Họ và tên của bạn" required><br><br>
-
-        <label class="lbe" for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="Email của bạn" required><br><br>
-
-        <label class="lbn" for="phone">Số điện thoại:</label>
-        <input type="text" id="phone" name="phone" placeholder="Số điện thoại" required><br><br>
-
-        <label class="lbpw" for="password">Mật khẩu:</label>
-        <input type="password" id="password" name="password" placeholder="Mật khẩu" required><br><br>
-
-        <label class="lbcpw" for="confirmpassword">Xác nhận mật khẩu:</label>
-        <input type="password" id="confirmpassword" name="confirmpassword" placeholder="Xác nhận mật khẩu" required><br><br>
-
-        <div class="bt_regis">
-            <button type="button" id="clear-btn" onclick="location.href='{% url 'login' %}'">Quay lại</button>
-            
-            <button type="submit" id="register-btn">Đăng ký</button>
-        </div>
-    </form>
+    <main id="content-area" class="content-area">
+    </main>
 </div>
+
 <footer class="footer">
         <div class="footer-top">
             <div class="foot-content left">
@@ -105,6 +93,8 @@
     </footer>
     <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'main/js/account.js' %}"></script>
     <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

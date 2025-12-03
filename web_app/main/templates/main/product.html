@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ product.name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'main/css/product.css' %}">
+  <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo">
+      <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+    </div>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Tìm kiếm...">
+      <button id="search-button"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="mini-menu">
+      <div class="cart">
+        <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
+        <span id="num-cart-label">0</span>
+      </div>
+       {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
+    </div>
+  </div>
+  <div class="bottom">
+    <a href="{% url 'index' %}">Trang chủ</a>
+    <a href="{% url 'catalog' %}">Sản phẩm</a>
+    <a href="help.html">Liên hệ</a>
+    <a href="{% url 'aboutUs' %}">Giới thiệu</a>
+  </div>
+</header>
+
+<!-- Body sản phẩm -->
+<div class="product-body">
+  <div class="product-main">
+    <div class="product-title">
+      <span>Sản phẩm</span>
+      <p>{{ product.name }}</p>
+    </div>
+    <div class="product-content">
+      <div class="product-img">
+        {% with image_object=product.productimages_set.first %}
+        <img id="img-main" src="{{ image_object.image_url }}" alt="{{ product.name }}">
+        {% endwith %}
+
+        <!-- Thumbnail -->
+        <div class="thumbnail-gallery">
+
+        </div>
+      </div>
+
+      <div class="content">
+        <p class="price">{{ product.price }} VND</p>
+
+        <div class="sub-content">
+          <p>Thương hiệu: <span>Aroma Cafe</span></p>
+        </div>
+
+        <div class="add-to-cart-wrapper">
+          <div class="weight">
+            <label>Khối lượng</label>
+            <p>{{ product.weight_grams }}g</p>
+          </div>
+
+          <div class="type">
+            <label>Loại</label>
+            <p>{{ product.category.name }}</p>
+          </div>
+
+          <form id="add-to-cart-form">
+            {% csrf_token %}
+                <div class="count-num">
+                <label>Số lượng</label>
+                <button id="count-minus" type="button">-</button>
+                <span id="num-count">1</span>
+                <button id="count-add" type="button">+</button>
+                </div>
+                <button type="button" class="btn-buy add-cart-btn" data-id="{{ product.id }}">
+                Thêm vào giỏ
+                </button>
+            </form>
+        </div>
+      </div>
+
+      <div class="des-right">
+        <p class="title">Thông tin liên hệ tư vấn</p>
+        <div class="list-call">
+          <p><i class="fab fa-facebook-f"></i> Facebook: <a href="#">AromaCafe</a></p>
+          <p><i class="fab fa-twitter"></i>Twitter: <a href="#">AromaCafe</a></p>
+          <p><i class="fab fa-instagram"></i>Instagram: <a href="#">AromaCafe</a></p>
+          <p><i class="fab fa-linkedin-in"></i>Linkedin: <a href="#">AromaCafe</a></p>
+          <p><i class="fa-solid fa-phone"></i>Số hotline: XXXXXXXXXX</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mô tả sản phẩm -->
+  <div class="product-details">
+    <div class="detail-main" id="productDescription">
+      <div class="main-title">
+        <span class="line"></span>
+        <h2>MÔ TẢ SẢN PHẨM</h2>
+        <span class="line"></span>
+      </div>
+      <div class="detail-content" id="contentToCollapse">
+        <p>{{ product.description }}</p>
+      </div>
+      <button class="toggle-button" id="readMoreBtn">
+        Xem thêm <span class="arrow"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sản phẩm liên quan -->
+  <div class="product-relative">
+    <div class="relative-title">
+      <span class="line"></span>
+      <h2>SẢN PHẨM LIÊN QUAN</h2>
+      <span class="line"></span>
+    </div>
+    <div class="product-catalog" id="product-catalog">
+      {% for related in related_products %}
+      <a class="product" href="{% url 'product' related.id %}">
+        {% with image_object=related.productimages_set.first %}
+        <img src="{{ image_object.image_url }}" alt="{{ related.name }}">
+        {% endwith %}
+        <p>{{ related.name }}</p>
+        <span>{{ related.price }} VND</span>
+        <label>Loại: {{ related.category.name }}</label>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="foot-content left">
+      <h3>Aroma Café</h3>
+      <p>Địa chỉ: xxx, xxx, xxx.</p>
+      <p>Điện thoại: xxx-xxx-xxxx.</p>
+      <p>Email: example@gmail.com</p>
+    </div>
+
+    <div class="foot-content footer-links">
+      <h3>Quy định & Chính sách</h3>
+      <ul>
+        <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
+        <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
+        <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+      </ul>
+    </div>
+
+    <div class="foot-content right">
+      <h3>Kết nối với chúng tôi</h3>
+      <div class="social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 Aroma Café. All rights reserved.</p>
+  </div>
+</footer>
+
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
+
+<script src="{% static 'main/js/script.js' %}"></script>
+<script src="{% static 'main/js/product.js' %}"></script>
+</body>
+</html>

@@ -28,7 +28,6 @@
 .container input[type="text"],.container input[type="password"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box; /* đảm bảo padding và border được tính vào tổng chiều rộng */
@@ -68,4 +67,12 @@
 .register-link a {
     color: #cd764d;
     text-decoration: none;
+}
+.messages{
+    text-decoration: none;
+    list-style-type: none;
+    color: red;
+    font-size: 15px;
+    text-align: start;
+    margin-bottom: 10px;
 }

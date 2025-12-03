@@ -24,7 +24,11 @@
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
                 <span id="num-cart-label">0</span>
             </div>
-            <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+             {% if request.session.user_id %}
+                <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
+            {% endif %}
         </div>
     </div>
     <div class="bottom">
@@ -44,7 +48,28 @@
     </div>
 
     <div id="cart-list">
-        
+      {% for item in items %}
+        <div class="cart-item" data-price="{{ item.product.price }}">
+            <input type="checkbox" class="product-select">
+            <div class="product-remove"><i class="fas fa-times"></i></div>
+            <div class="product-thumbnail">
+               {% with image_object=item.product.productimages_set.first %}
+                    <img src="{{ image_object.image_url }}" alt="{{ item.product.name }}">
+                {% endwith %}
+            </div>
+            <div class="product-details">
+                <p class="product-name">{{ item.product.name }}</p>
+                <p class="product-type">Loại: {{ item.product.category.name }}</p>
+                <p class="product-weight">Khối lượng: <span>{{ item.product.weight_grams }}</span></p>
+            </div>
+            <div class="product-quantity">
+                <button class="btn-decrease">-</button>
+                <input type="number" value="{{ item.quantity }}" min="1" />
+                <button class="btn-increase">+</button>
+            </div>
+            <div class="product-subtotal">{{ item.product.price}}đ</div>
+            </div>
+      {% endfor %}
     </div>
 
     <div class="cart-totals">
@@ -100,5 +125,6 @@
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
 
 <script src="{% static 'main/js/script.js' %}"></script>
+<script src="{% static 'main/js/cart.js' %}"></script>
 </body>
 </html>
