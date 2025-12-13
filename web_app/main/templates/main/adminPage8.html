@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý mã giảm giá</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
+</head>
+<body>
+<div class="left-menu" id="left-menu">
+        <div class="logo">
+            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+        </div>
+    <div class="menu">
+        <a href="{% url 'adminPage1' %}" class="menu-item active">Tổng quan</a>
+        <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
+        <a href="{% url 'adminPage3' %}" class="menu-item">Quản lí đơn hàng</a>
+        <a href="{% url 'adminPage4' %}" class="menu-item">Quản lí tài khoản</a>
+        <a href="{% url 'adminPage6' %}" class="menu-item">Quản lí đánh giá</a>
+        <a href="{% url 'adminPage7' %}" class="menu-item">Quản lí banner</a>
+        <a href="{% url 'adminPage8' %}" class="menu-item">Quản lí mã giảm giá</a>
+        <a href="{% url 'adminPage5' %}" class="menu-item">Chăm sóc khách hàng</a>
+        <a href="#" class="menu-item" onclick="location.href='{% url 'index' %}'">Đăng xuất</a>
+    </div>
+    <div class="footer">
+        <p>2024 Aroma Café. All rights reserved.</p>
+    </div>
+</div>
+
+<div class="right-content" id="right-content">
+    <div class="title">
+        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <p>QUẢN LÍ MÃ GIẢM GIÁ</p>
+    </div>
+    <form class="search-bar">
+        <input type="text" placeholder="Tìm kiếm mã giảm giá" required>
+        <button><i class="fas fa-search"></i></button>
+    </form>
+    <div class="main-menu">
+        <button id="add">+ Thêm mã giảm giá</button>
+    </div>
+    <div class="list-discount">
+        <h3 class="discount-title">DANH SÁCH MÃ GIẢM GIÁ</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mã Code</th>
+                <th>Mô tả</th>
+                <th>Điều kiện</th>
+                <th>Mức giảm</th>
+                <th>Số lượng</th>
+                <th>Thời gian bắt đầu</th>
+                <th>Hạn sử dụng</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>#V001</td>
+                <td><strong>SALE10</strong></td>
+                <td>10% cho đơn trên 500k</td>
+                <td>500k</td>
+                <td>10%</td>
+                <td>100</td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#V002</td>
+                <td><strong>SALE15</strong></td>
+                <td>15% cho đơn trên 800k</td>
+                <td>800k</td>
+                <td>15%</td>
+                <td>100</td>
+                <td></td>
+                <td>31/12/2024</td>
+                <td>
+                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#V003</td>
+                <td><strong>SALE10</strong></td>
+                <td>20% cho đơn trên 1000k</td>
+                <td>1000k</td>
+                <td>20%</td>
+                <td>100</td>
+                <td>1/1/2000</td>
+                <td>31/12/2025</td>
+                <td>
+                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td>#V04</td>
+                <td><strong>SALE10</strong></td>
+                <td>5% trong giáng sinh</td>
+                <td>24-25 tháng 12</td>
+                <td>5%</td>
+                <td>100</td>
+                <td>24/12/2025</td>
+                <td>25/12/2025</td>
+                <td>
+                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<<<<<<< HEAD
+    <div class="form-add" id="form-add" style="display: none">
+        <div class="form-title">
+            <p>THÊM MÃ KHUYẾN MÃI</p>
+            <button id="take-off">X</button>
+        </div>
+        <form class="main-form">
+            <div class="p name-p">
+                <label>Mã Code</label>
+                <input type="text" placeholder="Mã giảm giá" required>
+            </div>
+            <div class="price-p">
+                <label>Mô tả</label>
+                <input type="text" placeholder="Nhập thông tin" required>
+            </div>
+
+            <div class="price-p">
+                <label>Điều kiện</label>
+                <input type="number" placeholder="Nhập số tiền tối thiểu" required>
+            </div>
+
+            <div class="price-p">
+                <label>Giá trị giảm</label>
+                <input type="number" placeholder="Phần trăm giảm" required>
+            </div>
+            <div class="count-p">
+                <label>Số lượng</label>
+                <input type="number" placeholder="Số lượng mã" required>
+            </div>
+            <div class="count-p">
+                <label>Ngày bắt đầu</label>
+                <input type="date" required>
+            </div>
+            <div class="count-p">
+                <label>Hạn sử dụng</label>
+                <input type="date" required>
+            </div>
+            <button class="submit" type="submit">Tạo Mã</button>
+        </form>
+=======
+<div class="form-add" id="form-add" style="display: none">
+    <div class="form-title">
+        <p>THÊM MÃ KHUYẾN MÃI</p>
+        <button id="take-off">X</button>
+>>>>>>> origin/main
+    </div>
+    <form class="main-form">
+        <div class="p name-p">
+            <label>Mã Code</label>
+            <input type="text" placeholder="Mã giảm giá" required>
+        </div>
+        <div class="type-p">
+            <label>Loại giảm giá</label>
+            <select>
+                <option>Theo phần trăm (%)</option>
+                <option>Theo số tiền (VND)</option>
+            </select>
+        </div>
+        <div class="price-p">
+            <label>Giá trị giảm</label>
+            <input type="number" placeholder="Nhập số..." required>
+        </div>
+        <div class="count-p">
+            <label>Số lượng</label>
+            <input type="number" placeholder="Số lượng mã" required>
+        </div>
+        <div class="count-p">
+            <label>Hạn sử dụng</label>
+            <input type="date" required>
+        </div>
+        <button class="submit" type="submit">Tạo Mã</button>
+    </form>
+</div>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+    <script src="{% static 'main/js/admin.js' %}"></script>
+</body>
+</html>

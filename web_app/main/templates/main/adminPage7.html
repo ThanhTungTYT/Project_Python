@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lí banner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../webapp/css/admin.css">
+</head>
+
+<body>
+<div class="left-menu" id="left-menu">
+    <div class="logo">
+        <img src="../webapp/img/logo.png" onclick="location.href='index.html'">
+    </div>
+    <div class="menu">
+        <a href="adminPage1.html" class="menu-item">Tổng quan</a>
+        <a href="adminPage2.html" class="menu-item">Quản lí sản phẩm</a>
+        <a href="adminPage3.html" class="menu-item">Quản lí đơn hàng</a>
+        <a href="adminPage4.html" class="menu-item">Quản lí tài khoản</a>
+        <a href="adminPage6.html" class="menu-item">Quản lí đánh giá</a>
+        <a href="adminPage7.html" class="menu-item active">Quản lí banner</a>
+        <a href="adminPage8.html" class="menu-item ">Quản lí mã giảm giá</a>
+        <a href="adminPage5.html" class="menu-item">Chăm sóc khách hàng</a>
+        <a href="#" class="menu-item" onclick="location.href='index.html'">Đăng xuất</a>
+    </div>
+    <div class="footer">
+        <p>2024 Aroma Café. All rights reserved.</p>
+    </div>
+</div>
+
+<div class="right-content" id="right-content">
+    <div class="title">
+        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <p>QUẢN LÍ BANNER</p>
+    </div>
+
+    <div class="main-menu">
+        <button id="add">+ Thêm banner</button>
+    </div>
+
+    <div class="list-product">
+        <h3>DANH SÁCH BANNER</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Hình ảnh</th>
+                <th>Trạng thái</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>B001</td>
+                <td><img src="../webapp/img/img_2.jpg" width="200"></td>
+                <td>active</td>
+                <td>2024-01-10</td>
+                <td>2024-02-10</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>B002</td>
+                <td><img src="../webapp/img/img_1.jpg" width="200"></td>
+                <td>inactive</td>
+                <td>2024-01-15</td>
+                <td>2024-03-01</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- POPUP THÊM BANNER -->
+<div class="form-add" id="form-add" style="display: none">
+    <div class="form-title">
+        <p>THÊM BANNER</p>
+        <button id="take-off">X</button>
+    </div>
+
+    <form class="main-form">
+        <div class="p name-p">
+            <label>URL Banner</label>
+            <input type="text" placeholder="Link ảnh banner">
+        </div>
+
+        <div class="type-p">
+            <label>Trạng thái</label>
+            <select>
+                <option>active</option>
+                <option>inactive</option>
+            </select>
+        </div>
+
+        <div class="p">
+            <label>Ngày bắt đầu</label>
+            <input type="date">
+        </div>
+
+        <div class="p">
+            <label>Ngày kết thúc</label>
+            <input type="date">
+        </div>
+
+        <button class="submit" type="submit">Thêm Banner</button>
+    </form>
+</div>
+
+<!-- POPUP SỬA BANNER -->
+<div class="form-add" id="form-remake" style="display: none">
+    <div class="form-title">
+        <p>SỬA BANNER</p>
+        <button id="close">X</button>
+    </div>
+
+    <form class="main-form">
+        <div class="p id-p">
+            <label>ID Banner</label>
+            <p>B00#</p>
+        </div>
+
+        <div class="p name-p">
+            <label>URL Banner</label>
+            <input type="text">
+        </div>
+
+        <div class="type-p">
+            <label>Trạng thái</label>
+            <select>
+                <option>active</option>
+                <option>inactive</option>
+            </select>
+        </div>
+
+        <div class="p">
+            <label>Ngày bắt đầu</label>
+            <input type="date">
+        </div>
+
+        <div class="p">
+            <label>Ngày kết thúc</label>
+            <input type="date">
+        </div>
+
+        <button class="submit" type="submit">Lưu Thay Đổi</button>
+    </form>
+</div>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+<script src="../webapp/js/admin.js"></script>
+</body>
+</html>

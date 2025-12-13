@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chăm sóc khách hàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../webapp/css/admin.css">
+</head>
+<body>
+<div class="left-menu" id="left-menu">
+    <div class="logo">
+        <img src="../webapp/img/logo.png" onclick="location.href='index.html'">
+    </div>
+    <div class="menu">
+        <a href="adminPage1.html" class="menu-item">Tổng quan</a>
+        <a href="adminPage2.html" class="menu-item">Quản lí sản phẩm</a>
+        <a href="adminPage3.html" class="menu-item">Quản lí đơn hàng</a>
+        <a href="adminPage4.html" class="menu-item">Quản lí tài khoản</a>
+        <a href="adminPage6.html" class="menu-item">Quản lí đánh giá</a>
+        <a href="adminPage7.html" class="menu-item">Quản lí banner</a>
+        <a href="adminPage8.html" class="menu-item">Quản lí mã giảm giá</a>
+        <a href="adminPage5.html" class="menu-item active">Chăm sóc khách hàng</a>
+        <a href="#" class="menu-item" onclick="location.href='index.html'">Đăng xuất</a>
+    </div>
+    <div class="footer">
+        <p>2024 Aroma Café. All rights reserved.</p>
+    </div>
+</div>
+<div class="right-content" id="right-content">
+    <div class="title">
+        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <p>CHĂM SÓC KHÁCH HÀNG</p>
+    </div>
+    <div class="notify">
+        <h3>THÔNG BÁO</h3>
+        <div class="notify-main">
+            <p><span>Phan Thanh Tùng</span> vừa gửi 1 liên hệ.</p>
+            <p><span>Nguyễn Huy Bảo</span> vừa gửi 1 liên hệ.</p>
+            <p><span>Nguyễn Lê Tiến Đạt</span> vừa gửi 1 liên hệ.</p>
+        </div>
+    </div>
+    <div class="main-content">
+        <form class="main-menu-date">
+            <div class="start">
+                <label>Start date</label>
+                <input type="date">
+            </div>
+            <div class="end">
+                <label>End date</label>
+                <input type="date">
+            </div>
+            <button>Xác nhận</button>
+        </form>
+        <div class="contact">
+            <h3 class="contact-title">DANH SÁCH LIÊN HỆ</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ngày gửi</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Nôi dung</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>CT01</td>
+                    <td>19/11/2025</td>
+                    <td>Nguyễn Thị C</td>
+                    <td>admin@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CT02</td>
+                    <td>20/11/2025</td>
+                    <td>Phan Thanh Tùng</td>
+                    <td>example@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CT03</td>
+                    <td>22/11/2025</td>
+                    <td>Nguyễn Huy Bảo</td>
+                    <td>example@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CT04</td>
+                    <td>30/10/2025</td>
+                    <td>Nguyễn Lê Tiến Đạt</td>
+                    <td>example@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CT05</td>
+                    <td>22/10/2025</td>
+                    <td>Nguyễn Văn A</td>
+                    <td>example@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CT06</td>
+                    <td>15/10/2025</td>
+                    <td>Nguyễn Lê Tiến Đạt</td>
+                    <td>example@gmail.com</td>
+                    <td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-message"></i></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<div class="detail-p" id="detail-p" style="display: none">
+    <button id="close">X</button>
+    <div>Tên khách hàng: Phan Thanh Tùng</div>
+    <div>Email: example@gmail.com</div>
+    <div class="detail-content">
+        <span>Nội dung chi tiết</span>
+        <p>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.</p>
+    </div>
+</div>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+<script src="../webapp/js/admin.js"></script>
+</body>
+</html>

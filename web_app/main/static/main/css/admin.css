@@ -1,0 +1,906 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    font-family: 'Open Sans', sans-serif;
+    position: relative; /* Thêm để định vị pop-up */
+}
+
+.left-menu {
+    width: 20%;
+    height: 100%;
+    border-right: 1px black solid;
+    display: flex;
+    flex-direction: column; /* Thêm để đẩy footer xuống */
+}
+
+.left-menu .logo {
+    height: 80px;
+    width: 100%;
+}
+
+.left-menu .logo img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.left-menu .menu {
+    height: calc(100% - 130px);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    background: #3a3a3a;
+    padding: 20px 20px;
+    flex-grow: 1; /* Thêm để chiếm không gian */
+}
+
+.left-menu .menu a {
+    height: 50px;
+    width: 100%;
+    text-decoration: none;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.left-menu .menu .menu-item.active, /* Thêm class active */
+.left-menu .menu .menu-item:hover {
+    background: #686868;
+    border-left: 3px #840500 solid;
+}
+
+.left-menu .footer {
+    width: 100%;
+    height: 50px;
+    background: #A0522D;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.left-menu .footer p {
+    color: white;
+    font-size: 12px;
+}
+
+.right-content {
+    width: 80%;
+    height: 100vh; /* Sửa */
+    overflow-y: auto; /* Thêm để cuộn */
+}
+
+.right-content .title {
+    position: relative;
+    height: 81px;
+    width: 100%;
+    background: #A0522D;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px; /* Thêm từ định nghĩa bị trùng */
+}
+
+.right-content .title button {
+    position: absolute;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    background: transparent;
+    border: 2px black solid;
+    color: white;
+    cursor: pointer;
+}
+
+.right-content .title p {
+    font-size: 28px;
+    color: white;
+}
+
+/* --- PAGE 1: TỔNG QUAN --- */
+.dashboard-container {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.kpi-card .card-icon {
+    font-size: 32px;
+    padding: 15px;
+    border-radius: 50%;
+    margin-right: 20px;
+    color: #fff;
+}
+
+.kpi-card .card-icon.blue {
+    background-color: #007bff;
+}
+
+.kpi-card .card-icon.green {
+    background-color: #28a745;
+}
+
+.kpi-card .card-icon.orange {
+    background-color: #fd7e14;
+}
+
+.kpi-card .card-icon.red {
+    background-color: #dc3545;
+}
+
+.kpi-card .card-info h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.kpi-card .card-info span {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.charts-grid {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.charts-grid .chart-card {
+    width: 50%;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.chart-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+.chart-card p {
+    font-size: 30px;
+    color: #7dca01;
+    text-align: start;
+}
+
+.large p {
+    margin-top: 40px;
+}
+
+.large span {
+    color: deepskyblue;
+    margin-right: 10px;
+}
+
+.small p {
+    font-size: 18px;
+    color: black;
+}
+
+.small span {
+    color: #7dca01;
+}
+
+.table-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-card h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+/* --- TABLE CHUNG --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+table th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+table td {
+    font-size: 15px;
+}
+
+/* --- PAGE 2 & 3: SẢN PHẨM & ĐƠN HÀNG --- */
+.right-content .search-bar {
+    width: 100%;
+    height: 50px;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-content .search-bar input {
+    width: 50%;
+    height: 40px;
+    padding: 10px 30px;
+    border-radius: 20px 0 0 20px;
+    border: 1px black solid;
+    border-right: none;
+}
+
+.right-content .search-bar input:focus {
+    outline: none;
+}
+
+.right-content .search-bar button {
+    width: 5%;
+    height: 40px;
+    padding: 10px 30px;
+    border-radius: 0 20px 20px 0;
+    border: 1px black solid;
+    border-left: none;
+    background: transparent;
+}
+
+.right-content .main-menu {
+    width: 100%;
+    height: 50px;
+    padding: 20px 50px;
+    margin-bottom: 30px;
+}
+
+.right-content .main-menu select {
+    float: left;
+    width: 200px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 0 10px;
+}
+
+.right-content .main-menu button {
+    float: right;
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    background: #c76739;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.right-content .main-menu button:hover {
+    background: #8c4828;
+}
+
+.right-content .list-product {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.right-content .list-product h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+.right-content h3 {
+    font-weight: normal;
+    color: #495057;
+}
+
+.right-content .list-product table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.right-content .list-product table th, .right-content .list-product table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.right-content .list-product table th, .right-content .list-product table td button {
+    width: 40px;
+    height: 30px;
+    background: #c76739;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.right-content .list-product table th, .right-content .list-product table td button:hover {
+    background: #8c4828;
+}
+
+.right-content .list-product table th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.right-content .list-product table td {
+    font-size: 15px;
+}
+
+.right-content .list-product button {
+    font-weight: 500;
+    margin-top: 20px;
+    color: white;
+    background: red;
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.right-content .list-product button:hover {
+    background: #700000;
+}
+
+/* --- PAGE 3: ĐƠN HÀNG --- */
+.right-content .main-content .main-menu-date {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+.right-content .main-content .main-menu-date button {
+    width: 150px;
+    height: 25px;
+    border-radius: 20px;
+    background: #c76739;
+    color: white;
+    cursor: pointer;
+}
+
+.right-content .main-content .main-menu-date button:hover {
+    background: #8c4828;
+}
+
+.right-content .main-content .list-order {
+    padding: 10px 30px;
+}
+
+.right-content .main-content .list-order table .detail {
+    cursor: pointer;
+    padding: 5px 5px;
+}
+
+/* --- PAGE 4: TÀI KHOẢN --- */
+.right-content .notify {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    background: #fff;
+    padding: 25px;
+    margin-left: 120px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.right-content .notify h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.right-content .notify .notify-main {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px 0;
+    overflow-y: scroll;
+}
+
+.right-content .notify .notify-main p span {
+    font-weight: 600;
+}
+
+.right-content .list-account {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.right-content .list-account h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #495057;
+}
+
+.right-content .list-account table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.right-content .list-account table th, .right-content .list-account table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.right-content .list-account table th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.right-content .list-account table td {
+    font-size: 15px;
+}
+
+.right-content .list-account button {
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 20px;
+    color: white;
+    background: red;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.right-content .list-account button:hover {
+    background: #700000;
+}
+
+/* --- POP-UP CHUNG --- */
+.form-add {
+    position: fixed; /* Sửa thành fixed */
+    height: fit-content;
+    max-height: 500px;
+    width: 60%;
+    background: white;
+    top: 50%;
+    left: 60%;
+    padding: 20px 20px;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    box-shadow: 0 8px 10px rgba(49, 49, 49, 0.5);
+    z-index: 100; /* Thêm */
+    overflow-y: scroll;
+}
+
+.list-order .detail {
+    background-color: #c76739;
+}
+
+.list-order .detail i {
+    color: white;
+}
+
+.form-add .form-title {
+    position: relative;
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: row;
+}
+
+.form-add .form-title button {
+    position: absolute;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    color: red;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.form-add .main-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-add .main-form label {
+    width: 150px;
+    font-size: 17px;
+}
+
+.form-add .main-form div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 20px;
+}
+
+.form-add .main-form .img-p button {
+    height: 30px;
+    width: 70px;
+    border: none;
+    cursor: pointer;
+}
+
+.form-add .main-form div input {
+    width: 60%;
+    height: 30px;
+    padding: 10px 10px;
+    border: 1px solid black;
+}
+
+.form-add .main-form div select {
+    font-size: 12px;
+    width: 60%;
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid black;
+}
+
+.form-add .main-form div textarea {
+    width: 60%;
+    height: 50px;
+    padding: 5px 10px;
+}
+
+.form-add .main-form .submit {
+    width: 30%;
+    height: 30px;
+    margin: auto;
+    background: #c76739;
+    color: white;
+    cursor: pointer;
+    border: none;
+    border-radius: 20px;
+}
+
+.form-add .main-form .submit:hover {
+    background: #8c4828;
+}
+
+.detail-p {
+    position: fixed;
+    height: fit-content;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    background: white;
+    top: 50%;
+    left: 60%;
+    padding: 50px 50px;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    box-shadow: 0 8px 10px rgba(49, 49, 49, 0.5);
+    z-index: 100; /* Thêm */
+}
+
+.detail-p h3 {
+    margin-bottom: 20px;
+}
+
+.detail-p .info-customer .info {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.detail-p .info-customer .info div {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-p button {
+    width: 200px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.detail-p .totalSum span {
+    color: #A0522D;
+    margin-left: 20px;
+}
+
+.detail-p #close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 20px;
+    height: 20px;
+    font-size: 15px;
+    color: red;
+    background: transparent;
+    border: none;
+}
+
+/* --- TRANG 5 --- */
+/* Title DANH SÁCH LIÊN HỆ */
+.contact {
+    padding: 25px;
+}
+
+.right-content h3 {
+    margin-bottom: 20px;
+}
+
+.contact-title {
+    margin-top: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.contact table th {
+    text-align: center;
+}
+
+.contact table td {
+    text-align: center;
+}
+
+.contact table td button {
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 5px;
+    margin-right: 50px;
+    color: white;
+    background: #c76739;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.contact table td button:hover {
+    background: #8c4828;
+
+}
+
+/* --- THÀNH PHẦN CHUNG KHÁC --- */
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status.pending {
+    background-color: #fff0c2;
+    color: #f39c12;
+}
+
+.status.completed {
+    background-color: #c8f7dc;
+    color: #28a745;
+}
+
+.status.cancelled {
+    background-color: #fde2e4;
+    color: #dc3545;
+}
+
+.slide-top {
+    position: fixed;
+    display: none;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    color: saddlebrown;
+    opacity: 0.7;
+    width: 50px;
+    height: 50px;
+    border: 3px solid black;
+    cursor: pointer;
+    z-index: 50;
+}
+
+.slide-top:hover {
+    background: saddlebrown;
+    color: white;
+}
+
+/* ---Trang 6*/
+.review {
+    padding: 25px;
+}
+
+.review-title {
+
+    margin-top: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.review table {
+    margin-top: 5px;
+}
+
+.review td button {
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 5px;
+    margin-right: 15px;
+    color: white;
+    background: #c76739;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.review td button:hover {
+    background: #8c4828;
+
+}
+
+/* ---Trang 7---*/
+/* ==== BANNER LIST STYLE ==== */
+
+.list-banner {
+    background: #fff;
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.list-banner h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.list-banner table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.list-banner table th,
+.list-banner table td {
+    padding: 12px;
+    text-align: left;
+}
+
+.list-banner table th {
+    background: #fafafa;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Banner preview image */
+.list-banner table img.banner-img {
+    width: 140px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+/* Nút sửa */
+.list-banner button.remake {
+    background: #e6f2ff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.list-banner button.remake:hover {
+    background: #cfe5ff;
+}
+
+/* Nút xóa */
+.delete-banner {
+    margin-top: 20px;
+    background: #dc3545;
+    border: none;
+    color: white;
+    width: 160px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.delete-banner:hover {
+    background: #b02a37;
+}
+
+/* trang 8*/
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.list-discount {
+    padding: 25px;
+}
+
+.discount-title {
+
+    margin-top: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.list-discount table {
+    margin-top: 5px;
+}
+
+.list-discount td button {
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 5px;
+    margin-right: 15px;
+    color: white;
+    background: #c76739;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.list-discount td button:hover {
+    background: #8c4828;
+
+}

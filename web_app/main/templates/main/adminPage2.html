@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lí sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../webapp/css/admin.css">
+
+</head>
+<body>
+<div class="left-menu" id="left-menu">
+    <div class="logo">
+        <img src="../webapp/img/logo.png" onclick="location.href='index.html'">
+    </div>
+    <div class="menu">
+        <a href="adminPage1.html" class="menu-item">Tổng quan</a>
+        <a href="adminPage2.html" class="menu-item active">Quản lí sản phẩm</a>
+        <a href="adminPage3.html" class="menu-item">Quản lí đơn hàng</a>
+        <a href="adminPage4.html" class="menu-item">Quản lí tài khoản</a>
+        <a href="adminPage6.html" class="menu-item">Quản lí đánh giá</a>
+        <a href="adminPage7.html" class="menu-item">Quản lí banner</a>
+        <a href="adminPage8.html" class="menu-item">Quản lí mã giảm giá</a>
+        <a href="adminPage5.html" class="menu-item">Chăm sóc khách hàng</a>
+        <a href="#" class="menu-item" onclick="location.href='index.html'">Đăng xuất</a>
+    </div>
+    <div class="footer">
+        <p>2024 Aroma Café. All rights reserved.</p>
+    </div>
+</div>
+<div class="right-content" id="right-content">
+    <div class="title">
+        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <p>QUẢN LÍ SẢN PHẨM</p>
+    </div>
+    <form class="search-bar">
+        <input type="text" placeholder="Tìm kiếm sản phẩm" required>
+        <button><i class="fas fa-search"></i></button>
+    </form>
+    <div class="main-menu">
+        <select>
+            <option>-Chọn dòng sản phẩm-</option>
+            <option>Cà phê hữu cơ</option>
+            <option>Cà phê rang nguyên hạt</option>
+            <option>Cà phê xay nguyên chất</option>
+            <option>Các sản phẩm đặc biệt khác</option>
+        </select>
+        <button id="add">+ Thêm sản phẩm</button>
+    </div>
+    <div class="list-product">
+        <h3>DANH SÁCH SẢN PHẨM</h3>
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Tên sản phẩm</th>
+                <th>Loại sản phẩm</th>
+                <th>Khối lượng</th>
+                <th>Giá (VND)</th>
+                <th>Số lượng còn</th>
+                <th>Số lượng bán</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>P001</td>
+                <td>Cafe Aroma 1</td>
+                <td>Cà phê hữu cơ</td>
+                <td>500gr</td>
+                <td>100.000</td>
+                <td>250</td>
+                <td>0</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>P002</td>
+                <td>Cafe Aroma 2</td>
+                <td>Cà phê rang nguyên hạt</td>
+                <td>500gr</td>
+                <td>150.000</td>
+                <td>250</td>
+                <td>0</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>P003</td>
+                <td>Cafe Aroma 3</td>
+                <td>Cà phê xay nguyên chất</td>
+                <td>800gr</td>
+                <td>200.000</td>
+                <td>250</td>
+                <td>0</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>P004</td>
+                <td>Ly uống cafe</td>
+                <td>Các sản phẩm đặc biệt</td>
+                <td></td>
+                <td>130.000</td>
+                <td>250</td>
+                <td>0</td>
+                <td>
+                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button>Xóa sản phẩm</button>
+    </div>
+</div>
+<div class="form-add" id="form-add" style="display: none">
+    <div class="form-title">
+        <p>THÊM SẢN PHẨM</p>
+        <button id="take-off">X</button>
+    </div>
+    <form class="main-form">
+        <div class="p name-p">
+            <label>Tên sản phẩm</label>
+            <input type="text" placeholder="Tên sản phẩm" required>
+        </div>
+        <div class="type-p">
+            <label>Loại sản phẩm</label>
+            <select>
+                <option>-Chọn dòng sản phẩm-</option>
+                <option>Cà phê hữu cơ</option>
+                <option>Cà phê rang nguyên hạt</option>
+                <option>Cà phê xay nguyên chất</option>
+                <option>Các sản phẩm đặc biệt khác</option>
+            </select>
+        </div>
+        <div class="price-p">
+            <label>Giá sản phẩm</label>
+            <input type="text" placeholder="Giá sản phẩm" required>
+        </div>
+        <div class="p name-p">
+            <label>Số lượng</label>
+            <input type="text" placeholder="Số lượng">
+        </div>
+        <div class="weight-p">
+            <label>Khối lượng</label>
+            <input type="text" placeholder="Khối lượng" required>
+        </div>
+        <div class="img-p">
+            <label>Ảnh</label>
+            <input type="text" placeholder="Url link">
+            <button type="button">Thêm</button>
+            <span>0</span>
+        </div>
+        <div class="des-p">
+            <label>Mô tả</label>
+            <textarea placeholder="Mô tả"></textarea>
+        </div>
+        <button class="submit" type="submit">Thêm</button>
+    </form>
+</div>
+<div class="form-add" id="form-remake" style="display: none">
+    <div class="form-title">
+        <p>SỬA SẢN PHẨM</p>
+        <button id="close">X</button>
+    </div>
+    <form class="main-form">
+        <div class="p id-p">
+            <label>ID</label>
+            <p>P00#</p>
+        </div>
+        <div class="p name-p">
+            <label>Tên sản phẩm</label>
+            <input type="text" placeholder="Tên sản phẩm">
+        </div>
+        <div class="type-p">
+            <label>Loại sản phẩm</label>
+            <select>
+                <option>-Chọn dòng sản phẩm-</option>
+                <option>Cà phê hữu cơ</option>
+                <option>Cà phê rang nguyên hạt</option>
+                <option>Cà phê xay nguyên chất</option>
+                <option>Các sản phẩm đặc biệt khác</option>
+            </select>
+        </div>
+        <div class="price-p">
+            <label>Giá sản phẩm</label>
+            <input type="text" placeholder="Giá sản phẩm">
+        </div>
+        <div class="weight-p">
+            <label>Khối lượng</label>
+            <input type="text" placeholder="Khối lượng" required>
+        </div>
+        <div class="p name-p">
+            <label>Số lượng</label>
+            <input type="text" placeholder="Số lượng">
+        </div>
+        <div class="des-p">
+            <label>Mô tả</label>
+            <textarea placeholder="Mô tả"></textarea>
+        </div>
+        <button class="submit" type="submit">Thêm</button>
+    </form>
+</div>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+<script src="../webapp/js/admin.js"></script>
+</body>
+</html>

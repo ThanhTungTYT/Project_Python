@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lí đánh giá</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../webapp/css/admin.css">
+</head>
+<body>
+<div class="left-menu" id="left-menu">
+    <div class="logo">
+        <img src="../webapp/img/logo.png" onclick="location.href='index.html'">
+    </div>
+    <div class="menu">
+        <a href="adminPage1.html" class="menu-item">Tổng quan</a>
+        <a href="adminPage2.html" class="menu-item">Quản lí sản phẩm</a>
+        <a href="adminPage3.html" class="menu-item">Quản lí đơn hàng</a>
+        <a href="adminPage4.html" class="menu-item">Quản lí tài khoản</a>
+        <a href="adminPage6.html" class="menu-item active">Quản lí đánh giá</a>
+        <a href="adminPage7.html" class="menu-item">Quản lí banner</a>
+        <a href="adminPage8.html" class="menu-item">Quản lí mã giảm giá</a>
+        <a href="adminPage5.html" class="menu-item">Chăm sóc khách hàng</a>
+        <a href="#" class="menu-item" onclick="location.href='index.html'">Đăng xuất</a>
+    </div>
+    <div class="footer">
+        <p>2024 Aroma Café. All rights reserved.</p>
+    </div>
+</div>
+
+<div class="right-content" id="right-content">
+    <div class="title">
+        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <p>QUẢN LÍ ĐÁNH GIÁ</p>
+    </div>
+    <form class="search-bar">
+        <input type="text" placeholder="Tìm kiếm người dùng hoặc sản phẩm" required>
+        <button><i class="fas fa-search"></i></button>
+    </form>
+    <div class="main-content">
+        <form class="main-menu-date">
+            <div class="start">
+                <label>Start date</label>
+                <input type="date">
+            </div>
+            <div class="end">
+                <label>End date</label>
+                <input type="date">
+            </div>
+            <button>Xác nhận</button>
+        </form>
+        <div class="review">
+            <h3 class="review-title">DANH SÁCH ĐÁNH GIÁ</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID Đánh giá</th>
+                    <th>Sản phẩm</th>
+                    <th>Khách hàng</th>
+                    <th>Xếp hạng</th>
+                    <th>Ngày đánh giá</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>RV001</td>
+                    <td>Cà phê hữu cơ hạt A</td>
+                    <td>Nguyễn Văn A</td>
+                    <td>
+                        <span class="rating-stars">5/5</span>
+                    </td>
+                    <td>15/11/2025</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-eye"></i></button>
+                        <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RV002</td>
+                    <td>Cà phê rang nguyên hạt B</td>
+                    <td>Trần Thị B</td>
+                    <td>
+                        <span class="rating-stars">4/5</span>
+                    </td>
+                    <td>14/11/2025</td>
+                    <td>
+                        <button class=" detail"><i class="fa-solid fa-eye"></i></button>
+                        <button class=" delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RV003</td>
+                    <td>Cà phê hòa tan C</td>
+                    <td>Lê Văn C</td>
+                    <td>
+                        <span class="rating-stars">3/5</span>
+                    </td>
+                    <td>12/11/2025</td>
+                    <td>
+                        <button class="detail"><i class="fa-solid fa-eye"></i></button>
+                        <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="detail-p" id="detail-p" style="display: none">
+    <button id="close">X</button>
+    <h3>CHI TIẾT ĐÁNH GIÁ #<span id="review-id-display">RV001</span></h3>
+    <div>Sản phẩm: Cà phê hữu cơ hạt A</div>
+    <div>Khách hàng: Nguyễn Văn A</div>
+    <div>Ngày: 15/11/2025</div>
+    <div>Xếp hạng: 5/5</div>
+    <div class="detail-full">
+        <p>Nội dung:</p>
+        <p class="review-text">Sản phẩm rất chất lượng, hương vị đậm đà, đóng gói cẩn thận. Tôi rất hài lòng và sẽ tiếp
+            tục ủng hộ Aroma Café!</p>
+    </div>
+</div>
+
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+<script src="../webapp/js/admin.js"></script>
+</body>
+</html>
