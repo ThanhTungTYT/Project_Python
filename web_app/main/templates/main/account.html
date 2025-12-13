@@ -24,7 +24,7 @@
         <div class="mini-menu">
             <div class="cart">
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
-                <span id="num-cart-label">0</span>
+                <span id="num-cart-label">{{ cart_count }}</span>
             </div>
              {% if request.session.user_id %}
                 <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>

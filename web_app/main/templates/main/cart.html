@@ -22,7 +22,7 @@
         <div class="mini-menu">
             <div class="cart">
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
-                <span id="num-cart-label">0</span>
+                <span id="num-cart-label">{{ cart_count }}</span>
             </div>
              {% if request.session.user_id %}
                 <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
@@ -67,14 +67,14 @@
                 <input type="number" value="{{ item.quantity }}" min="1" />
                 <button class="btn-increase">+</button>
             </div>
-            <div class="product-subtotal">{{ item.product.price}}đ</div>
+            <div class="product-subtotal">{{item.product.price}}đ</div>
             </div>
       {% endfor %}
     </div>
 
     <div class="cart-totals">
         <h3>TỔNG CỘNG</h3>
-        <span id="cart-total">0đ</span>
+        <span id="cart-total">0 VND</span>
         <p>(Chỉ tính các sản phẩm được chọn)</p>
     </div>
 

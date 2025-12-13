@@ -19,6 +19,9 @@ def get_warrantyPolicies(request):
 def get_help(request):
     return render(request, 'main/help.html')
 
+def get_forgotpassword(request):
+    return render(request, 'main/forgotpassword.html')
+
 def get_index(request):
     return render(request, 'main/index.html')
 
@@ -42,6 +45,30 @@ def get_about(request):
 
 def get_account(request):
     return render(request, 'main/account.html')
+
+def get_adminPage1(request):
+    return render(request, 'main/adminPage1.html')
+
+def get_adminPage2(request):
+    return render(request, 'main/adminPage2.html')
+
+def get_adminPage3(request):
+    return render(request, 'main/adminPage3.html')
+
+def get_adminPage4(request):
+    return render(request, 'main/adminPage4.html')
+
+def get_adminPage5(request):
+    return render(request, 'main/adminPage5.html')
+
+def get_adminPage6(request):
+    return render(request, 'main/adminPage6.html')
+
+def get_adminPage7(request):
+    return render(request, 'main/adminPage7.html')
+
+def get_adminPage8(request):
+    return render(request, 'main/adminPage8.html')
 
 def get_info(request):
     user_id = request.session.get('user_id')
@@ -104,7 +131,6 @@ def get_register(request):
             )
             new_user.save()
 
-            # Tạo cart cho user mới
             Carts.objects.create(user=new_user, created_at=timezone.now())
 
             return redirect('login')
@@ -129,6 +155,8 @@ def get_login(request):
                 request.session['user_name'] = user.full_name
                 request.session.set_expiry(3600)
 
+                if user.role == 'admin':
+                    return redirect('adminPage1')
                 return redirect('index')
             else:
                 messages.error(request, "Sai mật khẩu!")
@@ -223,16 +251,13 @@ def add_to_cart(request):
     except ValueError:
         quantity = 1
 
-    # Lấy hoặc tạo cart của user
     user_cart, created = Carts.objects.get_or_create(user=user, defaults={'created_at': timezone.now()})
 
-    # Kiểm tra sản phẩm
     try:
         product = Products.objects.get(id=product_id)
     except Products.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Sản phẩm không tồn tại!'})
 
-    # Lấy hoặc tạo CartItem
     cart_item, created = CartItems.objects.get_or_create(
         cart=user_cart,
         product=product,
@@ -242,7 +267,6 @@ def add_to_cart(request):
         cart_item.quantity += quantity
         cart_item.save()
 
-    # Tính tổng số lượng
     items_in_cart = CartItems.objects.filter(cart=user_cart)
     total_quantity = sum(item.quantity for item in items_in_cart)
 
@@ -270,6 +294,10 @@ def get_cart(request):
         'total_price': total_price
     }
     return render(request, 'main/cart.html', context)
+def some_view(request):
+    cart_count = request.session.get('cart_total_quantity', 0)
+    return render(request, 'page.html', {'cart_count': cart_count})
+
 
 
 

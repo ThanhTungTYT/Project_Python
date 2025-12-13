@@ -21,6 +21,10 @@ urlpatterns = [
     path('termOfUse/', views.get_termOfUse, name='termOfUse'),
     path('warrantyPolicies/', views.get_warrantyPolicies, name='warrantyPolicies'),
     path('help/', views.get_help, name='help'),
+<<<<<<< HEAD
+=======
+    path('forgotpassword/', views.get_forgotpassword, name='forgotpassword'),
+>>>>>>> b53e013d250b3c3e0ae5dc05e97193ec1a76bd35
     path('adminPage1/', views.get_adminPage1, name='adminPage1'),
     path('adminPage2/', views.get_adminPage2, name='adminPage2'),
     path('adminPage3/', views.get_adminPage3, name='adminPage3'),
