@@ -19,6 +19,9 @@ def get_warrantyPolicies(request):
 def get_help(request):
     return render(request, 'main/help.html')
 
+def get_forgotpassword(request):
+    return render(request, 'main/forgotpassword.html')
+
 def get_index(request):
     return render(request, 'main/index.html')
 

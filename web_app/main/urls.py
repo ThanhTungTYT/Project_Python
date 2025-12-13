@@ -21,4 +21,5 @@ urlpatterns = [
     path('termOfUse/', views.get_termOfUse, name='termOfUse'),
     path('warrantyPolicies/', views.get_warrantyPolicies, name='warrantyPolicies'),
     path('help/', views.get_help, name='help'),
+    path('forgotpassword/', views.get_forgotpassword, name='forgotpassword'),
 ]
