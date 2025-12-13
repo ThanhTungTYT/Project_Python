@@ -1,0 +1,77 @@
+
+.container {
+    width: 80%;
+    margin: 40px auto;
+    background: #fff;
+    padding: 40px 60px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.container h1 {
+    text-align: center;
+    color: #c76739;
+    font-size: 28px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.container h1:after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 3px;
+    background: #c76739;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.container h2 {
+    color: #c76739;
+    margin-top: 30px;
+    font-size: 24px;
+}
+
+.container p, .container li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.container ul {
+    padding-left: 20px;
+}
+
+.container .policy-img {
+    width: 100%;
+    max-width: 450px;
+    display: block;
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+.container .back-btn {
+    display: inline-block;
+    background: #c76739;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #b45c33;
+}
+
+/* Hiệu ứng fade-in */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

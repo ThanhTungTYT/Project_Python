@@ -1,13 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <title>Aroma Café Cà phê rang số 1 Việt Nam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'main/css/policies.css' %}">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/login.css' %}">
+
 </head>
 <body>
 <header>
@@ -38,46 +38,31 @@
         <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>
-
 <div class="container">
-        <h2 id="Login">Đăng nhập</h2>
+    <h1>Chính Sách Bảo Hành & Đổi Trả</h1>
 
-        <!-- FORM ĐÃ SỬA -->
-        <form id="f-login" action="{% url 'login' %}" method="post">
-            
-            <!-- BẮT BUỘC: Token bảo mật của Django -->
-            {% csrf_token %}
+    <h2 class="fade-in">1. Mục đích</h2>
+    <p class="fade-in">Nhằm đảm bảo quyền lợi tối đa cho khách hàng khi mua sản phẩm tại Aroma Café, chúng tôi áp dụng
+        chính sách bảo hành và đổi trả minh bạch, nhanh chóng.</p>
 
-            <label class="lbu" for="username">Email:</label>
-            <!-- QUAN TRỌNG: name="email" để khớp với logic trong views.py -->
-            <input type="text" id="username" name="email" placeholder="Nhập email của bạn" required><br><br>
+    <h2 class="fade-in">2. Thời hạn bảo hành</h2>
+    <ul class="fade-in">
+        <li>Thời gian bảo hành: 30 ngày kể từ ngày nhận hàng.</li>
+        <li>Áp dụng cho các sản phẩm có lỗi kỹ thuật do nhà sản xuất.</li>
+    </ul>
 
-            <label class="lbpw" for="password">Mật khẩu:</label>
-            <!-- name="password" đã đúng -->
-            <input type="password" id="password" name="password" placeholder="Mật khẩu" required><br><br>
-                    <!-- KHỐI HIỂN THỊ LỖI (VÍ DỤ: SAI MẬT KHẨU) -->
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-        {% endif %}
+    <h2 class="fade-in">3. Điều kiện đổi trả</h2>
+    <ul class="fade-in">
+        <li>Sản phẩm còn nguyên tem, nhãn mác và chưa qua sử dụng.</li>
+        <li>Có hóa đơn hoặc bằng chứng mua hàng hợp lệ.</li>
+    </ul>
 
-            <div class="forgot-password">
-                <p>Quên mật khẩu? <a href="forgotpassword.html">Click vào đây</a></p>
-            </div>
-            
-            <!-- QUAN TRỌNG: type="submit" để gửi form đi -->
-            <button type="submit" id="b-login">Đăng nhập</button>
-        </form>
+    <h2 class="fade-in">4. Quy trình đổi trả</h2>
+    <p class="fade-in">Khách hàng liên hệ với bộ phận chăm sóc qua email hoặc hotline để được hướng dẫn cụ thể. Quá
+        trình xử lý đổi trả được hoàn tất trong vòng 3–5 ngày làm việc.</p>
 
-        <div class="register-link">
-            <p>Bạn chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ở đây</a></p>
-        </div>
+    <a href="index.html" class="back-btn fade-in">Quay về trang chủ</a>
 </div>
-
-<!-- Giữ nguyên phần Footer của bạn -->
 <footer class="footer">
     <div class="footer-top">
         <div class="foot-content left">
@@ -86,6 +71,7 @@
             <p>Điện thoại: xxx-xxx-xxxx.</p>
             <p>Email: example@gmail.com</p>
         </div>
+
         <div class="foot-content footer-links">
             <h3>Quy định & Chính sách</h3>
             <ul>
@@ -94,6 +80,7 @@
                 <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
             </ul>
         </div>
+
         <div class="foot-content right">
             <h3>Kết nối với chúng tôi</h3>
             <div class="social">
@@ -108,7 +95,8 @@
         <p>&copy; 2024 Aroma Café. All rights reserved.</p>
     </div>
 </footer>
-<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
-<script src="{% static 'main/js/script.js' %}"></script>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+    <script src="{% static 'main/js/policies.js' %}"></script>
+    <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

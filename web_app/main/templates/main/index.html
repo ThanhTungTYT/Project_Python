@@ -24,7 +24,7 @@
                 <a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a>
                 <span id="num-cart-label">0</span>
             </div>
-            {% if request.session.user_id %}
+             {% if request.session.user_id %}
                 <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
             {% else %}
                 <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
@@ -34,7 +34,7 @@
     <div class="bottom">
         <a href="{% url 'index' %}">Trang chủ</a>
         <a href="{% url 'catalog' %}">Sản phẩm</a>
-        <a href="help.html">Liên hệ</a>
+        <a href="{% url 'help.html' %}">Liên hệ</a>
         <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>

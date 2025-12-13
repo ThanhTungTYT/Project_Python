@@ -7,6 +7,17 @@ from django.views.decorators.http import require_POST
 from .models import *
 
 # --- CÁC VIEW HIỂN THỊ TRANG TĨNH (Giữ nguyên) ---
+def get_shippingPolicies(request):
+    return render(request, 'main/shippingPolicies.html')
+
+def get_termOfUse(request):
+    return render(request, 'main/termOfUse.html')
+
+def get_warrantyPolicies(request):
+    return render(request, 'main/warrantyPolicies.html')
+
+def get_help(request):
+    return render(request, 'main/help.html')
 
 def get_index(request):
     return render(request, 'main/index.html')

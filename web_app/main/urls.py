@@ -17,4 +17,8 @@ urlpatterns = [
     path('logout/', views.get_logout, name='logout'),
     path('product/<int:product_id>/', views.get_product, name='product'),
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+    path('shippingPolicies/', views.get_shippingPolicies, name='shippingPolicies'),
+    path('termOfUse/', views.get_termOfUse, name='termOfUse'),
+    path('warrantyPolicies/', views.get_warrantyPolicies, name='warrantyPolicies'),
+    path('help/', views.get_help, name='help'),
 ]

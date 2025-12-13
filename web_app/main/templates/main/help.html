@@ -1,13 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <title>Aroma Café Cà phê rang số 1 Việt Nam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'main/css/help.css' %}">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/login.css' %}">
+
 </head>
 <body>
 <header>
@@ -38,46 +38,31 @@
         <a href="{% url 'aboutUs' %}">Giới thiệu</a>
     </div>
 </header>
-
 <div class="container">
-        <h2 id="Login">Đăng nhập</h2>
-
-        <!-- FORM ĐÃ SỬA -->
-        <form id="f-login" action="{% url 'login' %}" method="post">
-            
-            <!-- BẮT BUỘC: Token bảo mật của Django -->
-            {% csrf_token %}
-
-            <label class="lbu" for="username">Email:</label>
-            <!-- QUAN TRỌNG: name="email" để khớp với logic trong views.py -->
-            <input type="text" id="username" name="email" placeholder="Nhập email của bạn" required><br><br>
-
-            <label class="lbpw" for="password">Mật khẩu:</label>
-            <!-- name="password" đã đúng -->
-            <input type="password" id="password" name="password" placeholder="Mật khẩu" required><br><br>
-                    <!-- KHỐI HIỂN THỊ LỖI (VÍ DỤ: SAI MẬT KHẨU) -->
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-        {% endif %}
-
-            <div class="forgot-password">
-                <p>Quên mật khẩu? <a href="forgotpassword.html">Click vào đây</a></p>
-            </div>
-            
-            <!-- QUAN TRỌNG: type="submit" để gửi form đi -->
-            <button type="submit" id="b-login">Đăng nhập</button>
-        </form>
-
-        <div class="register-link">
-            <p>Bạn chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký ở đây</a></p>
+    <h1 id="help">Aroma Café - Cà phê rang số 1 Việt Nam</h1>
+    <div class="address">
+        <div class="pin-address">
+            <i class="fa-solid fa-location-dot"></i> Địa chỉ: xxx , xxx, xxx.
         </div>
+        <div class="phone-number">
+            <i class="fa-solid fa-phone"></i> Điện thoại: xxx-xxx-xxxx.
+        </div>
+        <div class="email-address">
+            <i class="fa-solid fa-envelope"></i> Email: aromacafe@gmail.com
+        </div>
+    </div>
+    <div class="main-content">
+        <h2> Liên hệ với chúng tôi</h2>
+        <form action="/submit" method="post">
+            <input type="text" id="name" name="name" placeholder="Họ và tên của bạn" required><br><br>
+            <input type="email" id="email" name="email" placeholder="Email của bạn" required><br><br>
+            <label class="lbmessage" for="message">Tin nhắn:</label><br>
+            <textarea id="message" name="message" placeholder="Viết tin nhắn của bạn ở đây..." rows="5" cols="40"
+                      required></textarea><br><br>
+            <button type="button" id="send-message">Liên hệ ngay</button>
+        </form>
+    </div>
 </div>
-
-<!-- Giữ nguyên phần Footer của bạn -->
 <footer class="footer">
     <div class="footer-top">
         <div class="foot-content left">
@@ -86,6 +71,7 @@
             <p>Điện thoại: xxx-xxx-xxxx.</p>
             <p>Email: example@gmail.com</p>
         </div>
+
         <div class="foot-content footer-links">
             <h3>Quy định & Chính sách</h3>
             <ul>
@@ -94,6 +80,7 @@
                 <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
             </ul>
         </div>
+
         <div class="foot-content right">
             <h3>Kết nối với chúng tôi</h3>
             <div class="social">
@@ -108,7 +95,7 @@
         <p>&copy; 2024 Aroma Café. All rights reserved.</p>
     </div>
 </footer>
-<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
-<script src="{% static 'main/js/script.js' %}"></script>
+<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
+    <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>
