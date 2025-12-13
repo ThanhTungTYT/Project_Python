@@ -22,4 +22,12 @@ urlpatterns = [
     path('warrantyPolicies/', views.get_warrantyPolicies, name='warrantyPolicies'),
     path('help/', views.get_help, name='help'),
     path('forgotpassword/', views.get_forgotpassword, name='forgotpassword'),
+    path('adminPage1/', views.get_adminPage1, name='adminPage1'),
+    path('adminPage2/', views.get_adminPage2, name='adminPage2'),
+    path('adminPage3/', views.get_adminPage3, name='adminPage3'),
+    path('adminPage4/', views.get_adminPage4, name='adminPage4'),
+    path('adminPage5/', views.get_adminPage5, name='adminPage5'),
+    path('adminPage6/', views.get_adminPage6, name='adminPage6'),
+    path('adminPage7/', views.get_adminPage7, name='adminPage7'),
+    path('adminPage8/', views.get_adminPage8, name='adminPage8'),
 ]
