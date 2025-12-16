@@ -14,12 +14,12 @@
             <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
     <div class="menu">
-        <a href="{% url 'adminPage1' %}" class="menu-item active">Tổng quan</a>
+        <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
         <a href="{% url 'adminPage3' %}" class="menu-item">Quản lí đơn hàng</a>
         <a href="{% url 'adminPage4' %}" class="menu-item">Quản lí tài khoản</a>
         <a href="{% url 'adminPage6' %}" class="menu-item">Quản lí đánh giá</a>
-        <a href="{% url 'adminPage7' %}" class="menu-item">Quản lí banner</a>
+        <a href="{% url 'adminPage7' %}" class="menu-item active">Quản lí banner</a>
         <a href="{% url 'adminPage8' %}" class="menu-item">Quản lí mã giảm giá</a>
         <a href="{% url 'adminPage5' %}" class="menu-item">Chăm sóc khách hàng</a>
         <a href="#" class="menu-item" onclick="location.href='{% url 'index' %}'">Đăng xuất</a>
@@ -54,27 +54,7 @@
             </thead>
 
             <tbody>
-            <tr>
-                <td>B001</td>
-                <td><img src="../webapp/img/img_2.jpg" width="200"></td>
-                <td>active</td>
-                <td>2024-01-10</td>
-                <td>2024-02-10</td>
-                <td>
-                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>B002</td>
-                <td><img src="../webapp/img/img_1.jpg" width="200"></td>
-                <td>inactive</td>
-                <td>2024-01-15</td>
-                <td>2024-03-01</td>
-                <td>
-                    <button class="remake"><i class="fa-solid fa-pen"></i></button>
-                </td>
-            </tr>
+            
             </tbody>
         </table>
     </div>

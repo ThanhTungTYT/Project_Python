@@ -32,10 +32,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         checkbox.addEventListener("change", updateCartTotal);
 
-        removeBtn.addEventListener("click", () => {
-            item.remove();
-            updateCartTotal();
-        });
     }
 
     // THAY ĐỔI SỐ LƯỢNG
@@ -64,12 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
         totalDisplay.textContent = formatPrice(total);
     }
 
-    // NÚT XÓA TẤT CẢ
-    clearAllBtn.addEventListener("click", e => {
-        e.preventDefault();
-        cartList.innerHTML = "";
-        updateCartTotal();
-    });
 
     // NÚT CHỌN TẤT CẢ
     selectAllBtn.addEventListener("click", e => {

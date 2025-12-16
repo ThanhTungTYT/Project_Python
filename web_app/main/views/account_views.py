@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from ..models import Users
+from ..models import Orders, Users
 
 def get_account(request):
     # Trang khung Account
@@ -11,7 +11,6 @@ def get_info(request):
     try:
         current_user = Users.objects.get(id=user_id)
     except Users.DoesNotExist:
-        # Nếu session lỗi hoặc user bị xóa, trả về info rỗng hoặc redirect
         return render(request, 'main/info.html')
         
     context = {
@@ -23,4 +22,17 @@ def get_changepw(request):
     return render(request, 'main/changepw.html')
 
 def get_history(request):
-    return render(request, 'main/history.html')
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return redirect('login')
+
+    try:
+        user = Users.objects.get(id=user_id)
+        orders = Orders.objects.filter(user=user).order_by('-created_at').prefetch_related('orderitems_set', 'orderitems_set__product')
+        
+        context = {
+            'orders': orders
+        }
+        return render(request, 'main/history.html', context)
+    except Users.DoesNotExist:
+        return redirect('login')

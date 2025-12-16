@@ -39,38 +39,51 @@
     </div>
 </header>
 
+<form action="{% url 'prepare_checkout' %}" method="POST" id="cart-form">
+    {% csrf_token %}
 <div class="cart-container">
     <h2>Giỏ hàng</h2>
 
     <div class="clear-all-container" style="display: flex; justify-content: space-between;">
         <a href="#" class="select-all-cart">Chọn tất cả</a>
-        <a href="#" class="clear-all-cart">Xóa tất cả</a>
+        <button class="clear-all-cart" type="submit" formaction="{% url 'remove_all_cart_items' %}" 
+                    style="background: none; border: none; cursor: pointer; color: inherit; padding: 0;">
+                Xóa tất cả
+            </button>
     </div>
 
     <div id="cart-list">
-      {% for item in items %}
-        <div class="cart-item" data-price="{{ item.product.price }}">
-            <input type="checkbox" class="product-select">
-            <div class="product-remove"><i class="fas fa-times"></i></div>
-            <div class="product-thumbnail">
-               {% with image_object=item.product.productimages_set.first %}
-                    <img src="{{ image_object.image_url }}" alt="{{ item.product.name }}">
-                {% endwith %}
-            </div>
-            <div class="product-details">
-                <p class="product-name">{{ item.product.name }}</p>
-                <p class="product-type">Loại: {{ item.product.category.name }}</p>
-                <p class="product-weight">Khối lượng: <span>{{ item.product.weight_grams }}</span></p>
-            </div>
-            <div class="product-quantity">
-                <button class="btn-decrease">-</button>
-                <input type="number" value="{{ item.quantity }}" min="1" />
-                <button class="btn-increase">+</button>
-            </div>
-            <div class="product-subtotal">{{item.product.price}}đ</div>
-            </div>
-      {% endfor %}
+    {% for item in items %}
+    <div class="cart-item" data-price="{{ item.product.price }}">
+        <input type="checkbox" class="product-select" name="selected_items" value="{{ item.product.id }}">
+        
+        <div class="product-remove">
+            <button type="submit" formaction="{% url 'remove_cart_item' %}" name="cart_item_id" value="{{ item.id }}" 
+                    style="background: none; border: none; cursor: pointer; color: inherit; padding: 0;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="product-thumbnail">
+            {% with image_object=item.product.productimages_set.first %}
+                <img src="{{ image_object.image_url }}" alt="{{ item.product.name }}">
+            {% endwith %}
+        </div>
+        <div class="product-details">
+            <p class="product-name">{{ item.product.name }}</p>
+            <p class="product-type">Loại: {{ item.product.category.name }}</p>
+            <p class="product-weight">Khối lượng: <span>{{ item.product.weight_grams }}</span></p>
+        </div>
+        <div class="product-quantity">
+            <button type="button" class="btn-decrease">-</button>
+            
+            <input type="number" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}" min="1" />
+            
+            <button type="button" class="btn-increase">+</button>
+        </div>
+        <div class="product-subtotal">{{item.product.price}}đ</div>
     </div>
+    {% endfor %}
+</div>
 
     <div class="cart-totals">
         <h3>TỔNG CỘNG</h3>
@@ -78,8 +91,8 @@
         <p>(Chỉ tính các sản phẩm được chọn)</p>
     </div>
 
-    <a href="{% url 'payment' %}" type="button" class="checkout-button"> Thanh Toán </a>
-
+    <button type="submit" class="checkout-button">Thanh Toán</button>
+  </form>
     <div class="payment-methods">
         <h4>Phương thức thanh toán</h4>
         <i class="fa-solid fa-boxes-stacked"></i>

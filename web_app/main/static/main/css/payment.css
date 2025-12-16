@@ -95,10 +95,23 @@ section {
     min-height: 80px;
     resize: vertical;
 }
-
-.radio-item {
-    display: block;
+.payment-method {
+    margin: 0;
+    padding: 0;
+}
+.payment-method .radio-item {
+    width: 300px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
     margin-bottom: 10px;
+}
+.payment-method .radio-item p{
+    width: 250px;
+    display: inline;
+    font-size: 14px;
 }
 
 input[type="radio"] {

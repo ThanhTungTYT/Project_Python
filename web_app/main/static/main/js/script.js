@@ -6,8 +6,6 @@ if(parseInt(num_cart.textContent) > 0){
 }else{
     num_cart.style.display = 'none';
 }
-updateCartLabel();
-
 window.addEventListener("scroll", () => {
     if (window.scrollY > 20) {
         btn.style.display = "block";

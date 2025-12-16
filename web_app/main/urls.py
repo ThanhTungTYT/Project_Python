@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from .views import order_views
 
 urlpatterns = [
     path('', views.get_index, name='index'),
@@ -30,4 +31,9 @@ urlpatterns = [
     path('adminPage6/', views.get_adminPage6, name='adminPage6'),
     path('adminPage7/', views.get_adminPage7, name='adminPage7'),
     path('adminPage8/', views.get_adminPage8, name='adminPage8'),
+    path('cart/prepare/', order_views.prepare_checkout, name='prepare_checkout'),
+    path('checkout/', order_views.checkout_view, name='checkout'),
+    path('process/', order_views.process_checkout, name='process_checkout'),
+    path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
+    path('remove_all_cart_items/', views.remove_all_cart_items, name='remove_all_cart_items'),
 ]

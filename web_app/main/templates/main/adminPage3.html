@@ -25,9 +25,9 @@
             <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
     <div class="menu">
-        <a href="{% url 'adminPage1' %}" class="menu-item active">Tổng quan</a>
+        <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
-        <a href="{% url 'adminPage3' %}" class="menu-item">Quản lí đơn hàng</a>
+        <a href="{% url 'adminPage3' %}" class="menu-item active">Quản lí đơn hàng</a>
         <a href="{% url 'adminPage4' %}" class="menu-item">Quản lí tài khoản</a>
         <a href="{% url 'adminPage6' %}" class="menu-item">Quản lí đánh giá</a>
         <a href="{% url 'adminPage7' %}" class="menu-item">Quản lí banner</a>
@@ -71,50 +71,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        <button class="detail"><i class="fa-solid fa-list"></i></button>
-                    </td>
-                    <td>#DH10542</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>09/11/2025</td>
-                    <td><span class="status pending">Chờ xử lý</span></td>
-                    <td>120.000đ</td>
-                    <td>Thanh toán khi nhận hàng</td>
-                </tr>
-                <tr>
-                    <td>
-                        <button class="detail"><i class="fa-solid fa-list"></i></button>
-                    </td>
-                    <td>#DH10541</td>
-                    <td>Trần Thị B</td>
-                    <td>09/11/2025</td>
-                    <td><span class="status completed">Đã giao</span></td>
-                    <td>150.000đ</td>
-                    <td>Chuyển khoản qua ngân hàng</td>
-                </tr>
-                <tr>
-                    <td>
-                        <button class="detail"><i class="fa-solid fa-list"></i></button>
-                    </td>
-                    <td>#DH10540</td>
-                    <td>Lê Văn C</td>
-                    <td>08/11/2025</td>
-                    <td><span class="status cancelled">Đã hủy</span></td>
-                    <td>250.000đ</td>
-                    <td>Chuyển khoản qua ngân hàng</td>
-                </tr>
-                <tr>
-                    <td>
-                        <button class="detail"><i class="fa-solid fa-list"></i></button>
-                    </td>
-                    <td>#DH10539</td>
-                    <td>Phạm Thị D</td>
-                    <td>08/11/2025</td>
-                    <td><span class="status completed">Đã giao</span></td>
-                    <td>55.000đ</td>
-                    <td>Thanh toán khi nhận hàng</td>
-                </tr>
+                
                 </tbody>
             </table>
         </div>

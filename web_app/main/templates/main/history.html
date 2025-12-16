@@ -1,2 +1,78 @@
-<h2>Lịch sử mua hàng</h2>
-<p>Danh sách các đơn hàng gần đây của bạn:</p>
+<div class="history-container" style="padding: 20px;">
+    <h2 style="color: #6f4e37; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Lịch sử mua hàng</h2>
+
+    <div class="order-list">
+        {% for order in orders %}
+            <div class="order-card" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden;">
+                
+                <!-- Header của đơn hàng -->
+                <div class="order-header" style="background-color: #f9f9f9; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;">
+                    <div>
+                        <strong style="color: #333;">Đơn hàng #{{ order.id }}</strong>
+                        <span style="font-size: 13px; color: #666; margin-left: 10px;">{{ order.created_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div>
+                        <!-- Badge trạng thái -->
+                        <span class="status-badge" style="
+                            padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold;
+                            {% if order.status == 'Pending' %} background: #fff3cd; color: #856404;
+                            {% elif order.status == 'Completed' %} background: #d4edda; color: #155724;
+                            {% else %} background: #f8d7da; color: #721c24; {% endif %}
+                        ">
+                            {{ order.status }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Danh sách sản phẩm trong đơn -->
+                <div class="order-body" style="padding: 15px;">
+                    {% for item in order.orderitems_set.all %}
+                        <div class="order-item" style="display: flex; gap: 15px; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
+                            <!-- Ảnh sản phẩm -->
+                            <div style="width: 60px; height: 60px; flex-shrink: 0;">
+                                {% with img=item.product.productimages_set.first %}
+                                    {% if img %}
+                                        <img src="{% if 'http' in img.image_url %}{{ img.image_url }}{% else %}/static/main/img/{{ img.image_url }}{% endif %}" 
+                                             alt="{{ item.product.name }}" 
+                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                                    {% else %}
+                                        <img src="/static/main/img/no-image.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            
+                            <!-- Thông tin món -->
+                            <div style="flex-grow: 1;">
+                                <p style="margin: 0; font-weight: 500;">{{ item.product.name }}</p>
+                                <p style="margin: 5px 0; font-size: 13px; color: #666;">
+                                    {{ item.price }}đ x {{ item.quantity }}
+                                </p>
+                            </div>
+                            
+                            <!-- Thành tiền món -->
+                            <div style="text-align: right;">
+                                <span style="font-weight: bold; color: #333;">
+                                    {% widthratio item.price 1 item.quantity %}đ
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Footer đơn hàng (Tổng tiền) -->
+                <div class="order-footer" style="padding: 10px 15px; text-align: right; background-color: #fff;">
+                    <span style="font-size: 14px; color: #666;">Tổng tiền:</span>
+                    <span style="font-size: 18px; color: #b71c1c; font-weight: bold; margin-left: 10px;">
+                        {{ order.total_amount }}đ
+                    </span>
+                </div>
+            </div>
+        {% empty %}
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-shopping-bag" style="font-size: 40px; margin-bottom: 10px; color: #ccc;"></i>
+                <p>Bạn chưa có đơn hàng nào.</p>
+                <a href="{% url 'catalog' %}" style="color: #6f4e37; text-decoration: underline;">Mua sắm ngay</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>

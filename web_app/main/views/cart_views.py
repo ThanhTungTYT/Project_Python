@@ -1,18 +1,17 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.utils import timezone
 from ..models import Users, Carts, CartItems, Products
 
 def get_cart(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        return redirect('login')
+        return render(request, 'main/login.html')
 
     try:
         user = Users.objects.get(id=user_id)
         cart = Carts.objects.get(user=user)
-        items = CartItems.objects.filter(cart=cart)
-        # Tính tổng tiền
+        items = CartItems.objects.filter(cart=cart).order_by('-id')
         total_price = sum(item.product.price * item.quantity for item in items)
     except (Users.DoesNotExist, Carts.DoesNotExist):
         cart = None
@@ -27,47 +26,67 @@ def get_cart(request):
     return render(request, 'main/cart.html', context)
 
 def add_to_cart(request):
-    if request.method != 'POST':
-        return JsonResponse({'status': 'fail', 'message': 'Yêu cầu không hợp lệ'})
+    if request.method == 'POST':
+        user_id = request.session.get('user_id')
+        if not user_id:
+            messages.error(request, "Vui lòng đăng nhập để mua hàng!")
+            return redirect('login')
 
-    user_id = request.session.get('user_id')
-    if not user_id:
-        return JsonResponse({'status': 'error', 'message': 'Vui lòng đăng nhập để mua hàng!'})
+        product_id = request.POST.get('product_id')
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+        except ValueError:
+            quantity = 1
 
-    try:
-        user = Users.objects.get(id=user_id)
-    except Users.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Người dùng không tồn tại!'})
+        try:
+            user = Users.objects.get(id=user_id)
+            user_cart, _ = Carts.objects.get_or_create(
+                user=user, 
+                defaults={'created_at': timezone.now()}
+            )
 
-    product_id = request.POST.get('product_id')
-    try:
-        quantity = int(request.POST.get('quantity', 1))
-    except ValueError:
-        quantity = 1
+            product = Products.objects.get(id=product_id)
+        
+            cart_item, created = CartItems.objects.get_or_create(
+                cart=user_cart, 
+                product=product,
+                defaults={'quantity': quantity}
+            )
 
-    # Tìm hoặc tạo giỏ hàng
-    user_cart, created = Carts.objects.get_or_create(user=user, defaults={'created_at': timezone.now()})
+            if not created:
+                cart_item.quantity += quantity
+                cart_item.save()
+            
+        except (Users.DoesNotExist, Products.DoesNotExist) as e:
+            e.print(e)
 
-    try:
-        product = Products.objects.get(id=product_id)
-    except Products.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Sản phẩm không tồn tại!'})
+    return redirect('cart')
 
-    # Thêm sản phẩm vào chi tiết giỏ
-    cart_item, created = CartItems.objects.get_or_create(
-        cart=user_cart,
-        product=product,
-        defaults={'quantity': quantity}
-    )
-    if not created:
-        cart_item.quantity += quantity
-        cart_item.save()
+def remove_cart_item(request):
+    if request.method == 'POST':
+        user_id = request.session.get('user_id')
 
-    # Tính tổng số lượng để update icon
-    items_in_cart = CartItems.objects.filter(cart=user_cart)
-    total_quantity = sum(item.quantity for item in items_in_cart)
+        cart_item_id = request.POST.get('cart_item_id')
 
-    return JsonResponse({'status': 'success', 'total_quantity': total_quantity})
+        try:
+            cart_item = CartItems.objects.get(id=cart_item_id, cart__user_id=user_id)
+            cart_item.delete()
+        except CartItems.DoesNotExist:
+            pass
+
+    return redirect('cart')
+
+def remove_all_cart_items(request):
+    if request.method == 'POST':
+        user_id = request.session.get('user_id')
+
+        try:
+            cart = Carts.objects.get(user_id=user_id)
+            CartItems.objects.filter(cart=cart).delete()
+        except Carts.DoesNotExist:
+            pass
+
+    return redirect('cart')
 
 def get_payment(request):
     return render(request, 'main/payment.html')

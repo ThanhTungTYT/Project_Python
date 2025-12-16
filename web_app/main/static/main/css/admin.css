@@ -40,14 +40,37 @@ body {
     gap: 30px;
     background: #3a3a3a;
     padding: 20px 20px;
-    flex-grow: 1; /* Thêm để chiếm không gian */
+    overflow-y: scroll;
+}
+/* Toàn bộ scrollbar */
+::-webkit-scrollbar {
+    width: 8px;              /* chiều rộng */
 }
 
+/* Track (nền) */
+::-webkit-scrollbar-track {
+    background: #3a3a3a;
+    border-radius: 10px;
+}
+
+/* Thumb (thanh kéo) */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+/* Hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
 .left-menu .menu a {
-    height: 50px;
+    height: 70px;
     width: 100%;
     text-decoration: none;
     text-align: center;
+    padding-bottom: 10px;
     padding-top: 10px;
     font-size: 18px;
     font-weight: 500;

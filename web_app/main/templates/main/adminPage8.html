@@ -13,13 +13,13 @@
             <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
     <div class="menu">
-        <a href="{% url 'adminPage1' %}" class="menu-item active">Tổng quan</a>
+        <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
         <a href="{% url 'adminPage3' %}" class="menu-item">Quản lí đơn hàng</a>
         <a href="{% url 'adminPage4' %}" class="menu-item">Quản lí tài khoản</a>
         <a href="{% url 'adminPage6' %}" class="menu-item">Quản lí đánh giá</a>
         <a href="{% url 'adminPage7' %}" class="menu-item">Quản lí banner</a>
-        <a href="{% url 'adminPage8' %}" class="menu-item">Quản lí mã giảm giá</a>
+        <a href="{% url 'adminPage8' %}" class="menu-item active">Quản lí mã giảm giá</a>
         <a href="{% url 'adminPage5' %}" class="menu-item">Chăm sóc khách hàng</a>
         <a href="#" class="menu-item" onclick="location.href='{% url 'index' %}'">Đăng xuất</a>
     </div>
@@ -58,62 +58,11 @@
             </thead>
             <tbody>
             <tr>
-                <td>#V001</td>
-                <td><strong>SALE10</strong></td>
-                <td>10% cho đơn trên 500k</td>
-                <td>500k</td>
-                <td>10%</td>
-                <td>100</td>
-                <td></td>
-                <td></td>
-                <td>
-                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>#V002</td>
-                <td><strong>SALE15</strong></td>
-                <td>15% cho đơn trên 800k</td>
-                <td>800k</td>
-                <td>15%</td>
-                <td>100</td>
-                <td></td>
-                <td>31/12/2024</td>
-                <td>
-                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>#V003</td>
-                <td><strong>SALE10</strong></td>
-                <td>20% cho đơn trên 1000k</td>
-                <td>1000k</td>
-                <td>20%</td>
-                <td>100</td>
-                <td>1/1/2000</td>
-                <td>31/12/2025</td>
-                <td>
-                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>#V04</td>
-                <td><strong>SALE10</strong></td>
-                <td>5% trong giáng sinh</td>
-                <td>24-25 tháng 12</td>
-                <td>5%</td>
-                <td>100</td>
-                <td>24/12/2025</td>
-                <td>25/12/2025</td>
-                <td>
-                    <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
+                
             </tbody>
         </table>
     </div>
 </div>
-<<<<<<< HEAD
     <div class="form-add" id="form-add" style="display: none">
         <div class="form-title">
             <p>THÊM MÃ KHUYẾN MÃI</p>
@@ -152,12 +101,6 @@
             </div>
             <button class="submit" type="submit">Tạo Mã</button>
         </form>
-=======
-<div class="form-add" id="form-add" style="display: none">
-    <div class="form-title">
-        <p>THÊM MÃ KHUYẾN MÃI</p>
-        <button id="take-off">X</button>
->>>>>>> origin/main
     </div>
     <form class="main-form">
         <div class="p name-p">
