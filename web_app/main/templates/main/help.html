@@ -13,7 +13,7 @@
 <header>
     <div class="top">
         <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+            <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -40,26 +40,31 @@
 </header>
 <div class="container">
     <h1 id="help">Aroma Café - Cà phê rang số 1 Việt Nam</h1>
+    
     <div class="address">
-        <div class="pin-address">
-            <i class="fa-solid fa-location-dot"></i> Địa chỉ: xxx , xxx, xxx.
-        </div>
-        <div class="phone-number">
-            <i class="fa-solid fa-phone"></i> Điện thoại: xxx-xxx-xxxx.
-        </div>
-        <div class="email-address">
-            <i class="fa-solid fa-envelope"></i> Email: aromacafe@gmail.com
-        </div>
+        <div class="pin-address"><i class="fa-solid fa-location-dot"></i> Địa chỉ: xxx, xxx, xxx.</div>
+        <div class="phone-number"><i class="fa-solid fa-phone"></i> Điện thoại: xxx-xxx-xxxx.</div>
+        <div class="email-address"><i class="fa-solid fa-envelope"></i> Email: aromacafe@gmail.com</div>
     </div>
+
     <div class="main-content">
-        <h2> Liên hệ với chúng tôi</h2>
-        <form action="/submit" method="post">
-            <input type="text" id="name" name="name" placeholder="Họ và tên của bạn" required><br><br>
-            <input type="email" id="email" name="email" placeholder="Email của bạn" required><br><br>
+        <h2>Liên hệ với chúng tôi</h2>
+
+        {% if success_msg %}
+            <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                {{ success_msg }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Họ và tên của bạn" required><br><br>
+            <input type="email" name="email" placeholder="Email của bạn" required><br><br>
+            
             <label class="lbmessage" for="message">Tin nhắn:</label><br>
-            <textarea id="message" name="message" placeholder="Viết tin nhắn của bạn ở đây..." rows="5" cols="40"
-                      required></textarea><br><br>
-            <button type="button" id="send-message">Liên hệ ngay</button>
+            <textarea id="message" name="message" placeholder="Viết tin nhắn của bạn ở đây..." rows="5" required></textarea><br><br>
+            
+            <button type="submit" id="send-message">Liên hệ ngay</button>
         </form>
     </div>
 </div>

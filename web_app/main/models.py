@@ -77,7 +77,18 @@ class AuthUserUserPermissions(models.Model):
         db_table = 'auth_user_user_permissions'
         unique_together = (('user_id', 'permission_id'),)
 
+class Users(models.Model):
+    full_name = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
+    password_hash = models.CharField(max_length=255)
+    role = models.CharField(max_length=255, default='Customer')
+    created_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        managed = False  
+        db_table = 'users'
+        
 class Banners(models.Model):
     banner_url = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
@@ -117,11 +128,11 @@ class Categories(models.Model):
 
 
 class Contacts(models.Model):
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, db_column='user_id')
     full_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     message = models.CharField(max_length=255)
-    sent_at = models.DateTimeField()
+    sent_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = False
@@ -295,15 +306,4 @@ class UserAddresses(models.Model):
         db_table = 'user_addresses'
 
 
-class Users(models.Model):
-    full_name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20)
-    password_hash = models.CharField(max_length=255)
-    role = models.CharField(max_length=255)
-    created_at = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        managed = False
-        db_table = 'users'
-        db_table_comment = 'users table'
