@@ -13,7 +13,7 @@
 <header>
     <div class="top">
         <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+            <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -76,37 +76,35 @@
     </form>
 </div>
 <footer class="footer">
-        <div class="footer-top">
-            <div class="foot-content left">
-                <h3>Aroma Café</h3>
-                <p>Địa chỉ: xxx, xxx, xxx.</p>
-                <p>Điện thoại: xxx-xxx-xxxx.</p>
-                <p>Email: example@gmail.com</p>
-            </div>
-
-            <div class="foot-content footer-links">
-                <h3>Quy định & Chính sách</h3>
-                <ul>
-                    <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
-                    <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
-                    <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
-                </ul>
-            </div>
-
-            <div class="foot-content right">
-                <h3>Kết nối với chúng tôi</h3>
-                <div class="social">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+    <div class="footer-top">
+        <div class="foot-content left">
+            <h3>Aroma Café</h3>
+            <p>Địa chỉ: xxx, xxx, xxx.</p>
+            <p>Điện thoại: xxx-xxx-xxxx.</p>
+            <p>Email: example@gmail.com</p>
+        </div>
+        <div class="foot-content footer-links">
+            <h3>Quy định & Chính sách</h3>
+            <ul>
+                <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
+                <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
+            </ul>
+        </div>
+        <div class="foot-content right">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Aroma Café. All rights reserved.</p>
-        </div>
-    </footer>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Aroma Café. All rights reserved.</p>
+    </div>
+</footer>
     <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
 
     <script src="{% static 'main/js/script.js' %}"></script>

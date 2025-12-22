@@ -13,7 +13,7 @@
 <header>
     <div class="top">
         <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+            <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -53,7 +53,7 @@
             đồng hành cùng khách hàng và nông dân trồng cà phê để lan tỏa tinh thần cà phê sạch, chất lượng và khác biệt.
         </p>
         <div class="about-imgs">
-            <img src="/static/main/img/about01.png" alt="Hình ảnh 1" />
+            <img src="{% static 'main/img/about01.png' %}" alt="Hình ảnh 1" />
         </div>
     </section>
 
@@ -67,7 +67,7 @@
                 </p>
             </div>
             <div class="about-imgs">
-                <img src="/static/main/img/about02.png" alt="Hình ảnh 2" />
+                <img src="{% static 'main/img/about02.png' %}" alt="Hình ảnh 2" />
             </div>
         </div>
     </section>
@@ -75,7 +75,7 @@
     <section class="about-section fade-in">
         <div class="about-content">
             <div class="about-imgs">
-                <img src="/static/main/img/about04.png" alt="Hình ảnh 3" />
+                <img src="{% static 'main/img/about04.png' %}" alt="Hình ảnh 3" />
             </div>
             <div class="about-text">
                 <h2>NHỮNG HẠT CÀ PHÊ NGUYÊN CHẤT</h2>
@@ -96,7 +96,7 @@
                 </p>
             </div>
             <div class="about-imgs">
-                <img src="/static/main/img/about05.png" alt="Hình ảnh 4" />
+                <img src="{% static 'main/img/about05.png' %}" alt="Hình ảnh 4" />
             </div>
         </div>
     </section>
@@ -110,16 +110,14 @@
             <p>Điện thoại: xxx-xxx-xxxx.</p>
             <p>Email: example@gmail.com</p>
         </div>
-
         <div class="foot-content footer-links">
             <h3>Quy định & Chính sách</h3>
             <ul>
-                <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
-                <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
-                <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+                <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
+                <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
             </ul>
         </div>
-
         <div class="foot-content right">
             <h3>Kết nối với chúng tôi</h3>
             <div class="social">

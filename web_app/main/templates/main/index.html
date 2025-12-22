@@ -13,7 +13,7 @@
 <header>
     <div class="top">
         <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+            <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -129,9 +129,9 @@
             <div class="foot-content footer-links">
                 <h3>Quy định & Chính sách</h3>
                 <ul>
-                    <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
-                    <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
-                    <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
+                    <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
+                    <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
+                    <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
                 </ul>
             </div>
 

@@ -33,10 +33,8 @@ def add_to_cart(request):
             return redirect('login')
 
         product_id = request.POST.get('product_id')
-        try:
-            quantity = int(request.POST.get('quantity', 1))
-        except ValueError:
-            quantity = 1
+
+        quantity = int(request.POST.get('quantity', 1))
 
         try:
             user = Users.objects.get(id=user_id)
@@ -58,7 +56,7 @@ def add_to_cart(request):
                 cart_item.save()
             
         except (Users.DoesNotExist, Products.DoesNotExist) as e:
-            e.print(e)
+            print(e)
 
     return redirect('cart')
 

@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from ..models import Orders, Users
 
 def get_account(request):
-    # Trang khung Account
     return render(request, 'main/account.html')
 
 def get_info(request):
