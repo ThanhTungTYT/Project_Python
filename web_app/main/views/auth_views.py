@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
-from ..models import Users, Carts # Import từ thư mục cha
+from ..models import Users, Carts
 
 def get_login(request):
     if request.method == 'POST':
@@ -13,7 +13,6 @@ def get_login(request):
             user = Users.objects.get(email=email_input)
 
             if check_password(password_input, user.password_hash):
-                # Lưu session
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.full_name
                 request.session.set_expiry(3600)
@@ -55,7 +54,6 @@ def get_register(request):
             )
             new_user.save()
 
-            # Tạo giỏ hàng ngay khi đăng ký
             Carts.objects.create(user=new_user, created_at=timezone.now())
 
             return redirect('login')
