@@ -21,7 +21,7 @@
 <header>
     <div class="top">
         <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px" style="cursor: pointer;">
+            <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px" style="cursor: pointer;">
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -48,6 +48,16 @@
 </header>
 
 <div class="checkout-container">
+    
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div class="back-link">
         <a href="{% url 'cart' %}"><i class="fas fa-arrow-left"></i> Quay lại giỏ hàng</a>
@@ -60,7 +70,7 @@
                 <div class="avatar-icon" id="account-btn">
                     <i class="fas fa-user"></i>
                 </div>
-                <div>
+<div>
                     <p class="name">{{ request.session.user_name|default:"Khách lẻ" }}</p>
                 </div>
             </div>
@@ -121,7 +131,7 @@
                             <img src="{% static 'main/img/no-image.png' %}" alt="No Image">
                         {% endif %}
                     {% endwith %}
-                    <div class="cart-info">
+<div class="cart-info">
                         <p class="product-name">{{ item.product.name }}</p>
                         <p class="product-type">Loại: {{ item.product.category.name }}</p>
                         <p class="weight">Khối lượng: {{ item.product.weight_grams}}g</p>
@@ -155,7 +165,7 @@
             <h3>Tóm tắt đơn hàng</h3>
             <div class="summary-row">
                 <span>Tổng tiền hàng</span>
-                <span id="total-price">{{ total_amount}}đ</span>
+                <span id="total-price">{{ total_amount }}đ</span>
             </div>
             <div class="summary-row">
                 <span>Phí vận chuyển</span>
@@ -163,10 +173,9 @@
             </div>
             <div class="summary-row total">
                 <span>Tổng thanh toán: </span>
-                <span id="final-total">{{ total_amount}}đ</span>
+                <span id="final-total">{{ total_amount }}đ</span>
             </div>
             
-            <!-- Nút submit kích hoạt form bên trái -->
             <button class="checkout-btn" id="checkout-btn" type="submit" form="shipping-form">Đặt hàng</button>
         </section>
     </div>
@@ -180,7 +189,23 @@
             <p>Điện thoại: xxx-xxx-xxxx.</p>
             <p>Email: example@gmail.com</p>
         </div>
-        <!-- ... code footer ... -->
+        <div class="foot-content footer-links">
+            <h3>Quy định & Chính sách</h3>
+            <ul>
+                <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
+                <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
+            </ul>
+        </div>
+        <div class="foot-content right">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
     </div>
     <div class="footer-bottom">
         <p>&copy; 2024 Aroma Café. All rights reserved.</p>

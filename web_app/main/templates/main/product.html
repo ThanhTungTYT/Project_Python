@@ -13,7 +13,7 @@
 <header>
   <div class="top">
     <div class="logo">
-      <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px" style="cursor: pointer;">
+      <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px" style="cursor: pointer;">
     </div>
     <div class="search-bar">
       <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -68,9 +68,9 @@
                     
                    <form action="{% url 'add_to_cart' %}" method="POST">
                     {% csrf_token %}
-                    <!-- Input ẩn chứa ID -->
+
                     <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <!-- Input ẩn chứa Số lượng (JS sẽ cập nhật cái này) -->
+
                     <input type="hidden" name="quantity" id="form-quantity" value="1">
 
                     <div class="add-to-cart-wrapper">
@@ -83,7 +83,6 @@
                             <p>{{ product.category.name }}</p>
                         </div>
                         
-                        <!-- Nút tăng giảm số lượng -->
                         <div class="count-num">
                             <label>Số lượng</label>
                             <button id="count-minus" type="button">-</button>
@@ -125,7 +124,6 @@
             </div>
         </div>
 
-        <!-- PHẦN BÌNH LUẬN & ĐÁNH GIÁ (Mới thêm) -->
         <div class="product-comment">
             <div class="main-section-title">
                 <span class="line"></span>
@@ -134,7 +132,7 @@
             </div>
 
             <div class="product-comment-wrapper">
-                <!-- 1. Tổng quan điểm số -->
+
                 <div class="review-summary">
                     <div class="average-rating">
                         <span class="rating-value">{{ avg_rating }}/5</span>
@@ -149,7 +147,6 @@
                     </div>
                 </div>
 
-                <!-- 2. Danh sách bình luận -->
                 <div class="review-list">
                     {% for review in reviews %}
                         <div class="review-item">
@@ -171,7 +168,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- 3. Form gửi đánh giá -->
                 <form method="post" class="review-form" action="">
                     {% csrf_token %}
                     <h4>Viết đánh giá của bạn</h4>
@@ -194,7 +190,7 @@
 
                     <button type="submit">Gửi đánh giá</button>
                 </form>
-                <!-- Thông báo lỗi/thành công từ Django Views -->
+           
             {% if messages %}
                 <div class="messages" style="margin-bottom: 20px; text-align: center;">
                     {% for message in messages %}
@@ -209,7 +205,6 @@
             </div>
         </div>
 
-        <!-- 4. Sản phẩm liên quan -->
         <div class="product-relative">
             <div class="relative-title">
                 <span class="line"></span>
@@ -240,36 +235,34 @@
     </div>
 
 <footer class="footer">
-  <div class="footer-top">
-    <div class="foot-content left">
-      <h3>Aroma Café</h3>
-      <p>Địa chỉ: xxx, xxx, xxx.</p>
-      <p>Điện thoại: xxx-xxx-xxxx.</p>
-      <p>Email: example@gmail.com</p>
+    <div class="footer-top">
+        <div class="foot-content left">
+            <h3>Aroma Café</h3>
+            <p>Địa chỉ: xxx, xxx, xxx.</p>
+            <p>Điện thoại: xxx-xxx-xxxx.</p>
+            <p>Email: example@gmail.com</p>
+        </div>
+        <div class="foot-content footer-links">
+            <h3>Quy định & Chính sách</h3>
+            <ul>
+                <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
+                <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
+                <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
+            </ul>
+        </div>
+        <div class="foot-content right">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
     </div>
-
-    <div class="foot-content footer-links">
-      <h3>Quy định & Chính sách</h3>
-      <ul>
-        <li><a href="shippingPolicies.html">Chính sách vận chuyển</a></li>
-        <li><a href="warrantyPolicies.html">Chính sách bảo hành, đổi trả</a></li>
-        <li><a href="termOfUse.html">Điều khoản sử dụng</a></li>
-      </ul>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Aroma Café. All rights reserved.</p>
     </div>
-
-    <div class="foot-content right">
-      <h3>Kết nối với chúng tôi</h3>
-      <div class="social">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2024 Aroma Café. All rights reserved.</p>
-  </div>
 </footer>
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
 
