@@ -6,7 +6,35 @@
     <title>Quản lí sản phẩm</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
+    <style>
+        /* CSS nội bộ nhỏ để chỉnh sửa nhanh giao diện hiển thị ảnh và thông báo */
+        .msg-box {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            min-width: 300px;
+        }
+        .alert {
+            padding: 15px; margin-bottom: 10px; border-radius: 5px; color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.5s ease-in-out;
+        }
+        .success { background-color: #4CAF50; }
+        .error { background-color: #f44336; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
 
+        .img-preview {
+            width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;
+        }
+        
+        /* Chỉnh lại nút hành động cho đẹp hơn */
+        .action-btn {
+            border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;
+        }
+        .edit-btn { background-color: #2196F3; }
+        .delete-btn { background-color: #F44336; }
+    </style>
 </head>
 <body>
 <div class="left-menu" id="left-menu">
@@ -33,128 +61,173 @@
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ SẢN PHẨM</p>
     </div>
+
     <form class="search-bar">
-        <input type="text" placeholder="Tìm kiếm sản phẩm" required>
+        <input type="text" placeholder="Tìm kiếm sản phẩm..." required>
         <button><i class="fas fa-search"></i></button>
     </form>
+
     <div class="main-menu">
         <select>
-            <option>-Chọn dòng sản phẩm-</option>
+            <option>- Lọc theo loại -</option>
             <option>Cà phê hữu cơ</option>
             <option>Cà phê rang nguyên hạt</option>
             <option>Cà phê xay nguyên chất</option>
-            <option>Các sản phẩm đặc biệt khác</option>
         </select>
         <button id="add">+ Thêm sản phẩm</button>
     </div>
+
     <div class="list-product">
         <h3>DANH SÁCH SẢN PHẨM</h3>
         <table>
             <thead>
             <tr>
-                <th></th>
+                <th>Ảnh</th>
                 <th>ID</th>
                 <th>Tên sản phẩm</th>
                 <th>Loại sản phẩm</th>
                 <th>Khối lượng</th>
-                <th>Giá (VND)</th>
-                <th>Số lượng còn</th>
-                <th>Số lượng bán</th>
-                <th></th>
+                <th>Giá (VNĐ)</th>
+                <th>Tồn kho</th>
+                <th>Đã bán</th>
+                <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
+            {% for p in products %}
+            <tr>
+                <td>
+                    {% if p.productimages_set.first.image_url %}
+                        <img src="{{ p.productimages_set.first.image_url }}" class="img-preview" alt="Img">
+                    {% else %}
+                        <span style="color: #999; font-size: 12px;">No Image</span>
+                    {% endif %}
+                </td>
+                
+                <td>{{ p.id }}</td>
+                <td style="font-weight: bold; color: #444;">{{ p.name }}</td>
+                <td>{{ p.category.name }}</td>
+                <td>{{ p.weight_grams }}</td>
+                <td style="color: #d32f2f; font-weight: bold;">{{ p.price }}</td>
+                <td>{{ p.stock }}</td>
+                <td>{{ p.sold }}</td>
+                <td>
+                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 20px;">
+                    Hiện chưa có sản phẩm nào. Hãy bấm "Thêm sản phẩm" để tạo mới!
+                </td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
-        <button>Xóa sản phẩm</button>
     </div>
 </div>
+
 <div class="form-add" id="form-add" style="display: none">
     <div class="form-title">
-        <p>THÊM SẢN PHẨM</p>
+        <p>THÊM SẢN PHẨM MỚI</p>
         <button id="take-off">X</button>
     </div>
-    <form class="main-form">
-        <div class="p name-p">
+    
+    <form class="main-form" method="POST" action="{% url 'adminPage2' %}">
+        {% csrf_token %} <div class="p name-p">
             <label>Tên sản phẩm</label>
-            <input type="text" placeholder="Tên sản phẩm" required>
+            <input type="text" name="name" placeholder="Nhập tên sản phẩm" required>
         </div>
+
         <div class="type-p">
             <label>Loại sản phẩm</label>
-            <select>
-                <option>-Chọn dòng sản phẩm-</option>
-                <option>Cà phê hữu cơ</option>
-                <option>Cà phê rang nguyên hạt</option>
-                <option>Cà phê xay nguyên chất</option>
-                <option>Các sản phẩm đặc biệt khác</option>
+            <select name="category" required>
+                <option value="">-- Chọn loại sản phẩm --</option>
+                <option value="1">Cà phê hữu cơ</option>
+                <option value="2">Cà phê rang nguyên hạt</option>
+                <option value="3">Cà phê xay nguyên chất</option>
+                <option value="4">Các sản phẩm đặc biệt khác</option>
             </select>
         </div>
+
         <div class="price-p">
             <label>Giá sản phẩm</label>
-            <input type="text" placeholder="Giá sản phẩm" required>
+            <input type="number" name="price" placeholder="Ví dụ: 50000" required>
         </div>
-        <div class="p name-p">
-            <label>Số lượng</label>
-            <input type="text" placeholder="Số lượng">
-        </div>
+
         <div class="weight-p">
-            <label>Khối lượng</label>
-            <input type="text" placeholder="Khối lượng" required>
+            <label>Khối lượng (Gram)</label>
+            <input type="text" name="weight" placeholder="Ví dụ: 500g" required>
         </div>
-        <div class="img-p">
-            <label>Ảnh</label>
-            <input type="text" placeholder="Url link">
-            <button type="button">Thêm</button>
-            <span>0</span>
+        
+        <div class="p name-p">
+            <label>Số lượng kho</label>
+            <input type="number" name="quantity" placeholder="Ví dụ: 100" required>
         </div>
+
+        <div class="p name-p">
+            <label>Link hình ảnh (URL)</label>
+            <input type="text" name="image_url" placeholder="Dán link ảnh (https://...)" required>
+        </div>
+
         <div class="des-p">
-            <label>Mô tả</label>
-            <textarea placeholder="Mô tả"></textarea>
+            <label>Link hình ảnh (Nhiều ảnh cách nhau bằng dấu phẩy hoặc xuống dòng)</label>
+            <textarea name="image_url" placeholder="Link 1&#10;Link 2&#10;Link 3..." required style="height: 80px;"></textarea>
         </div>
-        <button class="submit" type="submit">Thêm</button>
+
+        <button class="submit" type="submit">Lưu Sản Phẩm</button>
     </form>
 </div>
+
 <div class="form-add" id="form-remake" style="display: none">
     <div class="form-title">
         <p>SỬA SẢN PHẨM</p>
-        <button id="close">X</button>
+        <button id="close-remake">X</button>
     </div>
-    <form class="main-form">
-        <div class="p id-p">
-            <label>ID</label>
-            <p>P00#</p>
-        </div>
+    <form class="main-form" id="edit-form" method="POST" action="">
+        {% csrf_token %}
         <div class="p name-p">
             <label>Tên sản phẩm</label>
-            <input type="text" placeholder="Tên sản phẩm">
+            <input type="text" name="name" id="edit-name" required>
         </div>
+
         <div class="type-p">
             <label>Loại sản phẩm</label>
-            <select>
-                <option>-Chọn dòng sản phẩm-</option>
-                <option>Cà phê hữu cơ</option>
-                <option>Cà phê rang nguyên hạt</option>
-                <option>Cà phê xay nguyên chất</option>
-                <option>Các sản phẩm đặc biệt khác</option>
+            <select name="category" id="edit-category" required>
+                <option value="1">Cà phê hữu cơ</option>
+                <option value="2">Cà phê rang nguyên hạt</option>
+                <option value="3">Cà phê xay nguyên chất</option>
+                <option value="4">Các sản phẩm đặc biệt khác</option>
             </select>
         </div>
+
         <div class="price-p">
             <label>Giá sản phẩm</label>
-            <input type="text" placeholder="Giá sản phẩm">
+            <input type="number" name="price" id="edit-price" required>
         </div>
+
         <div class="weight-p">
             <label>Khối lượng</label>
-            <input type="text" placeholder="Khối lượng" required>
+            <input type="text" name="weight" id="edit-weight" required>
         </div>
+        
         <div class="p name-p">
-            <label>Số lượng</label>
-            <input type="text" placeholder="Số lượng">
+            <label>Số lượng kho</label>
+            <input type="number" name="quantity" id="edit-stock" required>
         </div>
+
         <div class="des-p">
-            <label>Mô tả</label>
-            <textarea placeholder="Mô tả"></textarea>
+            <label>Link hình ảnh (Nhập lại để thay đổi toàn bộ ảnh)</label>
+            <textarea name="image_url" id="edit-image" placeholder="Link 1, Link 2..." style="height: 80px;"></textarea>
         </div>
-        <button class="submit" type="submit">Thêm</button>
+
+        <div class="des-p">
+            <label>Mô tả sản phẩm</label>
+            <textarea name="description" id="edit-desc"></textarea>
+        </div>
+
+        <button class="submit" type="submit">Cập nhật</button>
     </form>
 </div>
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>

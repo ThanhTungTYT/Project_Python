@@ -408,7 +408,9 @@ table td {
 .right-content .list-product button:hover {
     background: #700000;
 }
-
+.list-product .delete-btn{
+    color: red;
+}
 /* --- PAGE 3: ĐƠN HÀNG --- */
 .right-content .main-content .main-menu-date {
     display: flex;

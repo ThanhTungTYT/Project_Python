@@ -48,6 +48,18 @@
 </header>
 
 <div class="checkout-container">
+    
+    <!-- === PHẦN MỚI THÊM: HIỂN THỊ LỖI TỪ BACKEND === -->
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- === KẾT THÚC PHẦN THÊM === -->
 
     <div class="back-link">
         <a href="{% url 'cart' %}"><i class="fas fa-arrow-left"></i> Quay lại giỏ hàng</a>
@@ -59,8 +71,8 @@
             <div class="account-info">
                 <div class="avatar-icon" id="account-btn">
                     <i class="fas fa-user"></i>
-                </div>
-                <div>
+</div>
+<div>
                     <p class="name">{{ request.session.user_name|default:"Khách lẻ" }}</p>
                 </div>
             </div>
@@ -121,8 +133,8 @@
                             <img src="{% static 'main/img/no-image.png' %}" alt="No Image">
                         {% endif %}
                     {% endwith %}
-                    <div class="cart-info">
-                        <p class="product-name">{{ item.product.name }}</p>
+<div class="cart-info">
+<p class="product-name">{{ item.product.name }}</p>
                         <p class="product-type">Loại: {{ item.product.category.name }}</p>
                         <p class="weight">Khối lượng: {{ item.product.weight_grams}}g</p>
                         <p class="price">{{ item.subtotal }}đ</p>
@@ -163,7 +175,7 @@
             </div>
             <div class="summary-row total">
                 <span>Tổng thanh toán: </span>
-                <span id="final-total">{{ total_amount}}đ</span>
+                <span id="final-total">{{ total_amount }}đ</span>
             </div>
             
             <!-- Nút submit kích hoạt form bên trái -->
