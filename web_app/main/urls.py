@@ -37,4 +37,8 @@ urlpatterns = [
     path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('remove_all_cart_items/', views.remove_all_cart_items, name='remove_all_cart_items'),
     path('search/', views.get_search, name='search'),
+    path('delete_account/<int:user_id>/', views.delete_account, name='delete_account'),
+    path('add_account/', views.add_account, name='add_account'),
+    path('add_banner/', views.add_banner, name='add_banner'),
+    path('update_banner/', views.update_banner, name='update_banner'),
 ]

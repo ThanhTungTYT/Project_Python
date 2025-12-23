@@ -155,6 +155,13 @@
         {% csrf_token %}
     </form>
 </div>
+    <script>
+        window.BANNERS = [
+        {% for banner in banners %}
+            "{{ banner.banner_url }}"{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        ];
+    </script>
     <script src="{% static 'main/js/index.js' %}"></script>
     <script src="{% static 'main/js/script.js' %}"></script>
 </body>

@@ -50,7 +50,7 @@
                 <i class='bx bx-trending-up'></i>
             </div>
             <div class="card-info">
-                <h3>1.500.000đ</h3>
+                <h3>{{sum_date}}đ</h3>
                 <span>Doanh thu hôm nay</span>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 <i class='bx bx-package'></i>
             </div>
             <div class="card-info">
-                <h3>32</h3>
+                <h3>{{orders_count}}</h3>
                 <span>Đơn hàng mới</span>
             </div>
         </div>
@@ -68,7 +68,7 @@
                 <i class='bx bx-group'></i>
             </div>
             <div class="card-info">
-                <h3>120</h3>
+                <h3>{{count_users}}</h3>
                 <span>Khách truy cập</span>
             </div>
         </div>
@@ -77,7 +77,7 @@
                 <i class='bx bx-money-withdraw'></i>
             </div>
             <div class="card-info">
-                <h3>46.875đ</h3>
+                <h3>{{avg_month}}đ</h3>
                 <span>Giá trị TB</span>
             </div>
         </div>
@@ -85,15 +85,14 @@
     <div class="charts-grid">
         <div class="chart-card large">
             <h3>Tổng doanh thu (30 ngày)</h3>
-            <p><span><i class="fa-solid fa-chart-line"></i></span>1.000.000.000 VND</p>
+            <p><span><i class="fa-solid fa-chart-line"></i></span>{{sum_month}} VND</p>
         </div>
         <div class="chart-card small">
             <h3>Top sản phẩm</h3>
             <div class="list-product">
-                <p>Cà phê hữu cơ: <span>500.000.000 VND</span></p>
-                <p>Cà phê rang nguyên hạt: <span>210.000.000 VND</span></p>
-                <p>Cà phê xay nguyên chất: <span>205.000.000 VND</span></p>
-                <p>Các sản phẩm đặc biệt: <span>85.000.000 VND</span></p>
+                {% for category_name, count in count_category %}
+                <p>{{ category_name }}:<span> {{ count }} sản phẩm.</span></p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -110,34 +109,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>#10542</td>
-                <td>Nguyễn Văn A</td>
-                <td>09/11/2025</td>
-                <td><span class="status pending">Chờ xử lý</span></td>
-                <td>120.000đ</td>
-            </tr>
-            <tr>
-                <td>#10541</td>
-                <td>Trần Thị B</td>
-                <td>09/11/2025</td>
-                <td><span class="status completed">Đã giao</span></td>
-                <td>0đ</td>
-            </tr>
-            <tr>
-                <td>#10540</td>
-                <td>Lê Văn C</td>
-                <td>08/11/2025</td>
-                <td><span class="status cancelled">Đã hủy</span></td>
-                <td>0đ</td>
-            </tr>
-            <tr>
-                <td>#10539</td>
-                <td>Phạm Thị D</td>
-                <td>08/11/2025</td>
-                <td><span class="status completed">Đã giao</span></td>
-                <td>55.000đ</td>
-            </tr>
+            {% for order in orders_near %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.full_name }}</td>
+                    <td>{{ order.created_at }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>{{ order.total_amount }}đ</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>

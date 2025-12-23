@@ -128,7 +128,7 @@ def process_checkout(request):
                     shipping_fee=0,      
                     discount_percent=0,
                     final_amount=total_amount, 
-                    status='Pending',    
+                    status='Đang xử lý',    
                     note=note,     
                     created_at=timezone.now()
                 )

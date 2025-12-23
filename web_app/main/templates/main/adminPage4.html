@@ -47,7 +47,9 @@
     <div class="notify">
         <h3>THÔNG BÁO</h3>
         <div class="notify-main">
-            
+            {% for account in accounts_now %}
+                <p><b>{{ account.full_name }}</b> vừa tạo tài khoản.</p>
+            {% endfor %}
         </div>
     </div>
     <form class="search-bar">
@@ -72,7 +74,21 @@
             </tr>
             </thead>
             <tbody>
-            
+            {% for account in accounts %}
+            <tr>
+                <td>{{ account.id }}</td>
+                <td>{{ account.full_name }}</td>
+                <td>{{ account.email }}</td>
+                <td>{{ account.phone }}</td>
+                <td>{{ account.role }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_account' account.id %}">
+                        {% csrf_token %}
+                        <button class="delete-btn" type="submit"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -82,26 +98,27 @@
         <p>THÊM TÀI KHOẢN</p>
         <button id="take-off">X</button>
     </div>
-    <form class="main-form">
+    <form class="main-form" method="post" action="{% url 'add_account' %}">
+        {% csrf_token %}
         <div class="p name-p">
             <label>Tên người dùng</label>
-            <input type="text" placeholder="Tên người dùng">
+            <input type="text" name="full_name" placeholder="Tên người dùng">
         </div>
         <div class="price-p">
             <label>Email</label>
-            <input type="text" placeholder="Email" required>
+            <input type="text" name="email" placeholder="Email" required>
         </div>
         <div class="count-p">
             <label>Mật khẩu</label>
-            <input type="text" placeholder="Mật khẩu" required>
+            <input type="text" name="password" placeholder="Mật khẩu" required>
         </div>
         <div class="count-p">
             <label>Số điện thoại</label>
-            <input type="text" placeholder="Số điện thoại">
+            <input type="text" name="phone" placeholder="Số điện thoại">
         </div>
         <div class="type-p">
             <label>Role</label>
-            <select>
+            <select name="role">
                 <option>-Chọn vai trò-</option>
                 <option>Admin</option>
                 <option>Customer</option>

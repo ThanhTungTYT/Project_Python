@@ -101,7 +101,7 @@ class Banners(models.Model):
 
 
 class CartItems(models.Model):
-    cart = models.ForeignKey('Carts', models.DO_NOTHING)
+    cart = models.ForeignKey('Carts', models.CASCADE)
     product = models.ForeignKey('Products', models.DO_NOTHING)
     quantity = models.IntegerField()
 
@@ -111,7 +111,10 @@ class CartItems(models.Model):
 
 
 class Carts(models.Model):
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField()
 
     class Meta:
@@ -196,7 +199,7 @@ class MainCustomer(models.Model):
 
 
 class OrderAddresses(models.Model):
-    order = models.ForeignKey('Orders', models.DO_NOTHING)
+    order = models.ForeignKey('Orders', models.CASCADE)
     country = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
     ward = models.CharField(max_length=255)
@@ -208,7 +211,7 @@ class OrderAddresses(models.Model):
 
 
 class OrderItems(models.Model):
-    order = models.ForeignKey('Orders', models.DO_NOTHING)
+    order = models.ForeignKey('Orders', models.CASCADE)
     product = models.ForeignKey('Products', models.DO_NOTHING)
     price = models.DecimalField(max_digits=18, decimal_places=2)
     quantity = models.IntegerField()
@@ -219,7 +222,10 @@ class OrderItems(models.Model):
 
 
 class Orders(models.Model):
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE
+    )
     payment_method = models.ForeignKey('PaymentMethod', models.DO_NOTHING)
     promo = models.ForeignKey('Promotions', models.DO_NOTHING)
     receiver_name = models.CharField(max_length=255)
@@ -295,7 +301,10 @@ class Promotions(models.Model):
 
 
 class UserAddresses(models.Model):
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE
+    )
     country = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
     ward = models.CharField(max_length=255)

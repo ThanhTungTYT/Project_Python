@@ -3,13 +3,44 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.dateparse import parse_date
-from ..models import Products, Categories, ProductImages, Contacts
+from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners
 
 
 def get_adminPage1(request):
-    return render(request, 'main/adminPage1.html')
+    orders_now = Orders.objects.all().filter(created_at=timezone.now())
+    users_now = Users.objects.all().filter(created_at=timezone.now())
+    orders_month = Orders.objects.all().filter(created_at__month=timezone.now().month)
+    orders_near = Orders.objects.all().filter(created_at__gte=timezone.now()-timezone.timedelta(days=7))
+    categories = Categories.objects.all()
+    count_category = []
+    for category in categories:
+        products = orders_month.filter(orderitems__product__category=category).distinct()
+        count_category.append((category.name, products.count()))
+    count_users = users_now.count()
+    sum_date = 0
+    orders_count = orders_now.count()
+    for order in orders_now:
+        sum_date += order.total_amount
+    sum_month = 0
+    for order in orders_month:
+        sum_month += order.total_amount
+    avg_month = sum_month / orders_month.count() if orders_month.count() > 0 else 0
+    context = {
+        'orders_now': orders_now,
+        'orders_month': orders_month,
+        'orders_count': orders_count,
+        'sum_date': sum_date,
+        'sum_month': sum_month,
+        'users_now': users_now,
+        'count_users': count_users,
+        'avg_month': avg_month,
+        'orders_near': orders_near,
+        'count_category': count_category,
+    }
+    return render(request, 'main/adminPage1.html', context)
 
 def get_adminPage2(request):
     if request.method == 'POST':
@@ -44,7 +75,7 @@ def get_adminPage2(request):
         except Exception as e:
             messages.error(request, f'Lỗi hệ thống: {e}')
 
-    products = Products.objects.select_related('category').all().order_by('-id')
+    products = Products.objects.select_related('category').all().order_by('id')
     return render(request, 'main/adminPage2.html', {'products': products})
 
 def get_adminPage5(request):  
@@ -79,7 +110,45 @@ def update_product(request, product_id):
     return redirect('adminPage2')
 
 def get_adminPage3(request): return render(request, 'main/adminPage3.html')
-def get_adminPage4(request): return render(request, 'main/adminPage4.html')
+def get_adminPage4(request): 
+    accounts = Users.objects.all().order_by('id')
+    accounts_now = Users.objects.filter(created_at__date=timezone.now().date()).order_by('id')
+    context = {
+        'accounts': accounts,
+        'accounts_now': accounts_now
+    }
+    return render(request, 'main/adminPage4.html', context)
+
+def delete_account(request, user_id):
+    if request.method == 'POST':
+        try:
+            user = Users.objects.get(id=user_id)
+            user.delete()
+        except Exception:
+            pass
+    return redirect('adminPage4')
+
+def add_account(request):
+    if request.method == 'POST':
+        try:
+            full_name = request.POST.get('full_name')
+            email = request.POST.get('email')
+            phone = request.POST.get('phone')
+            password = request.POST.get('password')
+            role = request.POST.get('role')
+
+            Users.objects.create(
+                full_name=full_name,
+                email=email,
+                phone=phone,
+                password_hash=make_password(password),
+                role=role,
+                created_at=timezone.now()
+            )
+        except Exception as e:
+            pass
+        
+    return redirect('adminPage4')
 
 def get_adminPage5(request):
     if request.method == 'POST':
@@ -125,5 +194,44 @@ def get_adminPage5(request):
     return render(request, 'main/adminPage5.html', context)
 
 def get_adminPage6(request): return render(request, 'main/adminPage6.html')
-def get_adminPage7(request): return render(request, 'main/adminPage7.html')
+def get_adminPage7(request):
+    banners_list = Banners.objects.all().order_by('id')
+    context = {
+        'banners_list': banners_list,
+    } 
+    return render(request, 'main/adminPage7.html', context)
+
+def add_banner(request):
+    if request.method == 'POST':
+        try:
+            banner_image_url = request.POST.get('banner_image_url')
+            banner_status = request.POST.get('status')
+            banner_start_date = request.POST.get('start_date')
+            banner_end_date = request.POST.get('end_date')
+            Banners.objects.create(
+                banner_url=banner_image_url,
+                status=banner_status,
+                start_date=banner_start_date,   
+                end_date=banner_end_date,
+            )
+        except Exception as e:
+            print(e);
+        
+    return redirect('adminPage7')
+
+def update_banner(request, banner_id):
+    if request.method == 'POST':
+        try:
+            banner = get_object_or_404(Banners, id=banner_id)
+
+            banner.banner_url = request.POST.get('banner_image_url')
+            banner.status = request.POST.get('status')
+            banner.start_date = request.POST.get('start_date')
+            banner.end_date = request.POST.get('end_date')
+            banner.save()
+        except Exception as e:
+            print(e);
+        
+    return redirect('adminPage7')
+
 def get_adminPage8(request): return render(request, 'main/adminPage8.html')

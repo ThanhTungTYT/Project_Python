@@ -2,11 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Avg, Q
-from ..models import Products, Categories, ProductsReview, Users
+from ..models import Banners, Products, Categories, ProductsReview, Users
 
 def get_index(request):
     try:
         products = Products.objects.all().order_by('-sold')[:4]
+        banners = Banners.objects.filter(status='active')
+        context = {
+            'products': products,
+            'banners': banners
+        }
+        return render(request, 'main/index.html', context)
     except:
         products = []
     return render(request, 'main/index.html', {'products': products})

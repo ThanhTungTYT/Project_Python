@@ -1,9 +1,6 @@
 const img_home = document.getElementById('img-home');
-const images = [
-    '/static/main/img/img_1.jpg',
-    '/static/main/img/img_2.jpg',
-    '/static/main/img/img_3.jpg'
-];
+const images = Array.isArray(window.BANNERS) ? window.BANNERS.filter(Boolean) : [];
+
 
 let currentIndex = 0;
 

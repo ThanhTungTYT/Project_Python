@@ -52,9 +52,17 @@
                 <th></th>
             </tr>
             </thead>
-
             <tbody>
-            
+            {% for banner in banners_list %}
+            <tr>
+                <td>{{ banner.id }}</td>
+                <td><img src="{{ banner.banner_image_url }}" alt="Banner Image" width="200px"></td>
+                <td>{{ banner.status }}</td>
+                <td>{{ banner.start_date }}</td>
+                <td>{{ banner.end_date }}</td>
+                <td><button class="remake"><i class="fa-solid fa-pen"></i></button></td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -67,15 +75,16 @@
         <button id="take-off">X</button>
     </div>
 
-    <form class="main-form">
+    <form class="main-form" method="post" action="{% url 'add_banner' %}">
+        {% csrf_token %}
         <div class="p name-p">
             <label>URL Banner</label>
-            <input type="text" placeholder="Link ảnh banner">
+            <input type="text" name="banner_image_url" placeholder="Link ảnh banner">
         </div>
 
         <div class="type-p">
             <label>Trạng thái</label>
-            <select>
+            <select name="status">
                 <option>active</option>
                 <option>inactive</option>
             </select>
@@ -83,12 +92,12 @@
 
         <div class="p">
             <label>Ngày bắt đầu</label>
-            <input type="date">
+            <input type="date" name="start_date">
         </div>
 
         <div class="p">
             <label>Ngày kết thúc</label>
-            <input type="date">
+            <input type="date" name="end_date">
         </div>
 
         <button class="submit" type="submit">Thêm Banner</button>
@@ -102,11 +111,8 @@
         <button id="close">X</button>
     </div>
 
-    <form class="main-form">
-        <div class="p id-p">
-            <label>ID Banner</label>
-            <p>B00#</p>
-        </div>
+    <form class="main-form" method="post" action="{% url 'update_banner' %}">
+        {% csrf_token %}
 
         <div class="p name-p">
             <label>URL Banner</label>
