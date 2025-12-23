@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Chăm sóc khách hàng</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
 </head>
 <body>
+
 <div class="left-menu" id="left-menu">
-        <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
-        </div>
+    <div class="logo">
+        <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+    </div>
     <div class="menu">
         <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
@@ -27,59 +28,166 @@
         <p>2024 Aroma Café. All rights reserved.</p>
     </div>
 </div>
+
 <div class="right-content" id="right-content">
     <div class="title">
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>CHĂM SÓC KHÁCH HÀNG</p>
     </div>
-    <div class="notify">
-        <h3>THÔNG BÁO</h3>
-        <div class="notify-main">
+
+    {% if messages %}
+        <div class="alert-container" style="padding: 0 30px;">
+            {% for message in messages %}
+                <div style="padding: 15px; margin-bottom: 20px; border-radius: 4px; background-color: {% if message.tags == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if message.tags == 'success' %}#155724{% else %}#721c24{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
-    </div>
+    {% endif %}
+
     <div class="main-content">
-        <form class="main-menu-date">
-            <div class="start">
+        <form class="filter-section" method="GET" action="">
+            <div class="filter-group">
                 <label>Start date</label>
-                <input type="date">
+                <input type="date" name="start_date" value="{{ start_date|default:'' }}">
             </div>
-            <div class="end">
+            <div class="filter-group">
                 <label>End date</label>
-                <input type="date">
+                <input type="date" name="end_date" value="{{ end_date|default:'' }}">
             </div>
-            <button>Xác nhận</button>
+            <button type="submit" class="btn-filter">Lọc</button>
+            <a href="?" class="btn-reset">Đặt lại</a>
         </form>
+
         <div class="contact">
             <h3 class="contact-title">DANH SÁCH LIÊN HỆ</h3>
             <table>
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Ngày gửi</th>
-                    <th>Họ và tên</th>
-                    <th>Email</th>
-                    <th>Nôi dung</th>
-                    <th></th>
+                    <th style="width: 5%;">ID</th>
+                    <th style="width: 15%;">Ngày gửi</th>
+                    <th style="width: 20%;">Họ và tên</th>
+                    <th style="width: 25%;">Email</th>
+                    <th style="width: 20%;">Nội dung (Rút gọn)</th>
+                    <th style="width: 15%;">Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
-                
+                {% for item in page_obj %}
+                <tr>
+                    <td>#{{ item.id }}</td>
+                    <td>{{ item.sent_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ item.full_name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.message|truncatechars:20 }}</td>
+                    <td>
+                        <div class="action-cell">
+                            <button class="action-btn btn-detail" type="button"
+                                    onclick="openDetail('{{ item.full_name }}', '{{ item.email }}', `{{ item.message|escapejs }}`)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn-reply" type="button"
+                                    onclick="openReply('{{ item.full_name }}', '{{ item.email }}')">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">Không có liên hệ nào.</td>
+                </tr>
+                {% endfor %}
                 </tbody>
             </table>
+
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">&laquo;</a>
+                {% endif %}
+                <span class="current">Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">&raquo;</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-</div>
-<div class="detail-p" id="detail-p" style="display: none">
-    <button id="close">X</button>
-    <div>Tên khách hàng: Phan Thanh Tùng</div>
-    <div>Email: example@gmail.com</div>
-    <div class="detail-content">
-        <span>Nội dung chi tiết</span>
-        <p>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.</p>
+
+<div class="detail-p" id="detail-p">
+    <span id="close-detail" class="close-btn">&times;</span>
+    <div class="popup-header-simple">
+        <h3>Chi tiết tin nhắn</h3>
+    </div>
+
+    <div id="detail-name" style="margin-bottom: 10px;"></div>
+    <div id="detail-email" style="margin-bottom: 10px;"></div>
+    <div class="detail-content" style="margin-top: 15px;">
+        <span style="font-weight: bold; display:block; margin-bottom: 5px;">Nội dung chi tiết:</span>
+        <div id="detail-msg"></div>
     </div>
 </div>
-<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static 'main/js/admin.js' %}"></script>
+
+<div class="form-add" id="form-reply">
+    <div class="popup-header">
+        <h3>Gửi phản hồi</h3>
+        <button id="close-reply" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form class="main-form" method="POST" action="">
+        {% csrf_token %}
+        <div style="margin-bottom: 10px;">
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Người nhận:</label>
+            <input type="email" id="reply-email-display" name="recipient_email" readonly style="background-color: #e9ecef; color: #555;">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Tiêu đề:</label>
+            <input type="text" name="reply_subject" value="Phản hồi từ Aroma Café" required>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Nội dung:</label>
+            <textarea name="reply_message" required placeholder="Nhập nội dung phản hồi..."></textarea>
+        </div>
+        <button type="submit" class="btn-submit-reply">Gửi Email</button>
+    </form>
+</div>
+
+<script>
+    const rightContent = document.getElementById("right-content");
+    const leftMenu = document.getElementById("left-menu");
+    const detailPopup = document.getElementById("detail-p");
+    const replyPopup = document.getElementById("form-reply");
+
+    function toggleBlur(isBlur) {
+        const filterVal = isBlur ? 'blur(5px)' : 'none';
+        rightContent.style.filter = filterVal;
+        leftMenu.style.filter = filterVal;
+    }
+
+    function openDetail(name, email, message) {
+        document.getElementById('detail-name').innerHTML = "<b>Tên khách hàng:</b> " + name;
+        document.getElementById('detail-email').innerHTML = "<b>Email:</b> " + email;
+        document.getElementById('detail-msg').innerText = message;
+        detailPopup.style.display = 'flex'; 
+        toggleBlur(true);
+    }
+
+    function openReply(name, email) {
+        document.getElementById('reply-email-display').value = email;
+        replyPopup.style.display = 'flex';
+        toggleBlur(true);
+    }
+
+    document.getElementById('close-detail').onclick = function() {
+        detailPopup.style.display = 'none';
+        toggleBlur(false);
+    }
+    
+    document.getElementById('close-reply').onclick = function(e) {
+        e.preventDefault(); 
+        replyPopup.style.display = 'none';
+        toggleBlur(false);
+    }
+</script>
+<script src="{% static 'main/js/admin.js' %}"></script>
 </body>
 </html>
