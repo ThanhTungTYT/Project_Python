@@ -70,7 +70,7 @@
                 <div class="avatar-icon" id="account-btn">
                     <i class="fas fa-user"></i>
                 </div>
-<div>
+                <div>
                     <p class="name">{{ request.session.user_name|default:"Khách lẻ" }}</p>
                 </div>
             </div>
@@ -132,6 +132,7 @@
                         {% endif %}
                     {% endwith %}
 <div class="cart-info">
+<p class="product-name">{{ item.product.name }}</p>
                         <p class="product-name">{{ item.product.name }}</p>
                         <p class="product-type">Loại: {{ item.product.category.name }}</p>
                         <p class="weight">Khối lượng: {{ item.product.weight_grams}}g</p>
