@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from ..models import Products, Categories, ProductsReview, Users
 
 def get_index(request):
@@ -38,6 +38,23 @@ def get_catalog(request):
         'active_sort': active_sort      
     }
     return render(request, 'main/catalog.html', context)
+
+def get_search(request):
+    query = request.GET.get('q', '')
+    products = []
+    
+    if query:
+        products = Products.objects.filter(
+            Q(name__icontains=query) | 
+            Q(description__icontains=query)
+        )
+    
+    context = {
+        'query': query,
+        'products': products,
+        'count': products.count() if query else 0
+    }
+    return render(request, 'main/search.html', context)
 
 def get_product(request, product_id):
     try:

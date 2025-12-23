@@ -12,7 +12,7 @@ def get_adminPage3(request):
 def get_adminPage4(request):    
     return render(request, 'main/adminPage4.html')
 
-def get_adminPage5(request):    
+def get_adminPage5(request):  
     return render(request, 'main/adminPage5.html')
 
 def get_adminPage6(request):    

@@ -36,4 +36,5 @@ urlpatterns = [
     path('process/', order_views.process_checkout, name='process_checkout'),
     path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('remove_all_cart_items/', views.remove_all_cart_items, name='remove_all_cart_items'),
+    path('search/', views.get_search, name='search'),
 ]
