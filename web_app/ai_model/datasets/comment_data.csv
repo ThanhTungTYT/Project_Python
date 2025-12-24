@@ -1,0 +1,300 @@
+text,label
+# ==============================================================================
+# NHÃN 0: SẠCH (CLEAN)
+# Khen ngợi, hỏi hàng, phàn nàn lịch sự, giao hàng...
+# ==============================================================================
+Sản phẩm tuyệt vời đóng gói cẩn thận,0
+Giao hàng nhanh shipper thân thiện,0
+Chất lượng sản phẩm tốt hơn mong đợi,0
+Shop tư vấn nhiệt tình dễ thương,0
+Màu sắc đẹp giống hệt trong ảnh,0
+Sẽ ủng hộ shop dài dài,0
+Cảm ơn shop đã hỗ trợ đổi trả,0
+Hàng chính hãng tem mác đầy đủ,0
+Mọi người nên mua nhé rất đáng tiền,0
+Gói hàng kĩ đẹp lắm ạ,0
+Dùng thích lắm da dẻ mịn màng hẳn,0
+Áo vải mềm mặc mát,0
+Quần hơi rộng xíu nhưng vẫn đẹp,0
+Sản phẩm tạm ổn trong tầm giá,0
+Giao hàng hơi chậm nhưng hàng oke,0
+Không ưng lắm nhưng cũng cho 4 sao,0
+Hàng bị móp méo hộp xíu,0
+Shop trả lời tin nhắn hơi lâu,0
+Mùi hương hơi nồng mình không thích lắm,0
+Chất lượng bình thường không có gì đặc sắc,0
+Sản phẩm không được tốt lắm,0
+Dùng một thời gian thấy cũng bình thường,0
+Giá hơi cao so với chất lượng,0
+Shop cần cải thiện khâu đóng gói,0
+Màu không giống hình lắm hơi thất vọng,0
+Chờ hàng mòn mỏi mới thấy tới,0
+Nhân viên giao hàng thái độ hơi kỳ,0
+Hàng này dùng cho người già được không shop,0
+Cho mình hỏi cách sử dụng với ạ,0
+Shop còn màu xanh không,0
+Bao lâu thì nhận được hàng vậy shop,0
+Có được kiểm tra hàng trước khi nhận không,0
+Phí ship cao quá shop ơi,0
+Hàng y hình không shop,0
+Tư vấn giúp mình size L nhé,0
+Mình muốn đổi địa chỉ giao hàng,0
+Shop check inbox mình với,0
+Đã nhận được hàng cảm ơn shop,0
+Hàng ô kê la lắm nha,0
+Tuyệt vời ông mặt trời,0
+Mua lần thứ 2 rồi vẫn ưng,0
+Đóng gói chắc chắn giao nhanh,0
+Sản phẩm đẹp y hình,0
+Chất lượng tốt giá rẻ,0
+Shop làm ăn uy tín,0
+Giao sai màu nhưng shop đổi lại nhanh,0
+Hàng đẹp lắm mọi người ơi,0
+Rất hài lòng về sản phẩm,0
+Sẽ giới thiệu cho bạn bè,0
+Cho shop 5 sao nhé,0
+Hàng dùng tốt,0
+Máy chạy êm ru,0
+Màn hình sắc nét,0
+Pin trâu dùng cả ngày,0
+Giày đi êm chân,0
+Vải dày dặn không bị lộ,0
+Đường may tinh tế,0
+Màu này tôn da lắm,0
+Dễ phối đồ,0
+Hương vị thơm ngon,0
+Bánh giòn rụm,0
+Nước hoa thơm lâu,0
+Son lên màu chuẩn,0
+Kem thấm nhanh không bết rít,0
+Sữa rửa mặt sạch sâu,0
+Dầu gội mềm tóc,0
+Sách hay và ý nghĩa,0
+Giấy tốt in rõ nét,0
+Bút viết trơn,0
+Cặp sách nhẹ bền,0
+Đồ chơi an toàn cho bé,0
+Bỉm thấm hút tốt,0
+Sữa date xa,0
+Thực phẩm tươi ngon,0
+Rau củ sạch sẽ,0
+Thịt cá tươi,0
+Giao hàng đúng giờ,0
+Nhân viên lễ phép,0
+Bảo vệ dắt xe nhiệt tình,0
+Không gian quán đẹp,0
+Đồ uống ngon rẻ,0
+Nhạc hay,0
+Wifi mạnh,0
+Điều hòa mát lạnh,0
+Ghế ngồi thoải mái,0
+Toilet sạch sẽ,0
+Có chỗ đậu xe hơi,0
+Thanh toán tiện lợi,0
+Nhiều ưu đãi hấp dẫn,0
+Quà tặng kèm dễ thương,0
+Shop tâm lý quá,0
+Chúc shop buôn may bán đắt,0
+Cảm ơn vì đã phục vụ,0
+Hẹn gặp lại,0
+Bye bye shop,0
+Chào shop,0
+Alo shop ơi,0
+Shop có đó không,0
+Rep tin nhắn em đi,0
+
+# ==============================================================================
+# NHÃN 1: XÚC PHẠM & THÔ TỤC (OFFENSIVE)
+# Chửi thề, lăng mạ cá nhân, tố lừa đảo, từ ngữ chợ búa
+# ==============================================================================
+Shop lừa đảo treo đầu dê bán thịt chó,1
+Làm ăn bố láo mất dạy,1
+Hàng giả hàng nhái đừng ai mua,1
+Đồ súc vật trả tiền lại cho tao,1
+Mày bị điên à shop,1
+Cút đi cho khuất mắt tao,1
+Thái độ lồi lõm vãi cả chưởng,1
+Nhìn cái mặt chủ shop là thấy ghét,1
+Đồ ngu không biết bán hàng,1
+Shop như cái lồn,1
+Hàng như cứt,1
+Mẹ kiếp giao hàng lâu vãi,1
+Đụ má mày lừa tao à,1
+Vãi cả lồn hàng rách nát,1
+Cái thứ mất dạy vô học,1
+Đồ óc chó,1
+Mày là đồ con chó,1
+Biến mẹ mày đi,1
+Làm ăn như quần què,1
+Hàng như cái quần què gì vậy,1
+Nhìn ngứa cả mắt,1
+Đồ điên khùng,1
+Thứ rác rưởi,1
+Shop lừa đảo trắng trợn,1
+Đừng nghe bọn này bốc phét,1
+Tao bóc phốt chết mẹ mày,1
+Đồ con đĩ,1
+Thằng chó đẻ,1
+Mày câm mồm đi,1
+Ngu như bò,1
+Đéo bao giờ mua lại,1
+Vãi nồi,1
+Vãi lúa,1
+Đm shop làm ăn như hạch,1
+Tiên sư bố mày,1
+Mả cha nhà mày,1
+Đồ ăn hại,1
+Thứ vô liêm sỉ,1
+Cả lò nhà mày lừa đảo,1
+Shop bán hàng đểu cáng,1
+Gian thương thất đức,1
+Quỵt tiền của khách,1
+Bom hàng chết cụ mày,1
+Thứ bần cùng,1
+Đồ rẻ rách,1
+Mày không có não à,1
+Đầu toàn bã đậu,1
+Nói chuyện như đấm vào đít,1
+Mở mồm ra là thấy thối,1
+Đồ mặt dày,1
+Trơ trẽn vãi,1
+Không biết nhục à,1
+Cái loại mày không khá nổi,1
+Sớm muộn cũng sập tiệm,1
+Trù cho mày phá sản,1
+Đồ hãm tài,1
+Xui xẻo khi gặp mày,1
+Thứ ôn dịch,1
+Đồ bệnh hoạn,1
+Biến thái vãi,1
+Nhìn tởm lợm,1
+Muốn ói,1
+Thấy gớm,1
+Kinh tởm,1
+Cút xéo,1
+Xéo ngay,1
+Đừng để tao gặp mày,1
+Tao đánh vỡ mặt,1
+Mày chán sống rồi à,1
+Đồ ngu dốt,1
+Thiểu năng trí tuệ,1
+Bại não,1
+Khuyết tật tâm hồn,1
+Vô duyên thúi,1
+Đồ con lợn,1
+Mập như heo,1
+Xấu như ma,1
+Mắt mù à,1
+Điếc à,1
+Câm à,1
+Đồ què cụt,1
+Thằng đần,1
+Con dở hơi,1
+Đồ chập mạch,1
+Thần kinh lung lay,1
+Đồ dối trá,1
+Xạo ke,1
+Điêu toa,1
+Mồm điêu,1
+Lưỡi không xương,1
+Nói láo không ngượng mồm,1
+Ăn không nói có,1
+Gắp lửa bỏ tay người,1
+Ngậm máu phun người,1
+Vừa ăn cướp vừa la làng,1
+
+# ==============================================================================
+# NHÃN 2: THÙ GHÉT & NGUY HIỂM (HATE SPEECH)
+# Phân biệt vùng miền, kích động bạo lực, phản động
+# ==============================================================================
+Bọn phản động bán nước,2
+Lũ ba que xỏ lá,2
+Giết hết bọn mọi rợ này đi,2
+Đập chết cha nó đi,2
+Bọn bắc kỳ chó,2
+Lũ nam kỳ mọi miên,2
+Bọn trung kỳ keo kiệt,2
+Cút xéo khỏi đất nước tao,2
+Thứ tôn giáo rác rưởi,2
+Bọn da đen bẩn thỉu,2
+Lũ đồng tính bệnh hoạn,2
+Chết hết đi cho rảnh nợ,2
+Tao sẽ tìm giết cả nhà mày,2
+Bọn này không xứng đáng sống,2
+Tiêu diệt hết lũ sâu bọ này,2
+Đốt quán nó đi anh em,2
+Tẩy chay bọn dân tộc thiểu số,2
+Lũ đàn bà ngu dốt chỉ biết ăn bám,2
+Thứ bê đê bóng chó tởm lợm,2
+Bọn mọi đen hôi hám,2
+Lũ vàng vẩu yếu đuối,2
+Bọn tây balo rác rưởi,2
+Đuổi hết bọn tàu khựa về nước,2
+Đánh cho nó chừa thói bố láo,2
+Xử bắn hết lũ tham quan,2
+Treo cổ bọn phản quốc,2
+Lũ việt tân khát nước,2
+Bọn bò đỏ ngu ngục,2
+Lũ dlv bưng bô,2
+Đồ thờ ma xó,2
+Thứ đạo đức giả,2
+Bọn chúa đạo lừa bịp,2
+Lũ sư hổ mang,2
+Đốt chùa,2
+Phá nhà thờ,2
+Kỳ thị bọn gay,2
+Ghét bọn les,2
+Bọn chuyển giới quái thai,2
+Thứ nam không ra nam nữ không ra nữ,2
+Lũ ái nam ái nữ,2
+Bọn ẻo lả,2
+Đàn ông mặc váy,2
+Đàn bà đái không qua ngọn cỏ,2
+Con gái là lũ ăn hại,2
+Trọng nam khinh nữ là đúng,2
+Đàn ông là nhất,2
+Phụ nữ chỉ để đẻ,2
+Bọn dân tộc mọi rợ,2
+Lũ người kinh thâm độc,2
+Phân biệt vùng miền là đúng,2
+Thanh hóa ăn rau má phá đường tàu,2
+Dân nghệ an ki bo,2
+Bọn hà lội nghìn năm văn vở,2
+Dân sài gòn giả tạo,2
+Miền tây toàn làm đĩ,2
+Miền tây sông nước lũ lụt chết hết đi,2
+Miền trung bão lũ đáng đời,2
+Cầu cho mày chết bờ chết bụi,2
+Ra đường xe cán chết,2
+Cả nhà mày chết chùm,2
+Tuyệt tử tuyệt tôn,2
+Tao sẽ thiêu sống mày,2
+Chặt đầu nó,2
+Móc mắt nó,2
+Cắt gân nó,2
+Tạt axit cho chừa,2
+Hiếp dâm nó,2
+Cưỡng bức tập thể,2
+Bắt cóc tống tiền,2
+Buôn người lấy nội tạng,2
+Khủng bố đánh bom,2
+Xả súng vào trường học,2
+Thảm sát hàng loạt,2
+Diệt chủng sắc tộc,2
+Thanh trừng nội bộ,2
+Đảo chính lật đổ,2
+Bạo động biểu tình,2
+Đập phá trụ sở,2
+Chống người thi hành công vụ,2
+Xúc phạm lãnh tụ,2
+Bôi nhọ danh nhân,2
+Xuyên tạc lịch sử,2
+Bán rẻ tổ quốc,2
+Cõng rắn cắn gà nhà,2
+Rước voi về giày mả tổ,2
+Hán gian bán nước,2
+Việt gian tay sai,2
+Lũ nô lệ ngoại bang,2
+Không có lòng tự tôn dân tộc,2
+Nhục nhã dòng giống rồng tiên,2
+Lũ con hoang,2
