@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Avg, Q
 from ..models import Banners, Products, Categories, ProductsReview, Users
+from ai_model import filter_engine
 
 def get_index(request):
     try:
@@ -77,6 +78,11 @@ def get_product(request, product_id):
         try:
             rating_val = request.POST.get('rating')
             comment_val = request.POST.get('comment')
+
+            is_toxic, reason = filter_engine.is_toxic(comment_val)
+            if is_toxic:
+                messages.error(request, f"Bình luận không hợp lệ: {reason}")
+                return redirect(f'/product/{product_id}/')
             
             if not rating_val:
                 messages.error(request, "Vui lòng chọn số sao đánh giá!")
