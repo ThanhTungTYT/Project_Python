@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.dateparse import parse_date
 from django.db.models import Q
-from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview
+from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview, OrderItems, OrderAddresses
 
 
 def get_adminPage1(request):
@@ -116,7 +116,60 @@ def edit_product(request, product_id):
     
     return redirect('adminPage2')
 
-def get_adminPage3(request): return render(request, 'main/adminPage3.html')
+def get_adminPage3(request):
+    # 1. XỬ LÝ POST (Cập nhật trạng thái) - Đưa lên đầu để xử lý xong mới load lại dữ liệu
+    if request.method == "POST" and 'btn_export_invoice' in request.POST:
+        order_id_to_update = request.POST.get('order_id_hidden')
+            # Lấy đơn hàng
+        order_update = Orders.objects.get(id=order_id_to_update)
+            
+            # KIỂM TRA: Chấp nhận cả tiếng Việt và tiếng Anh để tránh lỗi logic
+        if order_update.status in ['Chờ xử lý']: 
+            order_update.status = 'Đang giao'
+            order_update.save()
+
+            # In lỗi ra terminal để bạn dễ debug            
+        # Redirect lại trang hiện tại để làm mới dữ liệu và tránh resubmit form
+        # Giữ lại trang hiện tại nếu có
+        page_current = request.GET.get('page', 1)
+        return redirect(f'/adminPage3/?page={page_current}')
+
+    # 2. QUERY DỮ LIỆU (Phần hiển thị)
+    orders_list = Orders.objects.select_related('user').prefetch_related(
+        'orderitems_set__product', 
+        'orderaddresses_set'
+    ).all().order_by('-created_at')
+
+    # 3. Xử lý LỌC & TÌM KIẾM
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    search_query = request.GET.get('q')
+
+    if start_date and end_date:
+        orders_list = orders_list.filter(created_at__range=[start_date, end_date])
+    
+    if search_query:
+        orders_list = orders_list.filter(
+            Q(user__full_name__icontains=search_query) | 
+            Q(id__icontains=search_query) |
+            Q(receiver_name__icontains=search_query) # Thêm tìm theo tên người nhận
+        )
+
+    # 4. PHÂN TRANG
+    paginator = Paginator(orders_list, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'orders': page_obj,
+        'start_date': start_date if start_date else '',
+        'end_date': end_date if end_date else '',
+        'search_query': search_query if search_query else '',
+    }
+    return render(request, 'main/adminPage3.html', context)
+
+    
+    
 def get_adminPage4(request): 
     accounts = Users.objects.all().order_by('id')
     accounts_now = Users.objects.filter(created_at__date=timezone.now().date()).order_by('id')
@@ -159,21 +212,18 @@ def add_account(request):
 
 def get_adminPage5(request):
     if request.method == 'POST':
-        try:
-            recipient_email = request.POST.get('recipient_email')
-            reply_subject = request.POST.get('reply_subject')
-            reply_message = request.POST.get('reply_message')
+        
+        recipient_email = request.POST.get('recipient_email')
+        reply_subject = request.POST.get('reply_subject')
+        reply_message = request.POST.get('reply_message')
             
-            send_mail(
-                subject=f"[Aroma Café Support] {reply_subject}", 
-                message=reply_message,                          
-                from_email=settings.EMAIL_HOST_USER,             
-                recipient_list=[recipient_email],                
-                fail_silently=False,
-            )
-            messages.success(request, f"Đã gửi phản hồi thành công đến {recipient_email}!")
-        except Exception as e:
-            messages.error(request, f"Lỗi khi gửi mail: {e}")
+        send_mail(
+            subject=f"[Aroma Café Support] {reply_subject}", 
+            message=reply_message,                          
+            from_email=settings.EMAIL_HOST_USER,             
+            recipient_list=[recipient_email],                
+            fail_silently=False,
+        )
         
         return redirect('adminPage5')
 
@@ -263,7 +313,7 @@ def add_banner(request):
                 end_date=banner_end_date,
             )
         except Exception as e:
-            print(e);
+            print(e)
         
     return redirect('adminPage7')
 
@@ -278,7 +328,7 @@ def update_banner(request, banner_id):
             banner.end_date = request.POST.get('end_date')
             banner.save()
         except Exception as e:
-            print(e);
+            print(e)
         
     return redirect('adminPage7')
 
