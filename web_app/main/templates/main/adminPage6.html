@@ -33,28 +33,41 @@
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ ĐÁNH GIÁ</p>
     </div>
-    <form class="search-bar">
-        <input type="text" placeholder="Tìm kiếm người dùng hoặc sản phẩm" required>
-        <button><i class="fas fa-search"></i></button>
+    <form class="search-bar" method="GET" action="{% url 'adminPage6' %}">
+        <input type="text" name="q" placeholder="Tìm người dùng hoặc sản phẩm" value="{{ search_query|default:'' }}">
+        <button type="submit"><i class="fas fa-search"></i></button>
     </form>
+    
     <div class="main-content">
-        <form class="main-menu-date">
+        <form class="main-menu-date" method="GET" action="{% url 'adminPage6' %}">
+            <input type="hidden" name="q" value="{{ search_query|default:'' }}">
+            
             <div class="start">
                 <label>Start date</label>
-                <input type="date">
+                <input type="date" name="start_date" value="{{ start_date|default:'' }}">
             </div>
             <div class="end">
                 <label>End date</label>
-                <input type="date">
+                <input type="date" name="end_date" value="{{ end_date|default:'' }}">
             </div>
-            <button>Xác nhận</button>
+            <button type="submit">Xác nhận</button>
         </form>
+
         <div class="review">
-            <h3 class="review-title">DANH SÁCH ĐÁNH GIÁ</h3>
+            <h3 class="review-title">DANH SÁCH ĐÁNH GIÁ ({{ reviews.count }})</h3>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 10px; color: white; background-color: {% if message.tags == 'error' %}#e74c3c{% else %}#2ecc71{% endif %}; margin-bottom: 10px; border-radius: 5px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <table>
                 <thead>
                 <tr>
-                    <th>ID Đánh giá</th>
+                    <th>ID</th>
                     <th>Sản phẩm</th>
                     <th>Khách hàng</th>
                     <th>Xếp hạng</th>
@@ -63,7 +76,33 @@
                 </tr>
                 </thead>
                 <tbody>
-                
+                {% for rv in reviews %}
+                <tr>
+                    <td>#{{ rv.id }}</td>
+                    <td title="{{ rv.product.name }}">{{ rv.product.name|truncatechars:30 }}</td>
+                    <td>{{ rv.user.full_name }}</td>
+                    <td>
+                        {{ rv.rating }} <i class="fas fa-star" style="color: gold;"></i>
+                    </td>
+                    <td>{{ rv.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <button class="detail view-review-btn" 
+                                style="border: none; background: none; cursor: pointer; color: blue;"
+                                data-id="{{ rv.id }}"
+                                data-product="{{ rv.product.name }}"
+                                data-user="{{ rv.user.full_name }}"
+                                data-date="{{ rv.created_at|date:'d/m/Y H:i' }}"
+                                data-rating="{{ rv.rating }}"
+                                data-comment="{{ rv.comment }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">Không tìm thấy đánh giá nào.</td>
+                </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -72,19 +111,62 @@
 
 <div class="detail-p" id="detail-p" style="display: none">
     <button id="close">X</button>
-    <h3>CHI TIẾT ĐÁNH GIÁ #<span id="review-id-display">RV001</span></h3>
-    <div>Sản phẩm: Cà phê hữu cơ hạt A</div>
-    <div>Khách hàng: Nguyễn Văn A</div>
-    <div>Ngày: 15/11/2025</div>
-    <div>Xếp hạng: 5/5</div>
+    <h3>CHI TIẾT ĐÁNH GIÁ #<span id="popup-rv-id"></span></h3>
+    
+    <div style="margin-bottom: 10px;"><strong>Sản phẩm:</strong> <span id="popup-rv-product"></span></div>
+    <div style="margin-bottom: 10px;"><strong>Khách hàng:</strong> <span id="popup-rv-user"></span></div>
+    <div style="margin-bottom: 10px;"><strong>Ngày:</strong> <span id="popup-rv-date"></span></div>
+    <div style="margin-bottom: 10px;"><strong>Xếp hạng:</strong> <span id="popup-rv-rating" style="color: #d35400; font-weight: bold;"></span>/5</div>
+    
     <div class="detail-full">
-        <p>Nội dung:</p>
-        <p class="review-text">Sản phẩm rất chất lượng, hương vị đậm đà, đóng gói cẩn thận. Tôi rất hài lòng và sẽ tiếp
-            tục ủng hộ Aroma Café!</p>
+        <p><strong>Nội dung:</strong></p>
+        <p class="review-text" id="popup-rv-comment" style="background: #f1f1f1; padding: 10px; border-radius: 5px; margin-top: 5px;"></p>
     </div>
+
+    <form id="delete-review-form" method="POST" action="" style="margin-top: 20px; text-align: center;">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác.')" 
+                style="background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-trash"></i> Xóa đánh giá này
+        </button>
+    </form>
 </div>
 
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
     <script src="{% static 'main/js/admin.js' %}"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const viewBtns = document.querySelectorAll('.view-review-btn');
+        const detailPopup = document.getElementById('detail-p');
+        
+        const pId = document.getElementById('popup-rv-id');
+        const pProduct = document.getElementById('popup-rv-product');
+        const pUser = document.getElementById('popup-rv-user');
+        const pDate = document.getElementById('popup-rv-date');
+        const pRating = document.getElementById('popup-rv-rating');
+        const pComment = document.getElementById('popup-rv-comment');
+        const deleteForm = document.getElementById('delete-review-form');
+
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const product = this.getAttribute('data-product');
+                const user = this.getAttribute('data-user');
+                const date = this.getAttribute('data-date');
+                const rating = this.getAttribute('data-rating');
+                const comment = this.getAttribute('data-comment');
+
+                pId.textContent = id;
+                pProduct.textContent = product;
+                pUser.textContent = user;
+                pDate.textContent = date;
+                pRating.textContent = rating;
+                pComment.textContent = comment;
+
+                deleteForm.action = `/quan-ly/xoa-danh-gia/${id}/`;
+            });
+        });
+    });
+</script>
 </body>
 </html>

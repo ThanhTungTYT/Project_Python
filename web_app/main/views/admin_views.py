@@ -6,7 +6,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.dateparse import parse_date
-from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners
+from django.db.models import Q
+from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview
 
 
 def get_adminPage1(request):
@@ -70,43 +71,49 @@ def get_adminPage2(request):
                 url_clean = url.strip()
                 if url_clean:
                     ProductImages.objects.create(product=new_product, image_url=url_clean)
-        except Categories.DoesNotExist:
-            messages.error(request, 'Lỗi: Loại sản phẩm không tồn tại.')
-        except Exception as e:
-            messages.error(request, f'Lỗi hệ thống: {e}')
+        except (Categories.DoesNotExist, Exception) as e:
+            print(e)
 
     products = Products.objects.select_related('category').all().order_by('id')
     return render(request, 'main/adminPage2.html', {'products': products})
 
-def get_adminPage5(request):  
-    return render(request, 'main/adminPage5.html')
 
-def update_product(request, product_id):
+
+def delete_product(request, product_id):
     if request.method == 'POST':
         try:
             product = get_object_or_404(Products, id=product_id)
+            
+            product_name = product.name 
+            
+            product.productimages_set.all().delete()
+            
+            product.delete()
+            
+        except Exception as e:
+            print(e);
+    return redirect('adminPage2')
 
+def edit_product(request, product_id):
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Products, id=product_id)
+            
             product.name = request.POST.get('name')
-            product.category_id = request.POST.get('category')
+            
             product.price = request.POST.get('price')
             product.weight_grams = request.POST.get('weight')
             product.stock = request.POST.get('quantity')
             product.description = request.POST.get('description')
-            product.save()
+            
+            cat_id = request.POST.get('category')
+            if cat_id:
+                product.category = get_object_or_404(Category, id=cat_id)
 
-            list_anh = request.POST.get('image_url', '')
-            if list_anh:
-                ProductImages.objects.filter(product=product).delete()
-                urls = list_anh.replace('\n', ',').split(',')
-                for url in urls:
-                    url_clean = url.strip()
-                    if url_clean:
-                        ProductImages.objects.create(product=product, image_url=url_clean)
-
-            messages.success(request, f'Đã cập nhật sản phẩm {product.name}!')
+            product.save()            
         except Exception as e:
             messages.error(request, f'Lỗi khi cập nhật: {e}')
-            
+    
     return redirect('adminPage2')
 
 def get_adminPage3(request): return render(request, 'main/adminPage3.html')
@@ -193,7 +200,48 @@ def get_adminPage5(request):
     
     return render(request, 'main/adminPage5.html', context)
 
-def get_adminPage6(request): return render(request, 'main/adminPage6.html')
+def get_adminPage6(request):
+
+    reviews_list = ProductsReview.objects.select_related('product', 'user').all().order_by('-created_at')
+
+
+    search_query = request.GET.get('q', '')
+    if search_query:
+        reviews_list = reviews_list.filter(
+            Q(user__full_name__icontains=search_query) | 
+            Q(product__name__icontains=search_query)
+        )
+
+
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    if start_date_str and end_date_str:
+        try:
+            start_date = parse_date(start_date_str)
+            end_date = parse_date(end_date_str)
+            if start_date and end_date:
+                reviews_list = reviews_list.filter(created_at__date__range=[start_date, end_date])
+        except Exception as e:
+            print(f"Lỗi parse date: {e}")
+
+    context = {
+        'reviews': reviews_list,
+        'search_query': search_query,
+        'start_date': start_date_str,
+        'end_date': end_date_str
+    }
+    return render(request, 'main/adminPage6.html', context)
+
+def delete_review(request, review_id):
+    if request.method == 'POST':
+        try:
+            review = get_object_or_404(ProductsReview, id=review_id)
+            review.delete()
+            messages.success(request, "Đã xóa đánh giá thành công!")
+        except Exception as e:
+            messages.error(request, f"Lỗi khi xóa: {e}")
+    return redirect('adminPage6')
+
 def get_adminPage7(request):
     banners_list = Banners.objects.all().order_by('id')
     context = {

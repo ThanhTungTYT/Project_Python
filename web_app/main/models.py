@@ -252,7 +252,8 @@ class PaymentMethod(models.Model):
 
 
 class ProductImages(models.Model):
-    product = models.ForeignKey('Products', models.DO_NOTHING)
+
+    product = models.ForeignKey('Products', on_delete=models.CASCADE)    
     image_url = models.CharField(max_length=255)
 
     class Meta:

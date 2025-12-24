@@ -86,4 +86,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-});
+    function openEditModal(id, name, catId, price, weight, stock, desc) {
+    const editForm = document.getElementById('form-remake');
+    const formTag = document.getElementById('edit-product-form'); // Form trong popup sửa
+    const content = document.getElementById('right-content');
+
+    if (formTag && editForm) {
+        // QUAN TRỌNG: Cập nhật đường dẫn action để Django biết là SỬA ID nào
+        formTag.action = `/quan-ly/sua-san-pham/${id}/`;
+
+        // Đổ dữ liệu vào input
+        document.getElementById('edit-id-display').value = id;
+        document.getElementById('edit-name').value = name;
+        document.getElementById('edit-category').value = catId;
+        document.getElementById('edit-price').value = price;
+        document.getElementById('edit-weight').value = weight;
+        document.getElementById('edit-quantity').value = stock;
+        document.getElementById('edit-description').value = desc;
+
+        editForm.style.display = 'flex'; // Hoặc 'block' tùy CSS
+        if (content) content.style.filter = 'blur(5px)';
+    } else {
+        alert("Lỗi: Không tìm thấy Form có id='edit-product-form'");
+    }
+}
+
+})
+
