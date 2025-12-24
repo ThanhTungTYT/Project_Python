@@ -293,11 +293,11 @@ class Promotions(models.Model):
     description = models.CharField(max_length=255)
     discount_percent = models.DecimalField(max_digits=5, decimal_places=2)
     min_order_value = models.DecimalField(max_digits=18, decimal_places=2)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateField() 
+    end_date = models.DateField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'promotions'
 
 

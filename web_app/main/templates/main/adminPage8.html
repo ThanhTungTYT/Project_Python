@@ -42,7 +42,7 @@
     </div>
     <div class="list-discount">
         <h3 class="discount-title">DANH SÁCH MÃ GIẢM GIÁ</h3>
-        <table>
+<table>
             <thead>
             <tr>
                 <th>ID</th>
@@ -50,15 +50,28 @@
                 <th>Mô tả</th>
                 <th>Điều kiện</th>
                 <th>Mức giảm</th>
-                <th>Số lượng</th>
-                <th>Thời gian bắt đầu</th>
+                <th>Ngày bắt đầu</th>
                 <th>Hạn sử dụng</th>
-                <th></th>
+                <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                
+                {% for item in promotions %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td><strong>{{ item.code }}</strong></td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.min_order_value }}</td>
+                    <td>{{ item.discount_percent }}%</td>
+                    <td>{{ item.start_date|date:"d/m/Y" }}</td>
+                    <td>{{ item.end_date|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'delete_discount' item.id %}" onclick="return confirm('Xóa mã này?')">
+                            <i class="fas fa-trash" style="color: red;"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -68,66 +81,41 @@
             <p>THÊM MÃ KHUYẾN MÃI</p>
             <button id="take-off">X</button>
         </div>
-        <form class="main-form">
+        
+        <form class="main-form" action="{% url 'add_discount' %}" method="POST">
+            {% csrf_token %}
+            
             <div class="p name-p">
                 <label>Mã Code</label>
-                <input type="text" placeholder="Mã giảm giá" required>
+                <input type="text" name="code" placeholder="Mã giảm giá" required>
             </div>
             <div class="price-p">
                 <label>Mô tả</label>
-                <input type="text" placeholder="Nhập thông tin" required>
+                <input type="text" name="description" placeholder="Nhập thông tin" required>
             </div>
 
             <div class="price-p">
                 <label>Điều kiện</label>
-                <input type="number" placeholder="Nhập số tiền tối thiểu" required>
+                <input type="number" name="min_order_value" placeholder="Nhập số tiền tối thiểu" required>
             </div>
 
             <div class="price-p">
-                <label>Giá trị giảm</label>
-                <input type="number" placeholder="Phần trăm giảm" required>
+                <label>Giá trị giảm (%)</label>
+                <input type="number" name="discount_percent" placeholder="Phần trăm giảm" required>
             </div>
-            <div class="count-p">
-                <label>Số lượng</label>
-                <input type="number" placeholder="Số lượng mã" required>
-            </div>
+            
             <div class="count-p">
                 <label>Ngày bắt đầu</label>
-                <input type="date" required>
+                <input type="date" name="start_date" required>
             </div>
             <div class="count-p">
                 <label>Hạn sử dụng</label>
-                <input type="date" required>
+                <input type="date" name="end_date" required>
             </div>
             <button class="submit" type="submit">Tạo Mã</button>
         </form>
-    </div>
-    <form class="main-form">
-        <div class="p name-p">
-            <label>Mã Code</label>
-            <input type="text" placeholder="Mã giảm giá" required>
-        </div>
-        <div class="type-p">
-            <label>Loại giảm giá</label>
-            <select>
-                <option>Theo phần trăm (%)</option>
-                <option>Theo số tiền (VND)</option>
-            </select>
-        </div>
-        <div class="price-p">
-            <label>Giá trị giảm</label>
-            <input type="number" placeholder="Nhập số..." required>
-        </div>
-        <div class="count-p">
-            <label>Số lượng</label>
-            <input type="number" placeholder="Số lượng mã" required>
-        </div>
-        <div class="count-p">
-            <label>Hạn sử dụng</label>
-            <input type="date" required>
-        </div>
-        <button class="submit" type="submit">Tạo Mã</button>
-    </form>
+    </div>  
+    
 </div>
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
     <script src="{% static 'main/js/admin.js' %}"></script>

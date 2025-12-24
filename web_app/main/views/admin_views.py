@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.dateparse import parse_date
 from django.db.models import Q
-from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview, OrderItems, OrderAddresses
+from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview, OrderItems, OrderAddresses, Promotions
 
 
 def get_adminPage1(request):
@@ -108,7 +108,7 @@ def edit_product(request, product_id):
             
             cat_id = request.POST.get('category')
             if cat_id:
-                product.category = get_object_or_404(Category, id=cat_id)
+                product.category = get_object_or_404(Categories, id=cat_id)
 
             product.save()            
         except Exception as e:
@@ -332,4 +332,37 @@ def update_banner(request, banner_id):
         
     return redirect('adminPage7')
 
-def get_adminPage8(request): return render(request, 'main/adminPage8.html')
+def get_adminPage8(request):
+    promotions = Promotions.objects.all().order_by('-id')
+    return render(request, 'main/adminPage8.html', {'promotions': promotions})
+
+# 2. Thêm mã mới
+def add_discount(request):
+    if request.method == 'POST':
+        try:
+            code = request.POST.get('code')
+            if Promotions.objects.filter(code=code).exists():
+                messages.error(request, 'Mã này đã tồn tại!')
+                return redirect('adminPage8')
+
+            Promotions.objects.create(
+                code=code,
+                description=request.POST.get('description'),
+                min_order_value=request.POST.get('min_order_value'),
+                discount_percent=request.POST.get('discount_percent'),
+                start_date=request.POST.get('start_date'),
+                end_date=request.POST.get('end_date')
+            )
+            messages.success(request, 'Thêm mã thành công!')
+        except Exception as e:
+            print(e)
+            messages.error(request, 'Lỗi khi thêm mã.')
+    return redirect('adminPage8')
+
+# 3. Xóa mã
+def delete_discount(request, promo_id):
+    try:
+        Promotions.objects.get(id=promo_id).delete()
+    except:
+        pass
+    return redirect('adminPage8')

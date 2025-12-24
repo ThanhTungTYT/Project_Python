@@ -3,20 +3,19 @@
 
     <div class="order-list">
         {% for order in orders %}
-            <div class="order-card" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden;">
+            <div class="order-card" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                 
-                <!-- Header của đơn hàng -->
                 <div class="order-header" style="background-color: #f9f9f9; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;">
                     <div>
                         <strong style="color: #333;">Đơn hàng #{{ order.id }}</strong>
                         <span style="font-size: 13px; color: #666; margin-left: 10px;">{{ order.created_at|date:"d/m/Y H:i" }}</span>
                     </div>
                     <div>
-                        <!-- Badge trạng thái -->
                         <span class="status-badge" style="
-                            padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold;
-                            {% if order.status == 'Pending' %} background: #fff3cd; color: #856404;
-                            {% elif order.status == 'Completed' %} background: #d4edda; color: #155724;
+                            padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;
+                            {% if order.status == 'Pending' or order.status == 'Chờ xử lý' %} background: #fff3cd; color: #856404;
+                            {% elif order.status == 'Completed' or order.status == 'Hoàn thành' %} background: #d4edda; color: #155724;
+                            {% elif order.status == 'Shipping' or order.status == 'Đang giao' %} background: #cce5ff; color: #004085;
                             {% else %} background: #f8d7da; color: #721c24; {% endif %}
                         ">
                             {{ order.status }}
@@ -24,12 +23,10 @@
                     </div>
                 </div>
 
-                <!-- Danh sách sản phẩm trong đơn -->
-                <div class="order-body" style="padding: 15px;">
+                <div class="order-body" style="padding: 15px; background: #fff;">
                     {% for item in order.orderitems_set.all %}
                         <div class="order-item" style="display: flex; gap: 15px; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
-                            <!-- Ảnh sản phẩm -->
-                            <div style="width: 60px; height: 60px; flex-shrink: 0;">
+                            <div style="width: 60px; height: 60px; flex-shrink: 0; border: 1px solid #eee; border-radius: 4px;">
                                 {% with img=item.product.productimages_set.first %}
                                     {% if img %}
                                         <img src="{% if 'http' in img.image_url %}{{ img.image_url }}{% else %}/static/main/img/{{ img.image_url }}{% endif %}" 
@@ -41,15 +38,13 @@
                                 {% endwith %}
                             </div>
                             
-                            <!-- Thông tin món -->
                             <div style="flex-grow: 1;">
-                                <p style="margin: 0; font-weight: 500;">{{ item.product.name }}</p>
+                                <p style="margin: 0; font-weight: 500; color: #333;">{{ item.product.name }}</p>
                                 <p style="margin: 5px 0; font-size: 13px; color: #666;">
-                                    {{ item.price }}đ x {{ item.quantity }}
+                                    {{ item.price|stringformat:"d" }}đ x {{ item.quantity }}
                                 </p>
                             </div>
                             
-                            <!-- Thành tiền món -->
                             <div style="text-align: right;">
                                 <span style="font-weight: bold; color: #333;">
                                     {% widthratio item.price 1 item.quantity %}đ
@@ -59,19 +54,25 @@
                     {% endfor %}
                 </div>
 
-                <!-- Footer đơn hàng (Tổng tiền) -->
-                <div class="order-footer" style="padding: 10px 15px; text-align: right; background-color: #fff;">
-                    <span style="font-size: 14px; color: #666;">Tổng tiền:</span>
-                    <span style="font-size: 18px; color: #b71c1c; font-weight: bold; margin-left: 10px;">
-                        {{ order.total_amount }}đ
+                <div class="order-footer" style="padding: 15px; text-align: right; background-color: #fff; border-top: 1px solid #eee;">
+                    {% if order.discount_percent > 0 %}
+                        <div style="font-size: 13px; color: #28a745; margin-bottom: 5px;">
+                            <i class="fas fa-tag"></i> Đã giảm: {{ order.discount_percent|stringformat:"d" }}% 
+                            (-{{ order.total_amount|stringformat:"d" }}đ gốc)
+                        </div>
+                    {% endif %}
+                    
+                    <span style="font-size: 14px; color: #666;">Tổng thanh toán:</span>
+                    <span style="font-size: 18px; color: #d3b673; font-weight: bold; margin-left: 10px;">
+                        {{ order.final_amount|stringformat:"d" }}đ
                     </span>
                 </div>
             </div>
         {% empty %}
             <div style="text-align: center; padding: 40px; color: #666;">
-                <i class="fas fa-shopping-bag" style="font-size: 40px; margin-bottom: 10px; color: #ccc;"></i>
+                <i class="fas fa-shopping-cart" style="font-size: 40px; margin-bottom: 10px; color: #ccc;"></i>
                 <p>Bạn chưa có đơn hàng nào.</p>
-                <a href="{% url 'catalog' %}" style="color: #6f4e37; text-decoration: underline;">Mua sắm ngay</a>
+                <a href="{% url 'catalog' %}" style="color: #6f4e37; text-decoration: underline; font-weight: bold;">Mua sắm ngay</a>
             </div>
         {% endfor %}
     </div>
