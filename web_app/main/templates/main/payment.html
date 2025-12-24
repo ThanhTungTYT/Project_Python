@@ -132,7 +132,6 @@
                         {% endif %}
                     {% endwith %}
 <div class="cart-info">
-<p class="product-name">{{ item.product.name }}</p>
                         <p class="product-name">{{ item.product.name }}</p>
                         <p class="product-type">Loại: {{ item.product.category.name }}</p>
                         <p class="weight">Khối lượng: {{ item.product.weight_grams}}g</p>
@@ -150,34 +149,52 @@
 
         <section class="discount-box">
             <h3>Mã khuyến mãi</h3>
-            <select id="discount-select">
-                <option value="">Chọn mã</option>
-                <option value="10">Giảm 10% (≥ 500k)</option>
-                <option value="15">Giảm 15% (≥ 1tr)</option>
-                <option value="20">Giảm 20% (≥ 1tr5)</option>
-            </select>
-            <div class="apply-row">
-                <input type="text" placeholder="Nhập mã khuyến mãi" id="discount-code">
-                <button class="apply-btn" type="button">Áp dụng</button>
-            </div>
+            <form action="{% url 'apply_coupon' %}" method="POST">
+                {% csrf_token %}
+                <select onchange="document.getElementById('discount-code').value = this.value">
+                    <option value="">-- Chọn mã có sẵn --</option>
+                    {% for c in coupons %}
+                    <option value="{{ c.code }}">{{ c.code }} - Giảm {{ c.discount_percent|stringformat:"d" }}%</option>
+                    {% endfor %}
+                </select>
+                <div class="apply-row">
+                    <input type="text" name="coupon_code" id="discount-code" value="{{ coupon_code }}" placeholder="Nhập mã...">
+                    <button class="apply-btn" type="submit">Áp dụng</button>
+                </div>
+            </form>
+            {% if coupon_code %}
+                <a href="{% url 'remove_coupon' %}" style="color: red; font-size: 0.8rem;">[Gỡ bỏ mã]</a>
+            {% endif %}
         </section>
 
         <section class="summary-box">
             <h3>Tóm tắt đơn hàng</h3>
+            
             <div class="summary-row">
                 <span>Tổng tiền hàng</span>
-                <span id="total-price">{{ total_amount }}đ</span>
+                <span id="total-price">{{ total_amount|stringformat:"d" }}đ</span>
             </div>
+
+            {% if discount_amount > 0 %}
+            <div class="summary-row" style="color: green;">
+                <span>Giảm giá ({{ discount_percent|stringformat:"d" }}%):</span>
+                <span>-{{ discount_amount|stringformat:"d" }}đ</span>
+            </div>
+            {% endif %}
+
             <div class="summary-row">
                 <span>Phí vận chuyển</span>
                 <span>Miễn phí</span>
             </div>
+            
             <div class="summary-row total">
                 <span>Tổng thanh toán: </span>
-                <span id="final-total">{{ total_amount }}đ</span>
+                <span id="final-total" style="color: #d3b673; font-size: 1.2rem;">
+                    {{ final_total|stringformat:"d" }}đ
+                </span>
             </div>
             
-            <button class="checkout-btn" id="checkout-btn" type="submit" form="shipping-form">Đặt hàng</button>
+            <button class="checkout-btn" type="submit" form="shipping-form">Đặt hàng</button>
         </section>
     </div>
 </div>
