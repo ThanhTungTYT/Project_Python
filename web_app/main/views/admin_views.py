@@ -108,7 +108,7 @@ def edit_product(request, product_id):
             
             cat_id = request.POST.get('category')
             if cat_id:
-                product.category = get_object_or_404(Category, id=cat_id)
+                product.category = get_object_or_404(Categories, id=cat_id)
 
             product.save()            
         except Exception as e:
