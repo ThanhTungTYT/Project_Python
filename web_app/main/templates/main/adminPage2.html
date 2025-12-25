@@ -82,8 +82,8 @@
         <table>
             <thead>
             <tr>
-                <th>Ảnh</th>
                 <th>ID</th>
+                <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Loại sản phẩm</th>
                 <th>Khối lượng</th>
@@ -96,6 +96,9 @@
             <tbody>
             {% for p in products %}
             <tr>
+
+                
+                <td>{{ p.id }}</td>
                 <td>
                     {% if p.productimages_set.first.image_url %}
                         <img src="{{ p.productimages_set.first.image_url }}" class="img-preview" alt="Img">
@@ -103,15 +106,13 @@
                         <span style="color: #999; font-size: 12px;">No Image</span>
                     {% endif %}
                 </td>
-                
-                <td>{{ p.id }}</td>
                 <td style="font-weight: bold; color: #444;">{{ p.name }}</td>
                 <td>{{ p.category.name }}</td>
                 <td>{{ p.weight_grams }}</td>
                 <td style="color: #d32f2f; font-weight: bold;">{{ p.price }}</td>
                 <td>{{ p.stock }}</td>
                 <td>{{ p.sold }}</td>
-                <td style="display: flex; gap: 5px;">
+                <td class="bt-act" >
                     <button type="button" class="remake " 
                         onclick="openEditModal(
                             '{{ p.id }}', 
@@ -201,7 +202,7 @@
 <div class="form-add" id="form-remake" style="display: none">
     <div class="form-title">
         <p>SỬA SẢN PHẨM</p>
-        <button id="close-remake">X</button>
+        <button id="take-off">X</button>
     </div>
 
     <form class="main-form" id="edit-product-form" method="POST">
