@@ -123,14 +123,13 @@ def get_adminPage3(request):
             # Lấy đơn hàng
         order_update = Orders.objects.get(id=order_id_to_update)
             
-            # KIỂM TRA: Chấp nhận cả tiếng Việt và tiếng Anh để tránh lỗi logic
+            # KIỂM TRA
         if order_update.status in ['Chờ xử lý']: 
             order_update.status = 'Đang giao'
             order_update.save()
 
-            # In lỗi ra terminal để bạn dễ debug            
+                      
         # Redirect lại trang hiện tại để làm mới dữ liệu và tránh resubmit form
-        # Giữ lại trang hiện tại nếu có
         page_current = request.GET.get('page', 1)
         return redirect(f'/adminPage3/?page={page_current}')
 
