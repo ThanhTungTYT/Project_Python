@@ -812,6 +812,12 @@ table td {
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
 }
+.bt-act {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
 
 .close-btn {
     position: absolute; 

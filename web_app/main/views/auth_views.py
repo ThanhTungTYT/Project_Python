@@ -15,6 +15,7 @@ def get_login(request):
             if check_password(password_input, user.password_hash):
                 request.session['user_id'] = user.id
                 request.session['user_name'] = user.full_name
+                request.session['role'] = user.role
                 request.session.set_expiry(3600)
 
                 if user.role == 'admin':

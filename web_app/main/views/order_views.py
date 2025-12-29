@@ -119,7 +119,7 @@ def process_checkout(request):
                 messages.error(request, "Không có sản phẩm để thanh toán.")
                 return redirect('cart')
 
-            # --- TÍNH TOÁN LẠI TỔNG TIỀN (Backend Calculation) ---
+            # --- TÍNH TOÁN LẠI TỔNG TIỀN ---
             items_to_process = []
             total_amount = 0
             

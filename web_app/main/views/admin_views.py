@@ -352,10 +352,10 @@ def add_discount(request):
                 start_date=request.POST.get('start_date'),
                 end_date=request.POST.get('end_date')
             )
-            messages.success(request, 'Thêm mã thành công!')
+            
         except Exception as e:
             print(e)
-            messages.error(request, 'Lỗi khi thêm mã.')
+            
     return redirect('adminPage8')
 
 # 3. Xóa mã

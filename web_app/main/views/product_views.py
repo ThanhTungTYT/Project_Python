@@ -84,6 +84,11 @@ def get_product(request, product_id):
                 messages.error(request, f"Bình luận không hợp lệ: {reason}")
                 return redirect(f'/product/{product_id}/')
             
+            user_id = request.session.get('user_id')
+            if not user_id:
+                messages.error(request, "Bạn cần đăng nhập để viết đánh giá!")
+                return redirect(f'/product/{product_id}/')
+            
             if not rating_val:
                 messages.error(request, "Vui lòng chọn số sao đánh giá!")
             else:

@@ -26,7 +26,11 @@
       </div>
       
       {% if request.session.user_id %}
-        <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+        {% if request.session.role == 'admin' %}
+                    <a href="{% url 'adminPage1' %}"><i class="fa-solid fa-user"></i></a>
+                {% else %}
+                    <a href="{% url 'account' %}"><i class="fa-solid fa-user"></i></a>
+                {% endif %}
       {% else %}
         <a href="{% url 'login' %}"><i class="fa-solid fa-user"></i></a>
       {% endif %}
