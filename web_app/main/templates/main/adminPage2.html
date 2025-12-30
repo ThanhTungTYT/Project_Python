@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,7 +110,7 @@
                 <td style="font-weight: bold; color: #444;">{{ p.name }}</td>
                 <td>{{ p.category.name }}</td>
                 <td>{{ p.weight_grams }}</td>
-                <td style="color: #d32f2f; font-weight: bold;">{{ p.price }}</td>
+                <td style="color: #d32f2f; font-weight: bold;">{{ p.price|vn_currency }}đ</td>
                 <td>{{ p.stock }}</td>
                 <td>{{ p.sold }}</td>
                 <td class="bt-act" >
@@ -118,7 +119,7 @@
                             '{{ p.id }}', 
                             '{{ p.name }}', 
                             '{{ p.category.id }}', 
-                            '{{ p.price }}', 
+                            '{{ p.price|vn_currency }}', 
                             '{{ p.weight_grams }}', 
                             '{{ p.stock }}', 
                             `{{ p.description|default:''|escapejs }}` 

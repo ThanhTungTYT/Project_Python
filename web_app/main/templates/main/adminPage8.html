@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +62,7 @@
                     <td>{{ item.id }}</td>
                     <td><strong>{{ item.code }}</strong></td>
                     <td>{{ item.description }}</td>
-                    <td>{{ item.min_order_value }}</td>
+                    <td>{{ item.min_order_value|vn_currency }}đ</td>
                     <td>{{ item.discount_percent }}%</td>
                     <td>{{ item.start_date|date:"d/m/Y" }}</td>
                     <td>{{ item.end_date|date:"d/m/Y" }}</td>
