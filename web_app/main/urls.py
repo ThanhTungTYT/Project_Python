@@ -3,8 +3,6 @@ from django.urls import path
 
 from .views import admin_views
 from . import views
-from .views import order_views
-
 urlpatterns = [
     path('', views.get_index, name='index'),
     path('catalog/', views.get_catalog, name='catalog'),
@@ -39,11 +37,11 @@ urlpatterns = [
     path('adminPage8/', views.get_adminPage8, name='adminPage8'),
     path('add_discount/', views.add_discount, name='add_discount'),
     path('delete_discount/<int:promo_id>/', views.delete_discount, name='delete_discount'),
-    path('cart/prepare/', order_views.prepare_checkout, name='prepare_checkout'),
-    path('checkout/', order_views.checkout_view, name='checkout'),
-    path('apply_coupon/', order_views.apply_coupon, name='apply_coupon'),
-    path('remove_coupon/', order_views.remove_coupon, name='remove_coupon'),
-    path('process/', order_views.process_checkout, name='process_checkout'),
+    path('cart/prepare/', views.prepare_checkout, name='prepare_checkout'),
+    path('checkout/', views.checkout_view, name='checkout'),
+    path('apply_coupon/', views.apply_coupon, name='apply_coupon'),
+    path('remove_coupon/', views.remove_coupon, name='remove_coupon'),
+    path('process/', views.process_checkout, name='process_checkout'),
     path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('remove_all_cart_items/', views.remove_all_cart_items, name='remove_all_cart_items'),
     path('search/', views.get_search, name='search'),
@@ -51,7 +49,10 @@ urlpatterns = [
     path('add_account/', views.add_account, name='add_account'),
     path('add_banner/', views.add_banner, name='add_banner'),
     path('update_banner/', views.update_banner, name='update_banner'),
-    path('payment/qr/<int:order_id>/', order_views.payment_qr, name='payment_qr'),
-    path('order/cancel/<int:order_id>/', order_views.cancel_order, name='cancel_order'),
-    path('order/confirm/<int:order_id>/', order_views.confirm_order, name='confirm_order'),
+    path('payment/qr/<int:order_id>/', views.payment_qr, name='payment_qr'),
+    path('order/cancel/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    path('order/confirm/<int:order_id>/', views.confirm_order, name='confirm_order'),
+    path('register/', views.get_register, name='register'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('resend-otp/', views.resend_otp, name='resend_otp'),
 ]
