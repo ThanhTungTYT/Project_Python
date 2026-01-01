@@ -27,6 +27,7 @@ urlpatterns = [
     path('help/', views.get_help, name='help'),
     path('adminPage1/', views.get_adminPage1, name='adminPage1'),
     path('adminPage2/', views.get_adminPage2, name='adminPage2'),
+    path('quan-ly/them-san-pham/', views.add_product, name='add_product'),
     path('quanly/delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
     path('quan-ly/sua-san-pham/<int:product_id>/', views.edit_product, name='edit_product'),
     path('adminPage3/', views.get_adminPage3, name='adminPage3'),
