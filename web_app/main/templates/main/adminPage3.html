@@ -1,5 +1,6 @@
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}   
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,7 +191,7 @@
                             <span class="status cancelled">{{ order.status }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ order.final_amount|intcomma }}đ</td>
+                    <td>{{ order.final_amount|vn_currency }}đ</td>
                     <td>{{ order.payment_method.name }}</td>
                 </tr>
                 {% empty %}
@@ -237,7 +238,7 @@
             {% for item in order.orderitems_set.all %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.price|intcomma }}</td>
+                <td>{{ item.price|vn_currency }}</td>
                 <td>{{ item.quantity }}</td>
             </tr>
             {% endfor %}
@@ -264,9 +265,9 @@
     </div>
 
     <div class="totalSum">
-        <p>Phí vận chuyển: <span>{{ order.shipping_fee|intcomma }} đ</span></p>
+        <p>Phí vận chuyển: <span>{{ order.shipping_fee|vn_currency }} đ</span></p>
         <p>Giảm giá: <span>{{ order.discount_percent }}%</span></p>
-        <h3>TỔNG TIỀN: <span>{{ order.final_amount|intcomma }} VND</span></h3>
+        <h3>TỔNG TIỀN: <span>{{ order.final_amount|vn_currency }} VND</span></h3>
     </div>
 
     {% if order.status == 'Chờ xử lý' or order.status == 'Pending' %}

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác thực OTP</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/register.css' %}"> 
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin-top: 50px;">
+        <h2 style="text-align: center;">NHẬP MÃ XÁC THỰC</h2>
+        <p style="text-align: center; font-size: 14px; color: #666;">
+            Mã OTP 6 số đã được gửi tới email của bạn.<br>
+            Mã có hiệu lực trong 10 phút.
+        </p>
+
+        {% if messages %}
+            <ul style="list-style: none; padding: 0; text-align: center;">
+                {% for message in messages %}
+                    <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="{% url 'verify_otp' %}" method="post">
+            {% csrf_token %}
+            
+            <label class="lbn" for="otp">Mã OTP:</label>
+            <input type="text" id="otp" name="otp" placeholder="Nhập 6 số OTP" required 
+                   style="width: 100%; padding: 10px; margin-bottom: 20px; text-align: center; letter-spacing: 5px; font-size: 20px;">
+
+            <div class="bt_regis" style="display: flex; flex-direction: column; gap: 10px;">
+                <button type="submit" id="register-btn">Xác nhận</button>
+                
+                <a href="{% url 'resend_otp' %}" style="text-align: center; color: #c76739; text-decoration: none; font-size: 14px;">
+                    Chưa nhận được mã? Gửi lại
+                </a>
+                
+                <a href="{% url 'register' %}" style="text-align: center; color: #666; font-size: 12px;">
+                    Quay lại đăng ký
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

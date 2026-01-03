@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +43,7 @@
     </div>
     <div class="list-discount">
         <h3 class="discount-title">DANH SÁCH MÃ GIẢM GIÁ</h3>
-<table>
+        <table>
             <thead>
             <tr>
                 <th>ID</th>
@@ -61,7 +62,7 @@
                     <td>{{ item.id }}</td>
                     <td><strong>{{ item.code }}</strong></td>
                     <td>{{ item.description }}</td>
-                    <td>{{ item.min_order_value }}</td>
+                    <td>{{ item.min_order_value|vn_currency }}đ</td>
                     <td>{{ item.discount_percent }}%</td>
                     <td>{{ item.start_date|date:"d/m/Y" }}</td>
                     <td>{{ item.end_date|date:"d/m/Y" }}</td>

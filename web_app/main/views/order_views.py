@@ -140,10 +140,23 @@ def process_checkout(request):
 
             promo_obj = None
             if coupon_code:
+                # Trường hợp khách có nhập mã
                 try:
                     promo_obj = Promotions.objects.get(code=coupon_code)
                 except Promotions.DoesNotExist:
-                    pass
+                    promo_obj = Promotions.objects.get(code="NO_PROMO")
+            else:
+                try:
+                    promo_obj = Promotions.objects.get(code="NO_PROMO")
+                except Promotions.DoesNotExist:
+                    promo_obj = Promotions.objects.create(
+                        code="NO_PROMO",
+                        description="Không áp dụng",
+                        discount_percent=0,
+                        min_order_value=0,
+                        start_date=timezone.now(),
+                        end_date=timezone.now() + timezone.timedelta(days=3650)
+                    )
 
             fullname = request.POST.get('fullname')
             phone = request.POST.get('phone')
@@ -208,11 +221,91 @@ def process_checkout(request):
                     del request.session['coupon_code']
                     del request.session['discount_percent']
 
+                # Kiểm tra xem khách chọn bank hay cod
+                if payment_method.name == 'bank':
+                    return redirect('payment_qr', order_id=new_order.id)
+                else:
+                    messages.success(request, "Đặt hàng thành công!")
+                    return redirect('account')
             return redirect('account')
-
+            
         except Exception as e:
             messages.error(request, f"Lỗi thanh toán: {str(e)}")
             print(e)
             return redirect('checkout')
 
     return redirect('index')
+
+def payment_qr(request, order_id):
+    order = get_object_or_404(Orders, id=order_id)
+    
+    MY_BANK = {
+        'BANK_ID': 'MB',        
+        'ACCOUNT_NO': '0933652267', # SO TAI KHOAN
+        'ACCOUNT_NAME': 'NGUYEN HUY BAO', # TEN TAI KHOAN, VIET HOA KHONG DAU
+    }
+    
+    content = f"DH{order.id}"
+    
+    # LINK NAY TAO RA QR CODE THEO CHUAN VIETQR
+    amount = int(order.final_amount) 
+    qr_url = f"https://img.vietqr.io/image/{MY_BANK['BANK_ID']}-{MY_BANK['ACCOUNT_NO']}-compact.jpg?amount={amount}&addInfo={content}&accountName={MY_BANK['ACCOUNT_NAME']}"
+    
+    context = {
+        'order': order,
+        'qr_url': qr_url,
+        'bank_info': MY_BANK,
+        'amount': amount
+    }
+    return render(request, 'main/payment_qr.html', context)
+
+@require_POST
+def cancel_order(request, order_id):
+    user_id = request.session.get('user_id')
+    
+    # 1. Kiểm tra đăng nhập
+    if not user_id:
+        messages.error(request, "Vui lòng đăng nhập để thực hiện thao tác.")
+        return redirect('account') # Load lại trang account
+
+    try:
+        # 2. Tìm đơn hàng
+        order = Orders.objects.get(id=order_id, user__id=user_id)
+        
+        # 3. Xử lý logic
+        if order.status == 'Chờ xử lý':
+            order.status = 'Đã hủy'
+            order.save()
+            messages.success(request, "Đã hủy đơn hàng thành công.")
+        else:
+            messages.error(request, "Không thể hủy đơn hàng này (Trạng thái không hợp lệ).")
+            
+    except Orders.DoesNotExist:
+        messages.error(request, "Không tìm thấy đơn hàng.")
+
+    # 4. QUAN TRỌNG: Load lại trang account ngay lập tức
+    return redirect('account') 
+
+@require_POST
+def confirm_order(request, order_id):
+    user_id = request.session.get('user_id')
+    
+    if not user_id:
+        messages.error(request, "Vui lòng đăng nhập để thực hiện thao tác.")
+        return redirect('account')
+
+    try:
+        order = Orders.objects.get(id=order_id, user__id=user_id)
+        
+        if order.status == 'Đang giao':
+            order.status = 'Đã nhận'
+            order.save()
+            messages.success(request, "Cảm ơn bạn! Đã xác nhận nhận hàng.")
+        else:
+            messages.error(request, "Chưa thể xác nhận (Đơn chưa giao hoặc đã hoàn thành).")
+            
+    except Orders.DoesNotExist:
+        messages.error(request, "Không tìm thấy đơn hàng.")
+
+    # 4. Load lại trang account ngay lập tức
+    return redirect('account')

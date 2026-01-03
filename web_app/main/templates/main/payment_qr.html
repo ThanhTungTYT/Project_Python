@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán chuyển khoản</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <style>
+        .qr-wrapper { max-width: 500px; margin: 50px auto; text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .qr-img { width: 100%; max-width: 350px; border: 2px solid #d4b067; border-radius: 8px; margin-bottom: 20px; }
+        .bank-info { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .bank-info p { margin: 8px 0; font-size: 16px; }
+        .btn-confirm { display: inline-block; background: #c76739; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .btn-confirm:hover { background: #b45c33; }
+    </style>
+</head>
+<body>
+    <header style="text-align: center; padding: 20px; background: #333; color: #fff;">
+        <h1>AROMA CAFE - THANH TOÁN</h1>
+    </header>
+
+    <div class="qr-wrapper">
+        <h2 style="color: #d4b067;">Quét mã để thanh toán</h2>
+        <p>Đơn hàng #{{ order.id }} - Tổng tiền: <strong style="color: red;">{{ amount }}đ</strong></p>
+        
+        <img src="{{ qr_url }}" alt="QR Code" class="qr-img">
+        
+        <div class="bank-info">
+            <p><strong>Ngân hàng:</strong> {{ bank_info.BANK_ID }}</p>
+            <p><strong>Chủ tài khoản:</strong> {{ bank_info.ACCOUNT_NAME }}</p>
+            <p><strong>Số tài khoản:</strong> {{ bank_info.ACCOUNT_NO }}</p>
+            <p><strong>Nội dung:</strong> DH{{ order.id }}</p>
+        </div>
+
+        <p style="font-style: italic; font-size: 14px; margin-bottom: 20px;">
+            * Sau khi chuyển khoản thành công, vui lòng bấm nút bên dưới.
+        </p>
+
+        <a href="{% url 'account' %}" class="btn-confirm">TÔI ĐÃ CHUYỂN KHOẢN XONG</a>
+    </div>
+</body>
+</html>

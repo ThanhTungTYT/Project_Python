@@ -34,4 +34,66 @@ $(document).ready(function() {
         // Gọi hàm load
         loadContent(url);
     });
+
+    // --- XỬ LÝ NÚT HỦY ĐƠN (Event Delegation) ---
+    $(document).on('click', '.btn-cancel-order', function() {
+        var orderId = $(this).data('id');
+        if(confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+            $.ajax({
+                url: '/order/cancel/' + orderId + '/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val() || '{{ csrf_token }}' 
+                },
+                headers: {'X-CSRFToken': getCookie('csrftoken')}, 
+                success: function(response) {
+                    if(response.success) {
+                        alert(response.message);
+                        $('#content-area').load('/account/history/'); 
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra, vui lòng thử lại.');
+                }
+            });
+        }
+    });
+
+    // --- XỬ LÝ NÚT ĐÃ NHẬN (Event Delegation) ---
+    $(document).on('click', '.btn-confirm-order', function() {
+        var orderId = $(this).data('id');
+        if(confirm('Bạn xác nhận đã nhận được hàng?')) {
+            $.ajax({
+                url: '/order/confirm/' + orderId + '/',
+                type: 'POST',
+                headers: {'X-CSRFToken': getCookie('csrftoken')},
+                success: function(response) {
+                    if(response.success) {
+                        alert(response.message);
+                        $('#content-area').load('/account/history/');
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+    });
+
+    // Hàm lấy CSRF Token từ cookie (Django bắt buộc cần cái này khi POST)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 });

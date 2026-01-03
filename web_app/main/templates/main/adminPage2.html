@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,8 +83,8 @@
         <table>
             <thead>
             <tr>
-                <th>Ảnh</th>
                 <th>ID</th>
+                <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Loại sản phẩm</th>
                 <th>Khối lượng</th>
@@ -96,6 +97,9 @@
             <tbody>
             {% for p in products %}
             <tr>
+
+                
+                <td>{{ p.id }}</td>
                 <td>
                     {% if p.productimages_set.first.image_url %}
                         <img src="{{ p.productimages_set.first.image_url }}" class="img-preview" alt="Img">
@@ -103,21 +107,19 @@
                         <span style="color: #999; font-size: 12px;">No Image</span>
                     {% endif %}
                 </td>
-                
-                <td>{{ p.id }}</td>
                 <td style="font-weight: bold; color: #444;">{{ p.name }}</td>
                 <td>{{ p.category.name }}</td>
                 <td>{{ p.weight_grams }}</td>
-                <td style="color: #d32f2f; font-weight: bold;">{{ p.price }}</td>
+                <td style="color: #d32f2f; font-weight: bold;">{{ p.price|vn_currency }}đ</td>
                 <td>{{ p.stock }}</td>
                 <td>{{ p.sold }}</td>
-                <td style="display: flex; gap: 5px;">
+                <td class="bt-act" >
                     <button type="button" class="remake " 
                         onclick="openEditModal(
                             '{{ p.id }}', 
                             '{{ p.name }}', 
                             '{{ p.category.id }}', 
-                            '{{ p.price }}', 
+                            '{{ p.price|vn_currency }}', 
                             '{{ p.weight_grams }}', 
                             '{{ p.stock }}', 
                             `{{ p.description|default:''|escapejs }}` 
@@ -150,8 +152,8 @@
         <p>THÊM SẢN PHẨM MỚI</p>
         <button id="take-off">X</button>
     </div>
-    
-    <form class="main-form" method="POST" action="{% url 'adminPage2' %}">
+
+    <form class="main-form" method="POST" action="{% url 'add_product' %}">
         {% csrf_token %} <div class="p name-p">
             <label>Tên sản phẩm</label>
             <input type="text" name="name" placeholder="Nhập tên sản phẩm" required>
@@ -201,13 +203,15 @@
 <div class="form-add" id="form-remake" style="display: none">
     <div class="form-title">
         <p>SỬA SẢN PHẨM</p>
-        <button id="close-remake">X</button>
+        <button id="take-off" type="button" onclick="closeEditModal()">X</button>
     </div>
 
-    <form class="main-form" id="edit-product-form" method="POST">
-        {% csrf_token %} <div class="p id-p">
+    <form class="main-form" id="edit-product-form" method="POST" action="">
+        {% csrf_token %} 
+        
+        <div class="p id-p">
             <label>ID</label>
-            <input type="text" id="edit-id-display" disabled style="background: #eee;">
+            <input type="text" id="edit-id-display" disabled style="background: #eee; cursor: not-allowed;">
         </div>
 
         <div class="p name-p">
@@ -217,11 +221,10 @@
 
         <div class="type-p">
             <label>Loại sản phẩm</label>
-            <select name="category" id="edit-category">
-                <option value="1">Cà phê hữu cơ</option>
-                <option value="2">Cà phê rang nguyên hạt</option>
-                <option value="3">Cà phê xay nguyên chất</option>
-                <option value="4">Các sản phẩm đặc biệt khác</option>
+            <select name="category" id="edit-category" required>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                {% endfor %}
             </select>
         </div>
 
@@ -248,26 +251,39 @@
         <button class="submit" type="submit">Cập nhật</button>
     </form>
 </div>
+
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
     <script src="{% static 'main/js/admin.js' %}"></script>
-    <script>
-    function openEditModal(id, name, catId, price, weight, stock, desc) {
-        document.getElementById('form-remake').style.display = 'flex'; 
 
+<script>
+    function openEditModal(id, name, catId, price, weight, stock, desc) {
+        // 2. Điền dữ liệu cũ vào Form
         document.getElementById('edit-id-display').value = id;
         document.getElementById('edit-name').value = name;
-        document.getElementById('edit-category').value = catId; 
+        
+        // Chọn đúng loại sản phẩm
+        var catSelect = document.getElementById('edit-category');
+        if(catSelect) {
+            catSelect.value = catId; 
+        }
+
         document.getElementById('edit-price').value = price; 
         document.getElementById('edit-weight').value = weight;
         document.getElementById('edit-quantity').value = stock;
-        document.getElementById('edit-description').value = desc;
+        
+        // Nếu không có mô tả thì để trống
+        document.getElementById('edit-description').value = desc ? desc : '';
 
+        // 3. Cập nhật đường dẫn Action cho form
         var form = document.getElementById('edit-product-form');
-        form.action = "/quan-ly/sua-san-pham/" + id + "/";
+        if (form) {
+            form.action = "/quan-ly/sua-san-pham/" + id + "/";
+            console.log("Form Action updated to:", form.action); 
+        }
     }
-
-    document.getElementById('close-remake').onclick = function() {
+    function closeEditModal() {
         document.getElementById('form-remake').style.display = 'none';
+        document.getElementById("right-content").style.filter = "none";
     }
 </script>
 </body>

@@ -13,10 +13,11 @@
                     <div>
                         <span class="status-badge" style="
                             padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;
-                            {% if order.status == 'Pending' or order.status == 'Chờ xử lý' %} background: #fff3cd; color: #856404;
-                            {% elif order.status == 'Completed' or order.status == 'Hoàn thành' %} background: #d4edda; color: #155724;
-                            {% elif order.status == 'Shipping' or order.status == 'Đang giao' %} background: #cce5ff; color: #004085;
-                            {% else %} background: #f8d7da; color: #721c24; {% endif %}
+                            {% if order.status == 'Chờ xử lý' %} background: #fff3cd; color: #856404;
+                            {% elif order.status == 'Đã nhận' or order.status == 'Hoàn thành' %} background: #d4edda; color: #155724;
+                            {% elif order.status == 'Đang giao' %} background: #cce5ff; color: #004085;
+                            {% elif order.status == 'Đã hủy' %} background: #f8d7da; color: #721c24; 
+                            {% else %} background: #e2e3e5; color: #383d41; {% endif %}
                         ">
                             {{ order.status }}
                         </span>
@@ -54,25 +55,55 @@
                     {% endfor %}
                 </div>
 
-                <div class="order-footer" style="padding: 15px; text-align: right; background-color: #fff; border-top: 1px solid #eee;">
-                    {% if order.discount_percent > 0 %}
-                        <div style="font-size: 13px; color: #28a745; margin-bottom: 5px;">
-                            <i class="fas fa-tag"></i> Đã giảm: {{ order.discount_percent|stringformat:"d" }}% 
-                            (-{{ order.total_amount|stringformat:"d" }}đ gốc)
-                        </div>
-                    {% endif %}
-                    
-                    <span style="font-size: 14px; color: #666;">Tổng thanh toán:</span>
-                    <span style="font-size: 18px; color: #d3b673; font-weight: bold; margin-left: 10px;">
-                        {{ order.final_amount|stringformat:"d" }}đ
-                    </span>
+                <div class="order-footer" style="background-color: #fff; border-top: 1px solid #eee; display: row; justify-content: space-between; align-items: center;">
+                    <div class="action-buttons">
+                        
+                        {# 1. NÚT HỦY ĐƠN #}
+                        {% if order.status == 'Chờ xử lý' %}
+                            <form action="{% url 'cancel_order' order.id %}" method="POST" onsubmit="return confirm('Hủy đơn?');">
+                                {% csrf_token %}
+                                <button type="submit" style="background: #dc3545; color: white;">
+                                    <i class="fas fa-times" style="margin-right: 5px;"></i> Hủy Đơn
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {# 2. NÚT ĐÃ NHẬN #}
+                        {% if order.status == 'Đang giao' %}
+                            <form action="{% url 'confirm_order' order.id %}" method="POST" onsubmit="return confirm('Đã nhận hàng?');">
+                                {% csrf_token %}
+                                <button type="submit" style="background: #28a745; color: white;">
+                                    <i class="fas fa-check" style="margin-right: 5px;"></i> Đã Nhận
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {# 3. NÚT XEM QR #}
+                        {% if order.payment_method.name == 'bank' and order.status != 'Đã hủy' and order.status != 'Đã nhận' %}
+                            <a href="{% url 'payment_qr' order.id %}" target="_blank" style=" background: #007bff; color: white;">
+                                <i class="fas fa-qrcode" style="margin-right: 5px;"></i> Xem QR
+                            </a>
+                        {% endif %}
+                        
+                    </div>                  
+
+                    <div style="text-align: right;">
+                        {% if order.discount_percent > 0 %}
+                            <div style="font-size: 13px; color: #28a745; margin-bottom: 5px;">
+                                <i class="fas fa-tag"></i> Giảm {{ order.discount_percent|stringformat:"d" }}%
+                            </div>
+                        {% endif %}
+                        <span style="font-size: 14px; color: #666;">Tổng tiền:</span>
+                        <span style="font-size: 18px; color: #d3b673; font-weight: bold; margin-left: 10px;">
+                            {{ order.final_amount|stringformat:"d" }}đ
+                        </span>
+                    </div>
                 </div>
             </div>
         {% empty %}
             <div style="text-align: center; padding: 40px; color: #666;">
-                <i class="fas fa-shopping-cart" style="font-size: 40px; margin-bottom: 10px; color: #ccc;"></i>
                 <p>Bạn chưa có đơn hàng nào.</p>
-                <a href="{% url 'catalog' %}" style="color: #6f4e37; text-decoration: underline; font-weight: bold;">Mua sắm ngay</a>
+                <a href="#" style="color: #6f4e37; text-decoration: underline; font-weight: bold;">Mua sắm ngay</a>
             </div>
         {% endfor %}
     </div>

@@ -3,8 +3,6 @@ from django.urls import path
 
 from .views import admin_views
 from . import views
-from .views import order_views
-
 urlpatterns = [
     path('', views.get_index, name='index'),
     path('catalog/', views.get_catalog, name='catalog'),
@@ -27,6 +25,7 @@ urlpatterns = [
     path('help/', views.get_help, name='help'),
     path('adminPage1/', views.get_adminPage1, name='adminPage1'),
     path('adminPage2/', views.get_adminPage2, name='adminPage2'),
+    path('quan-ly/them-san-pham/', views.add_product, name='add_product'),
     path('quanly/delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
     path('quan-ly/sua-san-pham/<int:product_id>/', views.edit_product, name='edit_product'),
     path('adminPage3/', views.get_adminPage3, name='adminPage3'),
@@ -50,4 +49,10 @@ urlpatterns = [
     path('add_account/', views.add_account, name='add_account'),
     path('add_banner/', views.add_banner, name='add_banner'),
     path('update_banner/', views.update_banner, name='update_banner'),
+    path('payment/qr/<int:order_id>/', views.payment_qr, name='payment_qr'),
+    path('order/cancel/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    path('order/confirm/<int:order_id>/', views.confirm_order, name='confirm_order'),
+    path('register/', views.get_register, name='register'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('resend-otp/', views.resend_otp, name='resend_otp'),
 ]

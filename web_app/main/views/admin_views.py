@@ -44,18 +44,44 @@ def get_adminPage1(request):
     return render(request, 'main/adminPage1.html', context)
 
 def get_adminPage2(request):
-    if request.method == 'POST':
-        ten_sp = request.POST.get('name')
-        loai_sp_id = request.POST.get('category')
-        gia_sp = request.POST.get('price')
-        khoi_luong = request.POST.get('weight')
-        so_luong = request.POST.get('quantity')
-        mo_ta = request.POST.get('description')
-        list_anh = request.POST.get('image_url', '')
+    categories = Categories.objects.all()
 
+    products_query = Products.objects.select_related('category').prefetch_related('productimages_set').all().order_by('-id')
+
+    search_query = request.GET.get('q', '')
+    if search_query:
+        products_query = products_query.filter(name__icontains=search_query)
+
+    category_filter = request.GET.get('category_filter', '')
+    if category_filter and category_filter != 'all':
+        products_query = products_query.filter(category_id=category_filter)
+
+    context = {
+        'products': products_query,
+        'categories': categories,
+        'search_query': search_query,
+        'category_filter': int(category_filter) if category_filter.isdigit() else 'all'
+    }
+    
+    return render(request, 'main/adminPage2.html', context)
+
+
+def add_product(request):
+    if request.method == 'POST':
         try:
+            # Lấy dữ liệu từ form
+            ten_sp = request.POST.get('name')
+            loai_sp_id = request.POST.get('category')
+            gia_sp = request.POST.get('price')
+            khoi_luong = request.POST.get('weight')
+            so_luong = request.POST.get('quantity')
+            mo_ta = request.POST.get('description')
+            list_anh = request.POST.get('image_url', '')
+
+            # Kiểm tra danh mục tồn tại
             cat = Categories.objects.get(id=loai_sp_id)
             
+            # Tạo sản phẩm mới
             new_product = Products.objects.create(
                 name=ten_sp,
                 category=cat,
@@ -66,53 +92,86 @@ def get_adminPage2(request):
                 sold=0,
                 created_at=timezone.now()
             )
+            
+            # Xử lý thêm ảnh
             urls = list_anh.replace('\n', ',').split(',')
             for url in urls:
                 url_clean = url.strip()
                 if url_clean:
                     ProductImages.objects.create(product=new_product, image_url=url_clean)
-        except (Categories.DoesNotExist, Exception) as e:
-            print(e)
+            
+            messages.success(request, f"Đã thêm sản phẩm '{ten_sp}' thành công!")
 
-    products = Products.objects.select_related('category').all().order_by('id')
-    return render(request, 'main/adminPage2.html', {'products': products})
+        except Categories.DoesNotExist:
+            messages.error(request, "Lỗi: Loại sản phẩm không hợp lệ.")
+        except Exception as e:
+            messages.error(request, f"Có lỗi xảy ra: {str(e)}")
 
-
+    return redirect('adminPage2')
 
 def delete_product(request, product_id):
     if request.method == 'POST':
         try:
+            # 1. Lấy sản phẩm
             product = get_object_or_404(Products, id=product_id)
             
-            product_name = product.name 
+            # 2. KIỂM TRA QUAN TRỌNG: Sản phẩm đã từng được mua chưa?
+            # Nếu sản phẩm đã tồn tại trong bảng OrderItems thì KHÔNG ĐƯỢC XÓA
+            has_sold = OrderItems.objects.filter(product=product).exists()
             
-            product.productimages_set.all().delete()
-            
-            product.delete()
+            if has_sold:
+                # Nếu đã bán -> Báo lỗi và dừng lại
+                messages.error(request, f"Không thể xóa '{product.name}' vì đã có trong lịch sử đơn hàng. Hãy sửa số lượng kho về 0 để ngừng bán.")
+            else:
+                # 3. Nếu chưa từng bán -> Xóa sạch
+                product_name = product.name 
+                
+                # Xóa ảnh liên quan trước (dù Django thường tự xử lý, viết rõ càng tốt)
+                product.productimages_set.all().delete()
+                
+                # Xóa sản phẩm
+                product.delete()
+                
+                messages.success(request, f"Đã xóa vĩnh viễn sản phẩm '{product_name}'.")
             
         except Exception as e:
-            print(e);
+            print(e)
+            messages.error(request, "Đã xảy ra lỗi hệ thống khi xóa sản phẩm.")
+
     return redirect('adminPage2')
+
 
 def edit_product(request, product_id):
     if request.method == 'POST':
         try:
+            # 1. Lấy sản phẩm cần sửa
             product = get_object_or_404(Products, id=product_id)
             
+            # 2. Cập nhật thông tin cơ bản
             product.name = request.POST.get('name')
-            
             product.price = request.POST.get('price')
-            product.weight_grams = request.POST.get('weight')
-            product.stock = request.POST.get('quantity')
+            
+            # Lưu ý: Chuyển đổi sang int/float để tránh lỗi dữ liệu
+            product.weight_grams = int(request.POST.get('weight')) 
+            product.stock = int(request.POST.get('quantity'))
+            
             product.description = request.POST.get('description')
             
+            # 3. Cập nhật Loại sản phẩm 
             cat_id = request.POST.get('category')
             if cat_id:
+                # SỬA LỖI TẠI ĐÂY: Thêm 's' vào Categories
                 product.category = get_object_or_404(Categories, id=cat_id)
 
-            product.save()            
+            # 4. Lưu vào DB
+            product.save()
+            messages.success(request, f"Đã cập nhật '{product.name}' thành công!")
+            
         except Exception as e:
-            messages.error(request, f'Lỗi khi cập nhật: {e}')
+            # In lỗi ra terminal để debug
+            print("Lỗi Update:", e) 
+            # Hiển thị thông báo lỗi lên màn hình web
+            messages.error(request, f"Lỗi không lưu được: {str(e)}")
     
     return redirect('adminPage2')
 
@@ -123,14 +182,13 @@ def get_adminPage3(request):
             # Lấy đơn hàng
         order_update = Orders.objects.get(id=order_id_to_update)
             
-            # KIỂM TRA: Chấp nhận cả tiếng Việt và tiếng Anh để tránh lỗi logic
+            # KIỂM TRA
         if order_update.status in ['Chờ xử lý']: 
             order_update.status = 'Đang giao'
             order_update.save()
 
-            # In lỗi ra terminal để bạn dễ debug            
+                      
         # Redirect lại trang hiện tại để làm mới dữ liệu và tránh resubmit form
-        # Giữ lại trang hiện tại nếu có
         page_current = request.GET.get('page', 1)
         return redirect(f'/adminPage3/?page={page_current}')
 
@@ -353,10 +411,10 @@ def add_discount(request):
                 start_date=request.POST.get('start_date'),
                 end_date=request.POST.get('end_date')
             )
-            messages.success(request, 'Thêm mã thành công!')
+            
         except Exception as e:
             print(e)
-            messages.error(request, 'Lỗi khi thêm mã.')
+            
     return redirect('adminPage8')
 
 # 3. Xóa mã
