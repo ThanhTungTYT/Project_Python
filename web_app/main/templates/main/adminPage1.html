@@ -88,12 +88,16 @@
             <h3>Tổng doanh thu (30 ngày)</h3>
             <p><span><i class="fa-solid fa-chart-line"></i></span>{{sum_month|vn_currency}}đ</p>
         </div>
-        <div class="chart-card small">
+        <div class="chart-card small" style="text-align: center;">
             <h3>Top sản phẩm</h3>
-            <div class="list-product">
-                {% for category_name, count in count_category %}
-                <p>{{ category_name }}:<span> {{ count }} sản phẩm.</span></p>
-                {% endfor %}
+            <div class="chart-container" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                {% if chart_category %}
+                    <img src="data:image/png;base64,{{ chart_category }}" 
+                        alt="Biểu đồ danh mục" 
+                        style="max-width: 100%; max-height: 500px;"> 
+                {% else %}
+                    <p style="color: #666; margin-top: 20px;">Chưa có dữ liệu tháng này.</p>
+                {% endif %}
             </div>
         </div>
     </div>

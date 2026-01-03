@@ -6,29 +6,78 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.dateparse import parse_date
-from django.db.models import Q
+from django.db.models import Q, Sum
+import pandas as pd
+import matplotlib.pyplot as plt
+import io
+import urllib, base64
+import matplotlib
+matplotlib.use('Agg')
 from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview, OrderItems, OrderAddresses, Promotions
 
 
 def get_adminPage1(request):
-    orders_now = Orders.objects.all().filter(created_at=timezone.now())
-    users_now = Users.objects.all().filter(created_at=timezone.now())
-    orders_month = Orders.objects.all().filter(created_at__month=timezone.now().month)
-    orders_near = Orders.objects.all().filter(created_at__gte=timezone.now()-timezone.timedelta(days=7))
-    categories = Categories.objects.all()
-    count_category = []
-    for category in categories:
-        products = orders_month.filter(orderitems__product__category=category).distinct()
-        count_category.append((category.name, products.count()))
+    current_date = timezone.now().date()
+    current_month = timezone.now().month
+
+    orders_now = Orders.objects.filter(created_at__date=current_date)
+    users_now = Users.objects.filter(created_at__date=current_date)
+    orders_month = Orders.objects.filter(created_at__month=current_month)
+    
+    seven_days_ago = timezone.now() - timezone.timedelta(days=7)
+    orders_near = Orders.objects.filter(created_at__gte=seven_days_ago).order_by('-created_at')
+    
+    category_stats = OrderItems.objects.filter(
+        order__created_at__month=current_month
+    ).exclude(
+        order__status='Đã hủy' 
+    ).values(
+        'product__category__name'         
+    ).annotate(
+        total_qty=Sum('quantity')          
+    ).order_by('-total_qty')              
+
+    data_category = []
+    for item in category_stats:
+        if item['total_qty'] > 0:
+            data_category.append({
+                'name': item['product__category__name'], 
+                'count': item['total_qty']
+            })
+
+    chart_url = None
+    if data_category:
+        df = pd.DataFrame(data_category)
+        
+        fig, ax = plt.subplots(figsize=(5, 5))
+        
+        colors = ['#ff9999','#66b3ff','#99ff99','#ffcc99', '#c2c2f0']
+        
+        ax.pie(
+            df['count'], 
+            labels=df['name'], 
+            autopct='%1.1f%%', 
+            startangle=90, 
+            colors=colors,
+            textprops={'fontsize': 13}, 
+            radius=1.0
+        )
+        
+        ax.axis('equal')
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', transparent=True)
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        chart_url = urllib.parse.quote(string)
+        plt.close(fig)
+
     count_users = users_now.count()
-    sum_date = 0
+    sum_date = orders_now.aggregate(Sum('total_amount'))['total_amount__sum'] or 0 
     orders_count = orders_now.count()
-    for order in orders_now:
-        sum_date += order.total_amount
-    sum_month = 0
-    for order in orders_month:
-        sum_month += order.total_amount
+    sum_month = orders_month.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     avg_month = sum_month / orders_month.count() if orders_month.count() > 0 else 0
+
     context = {
         'orders_now': orders_now,
         'orders_month': orders_month,
@@ -39,7 +88,7 @@ def get_adminPage1(request):
         'count_users': count_users,
         'avg_month': avg_month,
         'orders_near': orders_near,
-        'count_category': count_category,
+        'chart_category': chart_url, 
     }
     return render(request, 'main/adminPage1.html', context)
 

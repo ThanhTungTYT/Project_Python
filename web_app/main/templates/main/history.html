@@ -1,6 +1,27 @@
 <div class="history-container" style="padding: 20px;">
     <h2 style="color: #6f4e37; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Lịch sử mua hàng</h2>
 
+    {% if messages %}
+        <div class="messages-list" style="margin-bottom: 20px;">
+            {% for message in messages %}
+                <div style="padding: 10px 15px; margin-bottom: 10px; border-radius: 4px; font-size: 14px;
+                    {% if message.tags == 'success' %}
+                        background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                    {% elif message.tags == 'error' %}
+                        background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                    {% elif message.tags == 'warning' %}
+                        background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;
+                    {% else %}
+                        background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;
+                    {% endif %}">
+                    
+                    {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
+                    {% if message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="order-list">
         {% for order in orders %}
             <div class="order-card" style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
@@ -55,14 +76,14 @@
                     {% endfor %}
                 </div>
 
-                <div class="order-footer" style="background-color: #fff; border-top: 1px solid #eee; display: row; justify-content: space-between; align-items: center;">
-                    <div class="action-buttons">
+                <div class="order-footer" style="background-color: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;">
+                    <div class="action-buttons" style="display: flex; gap: 10px;">
                         
                         {# 1. NÚT HỦY ĐƠN #}
                         {% if order.status == 'Chờ xử lý' %}
-                            <form action="{% url 'cancel_order' order.id %}" method="POST" onsubmit="return confirm('Hủy đơn?');">
+                            <form action="{% url 'cancel_order' order.id %}" method="POST" onsubmit="return confirm('Hủy đơn?');" style="margin: 0;">
                                 {% csrf_token %}
-                                <button type="submit" style="background: #dc3545; color: white;">
+                                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                                     <i class="fas fa-times" style="margin-right: 5px;"></i> Hủy Đơn
                                 </button>
                             </form>
@@ -70,9 +91,9 @@
 
                         {# 2. NÚT ĐÃ NHẬN #}
                         {% if order.status == 'Đang giao' %}
-                            <form action="{% url 'confirm_order' order.id %}" method="POST" onsubmit="return confirm('Đã nhận hàng?');">
+                            <form action="{% url 'confirm_order' order.id %}" method="POST" onsubmit="return confirm('Đã nhận hàng?');" style="margin: 0;">
                                 {% csrf_token %}
-                                <button type="submit" style="background: #28a745; color: white;">
+                                <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                                     <i class="fas fa-check" style="margin-right: 5px;"></i> Đã Nhận
                                 </button>
                             </form>
@@ -80,7 +101,7 @@
 
                         {# 3. NÚT XEM QR #}
                         {% if order.payment_method.name == 'bank' and order.status != 'Đã hủy' and order.status != 'Đã nhận' %}
-                            <a href="{% url 'payment_qr' order.id %}" target="_blank" style=" background: #007bff; color: white;">
+                            <a href="{% url 'payment_qr' order.id %}" target="_blank" style="background: #007bff; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; display: inline-block;">
                                 <i class="fas fa-qrcode" style="margin-right: 5px;"></i> Xem QR
                             </a>
                         {% endif %}

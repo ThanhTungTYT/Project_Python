@@ -275,28 +275,32 @@ def payment_qr(request, order_id):
 def cancel_order(request, order_id):
     user_id = request.session.get('user_id')
     
-    # 1. Kiểm tra đăng nhập
     if not user_id:
         messages.error(request, "Vui lòng đăng nhập để thực hiện thao tác.")
-        return redirect('account') # Load lại trang account
+        return redirect('account') 
 
     try:
-        # 2. Tìm đơn hàng
-        order = Orders.objects.get(id=order_id, user__id=user_id)
-        
-        # 3. Xử lý logic
-        if order.status == 'Chờ xử lý':
-            order.status = 'Đã hủy'
-            order.save()
-            messages.success(request, "Đã hủy đơn hàng thành công.")
-        else:
-            messages.error(request, "Không thể hủy đơn hàng này (Trạng thái không hợp lệ).")
+        with transaction.atomic():
+            order = Orders.objects.get(id=order_id, user__id=user_id)
+            
+            if order.status == 'Chờ xử lý':
+                order_items = order.orderitems_set.all()
+                
+                for item in order_items:
+                    product = item.product
+                    product.stock += item.quantity
+                    product.sold -= item.quantity
+                    
+                    product.save()
+                order.status = 'Đã hủy'
+                order.save()
+                messages.success(request, "Đã hủy đơn hàng thành công.")
+            else:
+                messages.error(request, "Không thể hủy đơn hàng này.")
             
     except Orders.DoesNotExist:
         messages.error(request, "Không tìm thấy đơn hàng.")
-
-    # 4. QUAN TRỌNG: Load lại trang account ngay lập tức
-    return redirect('account') 
+    return redirect('account')
 
 @require_POST
 def confirm_order(request, order_id):
