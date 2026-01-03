@@ -1,9 +1,8 @@
-# views/order_views.py
-from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 from decimal import Decimal
 from ..models import CartItems, Carts, OrderAddresses, OrderItems, Orders, PaymentMethod, Products, Promotions, Users
 
@@ -119,7 +118,6 @@ def process_checkout(request):
                 messages.error(request, "Không có sản phẩm để thanh toán.")
                 return redirect('cart')
 
-            # --- TÍNH TOÁN LẠI TỔNG TIỀN ---
             items_to_process = []
             total_amount = 0
             
@@ -134,7 +132,6 @@ def process_checkout(request):
                 })
                 total_amount += total
 
-            # --- TÍNH GIẢM GIÁ ---
             discount_percent_float = request.session.get('discount_percent', 0)
             discount_percent = Decimal(str(discount_percent_float))
             coupon_code = request.session.get('coupon_code', '')
@@ -142,7 +139,7 @@ def process_checkout(request):
             discount_amount = total_amount * (discount_percent / 100)
             final_amount = total_amount - discount_amount
 
-            # Lấy đối tượng Promo nếu có mã
+            promo_obj = None
             if coupon_code:
                 # Trường hợp khách có nhập mã
                 try:
@@ -162,7 +159,6 @@ def process_checkout(request):
                         end_date=timezone.now() + timezone.timedelta(days=3650)
                     )
 
-            # Lấy thông tin giao hàng
             fullname = request.POST.get('fullname')
             phone = request.POST.get('phone')
             
@@ -176,24 +172,22 @@ def process_checkout(request):
 
             payment_method, _ = PaymentMethod.objects.get_or_create(name=payment_method_code)
 
-            # --- TẠO ĐƠN HÀNG 
             with transaction.atomic():
                 new_order = Orders.objects.create(
                     user=user,
                     payment_method=payment_method,
-                    promo=promo_obj,           # Lưu mã khuyến mãi đã dùng
+                    promo=promo_obj,         
                     receiver_name=fullname,
                     receiver_phone=phone,
-                    total_amount=total_amount, # Giá gốc
+                    total_amount=total_amount,
                     shipping_fee=0,
-                    discount_percent=discount_percent, # Lưu % giảm
-                    final_amount=final_amount, # Giá cuối cùng khách phải trả
+                    discount_percent=discount_percent,
+                    final_amount=final_amount, 
                     status='Chờ xử lý',
                     note=note,
                     created_at=timezone.now()
                 )
                 
-                # Lưu địa chỉ
                 OrderAddresses.objects.create(
                     order=new_order,
                     country=country,
@@ -202,7 +196,6 @@ def process_checkout(request):
                     address=address_detail
                 )
 
-                # Lưu chi tiết sản phẩm & Trừ kho
                 for item in items_to_process:
                     OrderItems.objects.create(
                         order=new_order,
@@ -210,13 +203,11 @@ def process_checkout(request):
                         price=item['price'],
                         quantity=item['quantity']
                     )
-                    # Trừ tồn kho
                     product_obj = item['product']
                     product_obj.stock -= item['quantity']
                     product_obj.sold += item['quantity']
                     product_obj.save()
 
-                # Xóa sản phẩm khỏi giỏ hàng
                 try:
                     user_cart = Carts.objects.get(user=user)
                     CartItems.objects.filter(
@@ -226,9 +217,7 @@ def process_checkout(request):
                 except Carts.DoesNotExist:
                     pass
                 
-                # --- DỌN DẸP SESSION ---
-                request.session.pop('checkout_items', None) # Xóa an toàn, không có thì thôi, không báo lỗi
-                
+                del request.session['checkout_items']
                 if 'coupon_code' in request.session:
                     del request.session['coupon_code']
                     del request.session['discount_percent']
@@ -243,7 +232,7 @@ def process_checkout(request):
             
         except Exception as e:
             messages.error(request, f"Lỗi thanh toán: {str(e)}")
-            print(e) 
+            print(e)
             return redirect('checkout')
 
     return redirect('index')
