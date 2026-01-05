@@ -1,5 +1,7 @@
+import string
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.cache import cache
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 from django.core.mail import send_mail 
@@ -153,5 +155,64 @@ def get_logout(request):
     request.session.flush()
     return redirect('index')
 
+def generate_strong_password():
+    length = 8
+    lower = string.ascii_lowercase
+    upper = string.ascii_uppercase
+    digits = string.digits
+    special = "!@#$%^&*()"
+
+    password = [
+        random.choice(lower),
+        random.choice(upper),
+        random.choice(digits),
+        random.choice(special)
+    ]
+
+    all_chars = lower + upper + digits + special
+    password += [random.choice(all_chars) for _ in range(length - 4)]
+
+    random.shuffle(password)
+    return ''.join(password)
+
 def get_forgotpassword(request):
+    if request.method == 'POST':
+        email_input = request.POST.get('username', '').strip()
+        cache_key = f"reset_pass_{email_input}"
+        
+        cache_key = f"reset_pass_{email_input}"
+        if cache.get(cache_key):
+            messages.error(request, "Bạn vừa yêu cầu đổi mật khẩu. Vui lòng thử lại sau 1 tiếng.")
+            return render(request, 'main/forgotpassword.html')
+
+        try:
+            user = Users.objects.get(email__iexact=email_input)
+            new_password_raw = generate_strong_password()
+            
+            user.password_hash = make_password(new_password_raw)
+            user.save()
+
+            subject = 'Cấp lại mật khẩu mới - Aroma Café'
+            message = f'Chào {user.full_name},\n\nMật khẩu mới của bạn là: {new_password_raw}\n\nVui lòng đăng nhập và đổi lại mật khẩu ngay để bảo mật thông tin.'
+            
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [email_input],
+                fail_silently=False
+            )
+
+            cache.set(cache_key, True, 3600)
+
+            messages.success(request, "Mật khẩu mới đã được gửi vào email của bạn. Vui lòng kiểm tra hộp thư.")
+            return redirect('login')
+
+        except Users.DoesNotExist:
+            print(f"DEBUG: Không tìm thấy email '{email_input}' trong DB") 
+            messages.error(request, "Email này chưa được đăng ký trong hệ thống!")
+        except Exception as e:
+            print(e)
+            messages.error(request, "Có lỗi xảy ra khi gửi email.")
+
     return render(request, 'main/forgotpassword.html')
