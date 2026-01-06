@@ -121,6 +121,7 @@ def add_product(request):
             # Lấy dữ liệu từ form
             ten_sp = request.POST.get('name')
             loai_sp_id = request.POST.get('category')
+            trang_thai = request.POST.get('state')
             gia_sp = request.POST.get('price')
             khoi_luong = request.POST.get('weight')
             so_luong = request.POST.get('quantity')
@@ -134,6 +135,7 @@ def add_product(request):
             new_product = Products.objects.create(
                 name=ten_sp,
                 category=cat,
+                state=trang_thai,
                 price=gia_sp,
                 weight_grams=khoi_luong,
                 stock=so_luong,
@@ -164,13 +166,15 @@ def delete_product(request, product_id):
             # 1. Lấy sản phẩm
             product = get_object_or_404(Products, id=product_id)
             
-            # 2. KIỂM TRA QUAN TRỌNG: Sản phẩm đã từng được mua chưa?
             # Nếu sản phẩm đã tồn tại trong bảng OrderItems thì KHÔNG ĐƯỢC XÓA
             has_sold = OrderItems.objects.filter(product=product).exists()
             
             if has_sold:
-                # Nếu đã bán -> Báo lỗi và dừng lại
-                messages.error(request, f"Không thể xóa '{product.name}' vì đã có trong lịch sử đơn hàng. Hãy sửa số lượng kho về 0 để ngừng bán.")
+                # Nếu đã bán -> Không xóa vĩnh viễn, mà ẩn sản phẩm và đặt kho về 0
+                product.state = 'non active'  # cập nhật trạng thái để ẩn sản phẩm
+                product.stock = 0
+                product.save()
+                messages.info(request, f"Sản phẩm '{product.name}' đã có trong lịch sử đơn hàng; sản phẩm đã được ẩn và kho đặt về 0.")
             else:
                 # 3. Nếu chưa từng bán -> Xóa sạch
                 product_name = product.name 

@@ -7,7 +7,7 @@ from ai_model import filter_engine
 
 def get_index(request):
     try:
-        products = Products.objects.all().order_by('-sold')[:4]
+        products = Products.objects.filter(state='active').order_by('-sold')[:4]
         banners = Banners.objects.filter(status='active')
         context = {
             'products': products,
@@ -20,7 +20,7 @@ def get_index(request):
 
 def get_catalog(request):
     categories = Categories.objects.all()
-    products = Products.objects.all()
+    products = Products.objects.filter(state='active')
     
     active_category = request.GET.get('category')
     if active_category:
@@ -53,7 +53,8 @@ def get_search(request):
     if query:
         products = Products.objects.filter(
             Q(name__icontains=query) | 
-            Q(description__icontains=query)
+            Q(description__icontains=query),
+            state='active'
         )
     
     context = {
@@ -65,7 +66,7 @@ def get_search(request):
 
 def get_product(request, product_id):
     try:
-        product = Products.objects.get(id=product_id)
+        product = Products.objects.get(state='active', id=product_id)
     except Products.DoesNotExist:
         return redirect('catalog')
 
@@ -115,7 +116,7 @@ def get_product(request, product_id):
         total_score = sum(r.rating for r in reviews)
         avg_rating = round(total_score / reviews.count(), 1)
 
-    related_products = Products.objects.filter(category=product.category).exclude(id=product.id).order_by('?')[:4]
+    related_products = Products.objects.filter(state='active', category=product.category).exclude(id=product.id).order_by('?')[:4]
 
     context = {
         'product': product,

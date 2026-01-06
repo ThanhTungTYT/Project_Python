@@ -270,6 +270,7 @@ class Products(models.Model):
     weight_grams = models.IntegerField()
     created_at = models.DateTimeField()
     price = models.DecimalField(max_digits=18, decimal_places=2)
+    state = models.CharField(max_length=255)
 
     class Meta:
         managed = False

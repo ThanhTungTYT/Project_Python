@@ -87,6 +87,7 @@
                 <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Loại sản phẩm</th>
+                <th>Trạng thái</th>
                 <th>Khối lượng</th>
                 <th>Giá (VNĐ)</th>
                 <th>Tồn kho</th>
@@ -109,6 +110,7 @@
                 </td>
                 <td style="font-weight: bold; color: #444;">{{ p.name }}</td>
                 <td>{{ p.category.name }}</td>
+                <td>{{ p.state }}</td>
                 <td>{{ p.weight_grams }}</td>
                 <td style="color: #d32f2f; font-weight: bold;">{{ p.price|vn_currency }}đ</td>
                 <td>{{ p.stock }}</td>
@@ -170,6 +172,11 @@
             </select>
         </div>
 
+        <div class="state-p">
+            <label>Trạng thái sản phẩm</label>
+            <input type="text" name="state" id="edit-state" required>
+        </div>
+
         <div class="price-p">
             <label>Giá sản phẩm</label>
             <input type="number" name="price" placeholder="Ví dụ: 50000" required>
@@ -187,8 +194,7 @@
 
         <div class="p name-p">
             <label>Link hình ảnh (URL)</label>
-            <input type="text" name="image_url" placeholder="Dán link ảnh (https://...)" required>
-            <button type="button">Thêm hình ảnh</button>
+            <textarea type="text" name="image_url" placeholder="Dán link ảnh (https://...)" required></textarea>
         </div>
 
         <div class="des-p">
