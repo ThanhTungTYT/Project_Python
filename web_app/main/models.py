@@ -296,6 +296,8 @@ class Promotions(models.Model):
     min_order_value = models.DecimalField(max_digits=18, decimal_places=2)
     start_date = models.DateField() 
     end_date = models.DateField()
+    quantity = models.IntegerField()
+    state = models.CharField(max_length=20)
 
     class Meta:
         managed = True

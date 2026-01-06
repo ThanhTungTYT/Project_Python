@@ -151,7 +151,6 @@ def add_product(request):
                 if url_clean:
                     ProductImages.objects.create(product=new_product, image_url=url_clean)
             
-            messages.success(request, f"Đã thêm sản phẩm '{ten_sp}' thành công!")
 
         except Categories.DoesNotExist:
             messages.error(request, "Lỗi: Loại sản phẩm không hợp lệ.")
@@ -170,7 +169,7 @@ def delete_product(request, product_id):
             
             if has_sold:
                 # Nếu đã bán -> Không xóa vĩnh viễn, mà ẩn sản phẩm và đặt kho về 0
-                product.state = 'non active'  # cập nhật trạng thái để ẩn sản phẩm
+                product.state = 'inactive'  # cập nhật trạng thái để ẩn sản phẩm
                 product.stock = 0
                 product.save()
             else:
@@ -199,8 +198,8 @@ def edit_product(request, product_id):
             # 2. Cập nhật thông tin cơ bản
             product.name = request.POST.get('name')
             product.price = request.POST.get('price')
+            product.state = request.POST.get('state')
             
-            # Lưu ý: Chuyển đổi sang int/float để tránh lỗi dữ liệu
             product.weight_grams = int(request.POST.get('weight')) 
             product.stock = int(request.POST.get('quantity'))
             
@@ -209,16 +208,13 @@ def edit_product(request, product_id):
             # 3. Cập nhật Loại sản phẩm 
             cat_id = request.POST.get('category')
             if cat_id:
-                # SỬA LỖI TẠI ĐÂY: Thêm 's' vào Categories
                 product.category = get_object_or_404(Categories, id=cat_id)
 
             # 4. Lưu vào DB
             product.save()
             
         except Exception as e:
-            # In lỗi ra terminal để debug
             print("Lỗi Update:", e) 
-            # Hiển thị thông báo lỗi lên màn hình web
     
     return redirect('adminPage2')
 
@@ -443,31 +439,47 @@ def get_adminPage8(request):
 
 # 2. Thêm mã mới
 def add_discount(request):
-    if request.method == 'POST':
-        try:
-            code = request.POST.get('code')
-            if Promotions.objects.filter(code=code).exists():
-                messages.error(request, 'Mã này đã tồn tại!')
-                return redirect('adminPage8')
+    code = request.POST.get('code')
 
-            Promotions.objects.create(
-                code=code,
-                description=request.POST.get('description'),
-                min_order_value=request.POST.get('min_order_value'),
-                discount_percent=request.POST.get('discount_percent'),
-                start_date=request.POST.get('start_date'),
-                end_date=request.POST.get('end_date')
-            )
-            
-        except Exception as e:
-            print(e)
-            
+    if Promotions.objects.filter(code=code).exists():
+        messages.error(request, 'Mã này đã tồn tại!')
+        return redirect('adminPage8')
+
+    state = request.POST.get('state')
+    if state not in ['active', 'inactive']:
+        state = 'inactive'
+
+    Promotions.objects.create(
+        code=code,
+        description=request.POST.get('description'),
+        min_order_value=request.POST.get('min_order_value'),
+        discount_percent=request.POST.get('discount_percent'),
+        quantity=request.POST.get('quantity'),
+        start_date=request.POST.get('start_date'),
+        end_date=request.POST.get('end_date'),
+        state=state
+    )
+
+    messages.success(request, 'Đã tạo mã giảm giá.')
     return redirect('adminPage8')
+
 
 # 3. Xóa mã
 def delete_discount(request, promo_id):
-    try:
-        Promotions.objects.get(id=promo_id).delete()
-    except:
-        pass
+    if request.method == 'POST':
+        try:
+            promo = get_object_or_404(Promotions, id=promo_id)
+
+            has_used = Orders.objects.filter(promo=promo).exists()
+
+            if has_used:
+                promo.state = 'non active'
+                promo.quantity = 0
+                promo.save()
+            else:
+                promo.delete()
+
+        except Exception as e:
+            print(e)
+
     return redirect('adminPage8')

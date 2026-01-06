@@ -174,7 +174,10 @@
 
         <div class="state-p">
             <label>Trạng thái sản phẩm</label>
-            <input type="text" name="state" id="edit-state" required>
+            <select name="state" id="edit-state" required>
+                <option value="active">active</option>
+                <option value="inactive">inactive</option>
+            </select>
         </div>
 
         <div class="price-p">
@@ -233,7 +236,13 @@
                 {% endfor %}
             </select>
         </div>
-
+        <div class="state-p">
+            <label>Trạng thái sản phẩm</label>
+            <select name="state" id="edit-state" required>
+                <option value="active">active</option>
+                <option value="inactive">inactive</option>
+            </select>
+        </div>
         <div class="price-p">
             <label>Giá sản phẩm</label>
             <input type="number" name="price" id="edit-price" required>
@@ -262,7 +271,7 @@
     <script src="{% static 'main/js/admin.js' %}"></script>
 
 <script>
-    function openEditModal(id, name, catId, price, weight, stock, desc) {
+    function openEditModal(id, name, catId, price, weight, stock, desc, state) {
         // 2. Điền dữ liệu cũ vào Form
         document.getElementById('edit-id-display').value = id;
         document.getElementById('edit-name').value = name;
@@ -272,7 +281,8 @@
         if(catSelect) {
             catSelect.value = catId; 
         }
-
+        
+        document.getElementById('edit-state').value = state;           
         document.getElementById('edit-price').value = price; 
         document.getElementById('edit-weight').value = weight;
         document.getElementById('edit-quantity').value = stock;

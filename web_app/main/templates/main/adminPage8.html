@@ -47,12 +47,14 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Mã Code</th>
+                <th>Mã</th>
                 <th>Mô tả</th>
                 <th>Điều kiện</th>
-                <th>Mức giảm</th>
-                <th>Ngày bắt đầu</th>
-                <th>Hạn sử dụng</th>
+                <th>Giảm</th>
+                <th>Số lượng</th>
+                <th>Bắt đầu</th>
+                <th>Kết thúc</th>
+                <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
             </thead>
@@ -64,12 +66,23 @@
                     <td>{{ item.description }}</td>
                     <td>{{ item.min_order_value|vn_currency }}đ</td>
                     <td>{{ item.discount_percent }}%</td>
+                    <td>{{ item.quantity }}</td>
                     <td>{{ item.start_date|date:"d/m/Y" }}</td>
                     <td>{{ item.end_date|date:"d/m/Y" }}</td>
                     <td>
-                        <a href="{% url 'delete_discount' item.id %}" onclick="return confirm('Xóa mã này?')">
-                            <i class="fas fa-trash" style="color: red;"></i>
-                        </a>
+                        {% if item.state == 'active' %}
+                            <span >active</span>
+                        {% else %}
+                            <span >inactive</span>
+                        {% endif %}
+                    </td>                    
+                    <td>
+                       <form action="{% url 'delete_discount' item.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('Xóa mã này?')">
+                                <i class="fas fa-trash" style="color:rgb(255, 254, 254);"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -106,6 +119,10 @@
             </div>
             
             <div class="count-p">
+                <label>Số lượng</label>
+                <input type="number" name="quantity" required>
+            </div>
+            <div class="count-p">
                 <label>Ngày bắt đầu</label>
                 <input type="date" name="start_date" required>
             </div>
@@ -113,10 +130,18 @@
                 <label>Hạn sử dụng</label>
                 <input type="date" name="end_date" required>
             </div>
+
+            <div class="state-p">
+                <label>Trạng thái</label>
+                <select name="state" required>
+                    <option value="active">active</option>
+                    <option value="inactive">inactive</option>
+                </select>
+            </div>
+
             <button class="submit" type="submit">Tạo Mã</button>
         </form>
     </div>  
-    
 </div>
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
     <script src="{% static 'main/js/admin.js' %}"></script>

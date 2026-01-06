@@ -27,35 +27,41 @@ def prepare_checkout(request):
     return redirect('cart')
 
 def apply_coupon(request):
-    if request.method == 'POST':
-        code = request.POST.get('coupon_code')
-        
-        checkout_data = request.session.get('checkout_items', {})
-        products = Products.objects.filter(id__in=checkout_data.keys())
-        current_total = Decimal(0)
-        for product in products:
-            qty = checkout_data[str(product.id)]
-            current_total += product.price * qty
+    code = request.POST.get('coupon_code')
+    checkout_data = request.session.get('checkout_items', {})
 
-        try:
+    products = Products.objects.filter(
+        id__in=checkout_data.keys(),
+        state='active'
+    )
 
-            coupon = Promotions.objects.get(
-                code=code,
-                start_date__lte=timezone.now(),
-                end_date__gte=timezone.now()
-            )
-            
-            if current_total < coupon.min_order_value:
-                print('Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã này.')
-            else:
+    total = sum(
+        p.price * checkout_data[str(p.id)]
+        for p in products
+    )
 
-                request.session['coupon_id'] = coupon.id
-                request.session['discount_percent'] = float(coupon.discount_percent)
-                request.session['coupon_code'] = coupon.code
-                print('Mã giảm giá đã được áp dụng.')
-        except Promotions.DoesNotExist:
-            print('Mã không hợp lệ hoặc hết hạn.')    
+    today = timezone.now().date()
+
+    try:
+        promo = Promotions.objects.get(
+            code=code,
+            start_date__lte=today,
+            end_date__gte=today,
+            state='active',
+            quantity__gt=0
+        )
+
+        if total < promo.min_order_value:
+            messages.warning(request, 'Đơn hàng chưa đủ điều kiện.')
+        else:
+            request.session['coupon_code'] = promo.code
+            messages.success(request, 'Đã áp dụng mã giảm giá.')
+
+    except Promotions.DoesNotExist:
+        messages.error(request, 'Mã không hợp lệ.')
+
     return redirect('checkout')
+
 
 def remove_coupon(request):
     if 'coupon_id' in request.session:
@@ -86,7 +92,7 @@ def checkout_view(request):
             'subtotal': subtotal
         })
     now = timezone.now().date()
-    valid_coupons = Promotions.objects.filter(start_date__lte=now, end_date__gte=now)    
+    valid_coupons = Promotions.objects.filter(start_date__lte=now, end_date__gte=now, state='active', quantity__gt=0)
     discount_percent_float = request.session.get('discount_percent', 0)
     discount_percent = Decimal(str(discount_percent_float)) 
     
@@ -140,13 +146,21 @@ def process_checkout(request):
             final_amount = total_amount - discount_amount
 
             promo_obj = None
+            today = timezone.now().date()
             if coupon_code:
-                # Trường hợp khách có nhập mã
+                # Trường hợp khách có nhập mã: chỉ chấp nhận mã đang active và còn lượt
                 try:
-                    promo_obj = Promotions.objects.get(code=coupon_code)
+                    promo_obj = Promotions.objects.get(
+                        code=coupon_code,
+                        start_date__lte=today,
+                        end_date__gte=today,
+                        state='active',
+                        quantity__gt=0
+                    )
                 except Promotions.DoesNotExist:
-                    promo_obj = Promotions.objects.get(code="NO_PROMO")
-            else:
+                    promo_obj = None
+
+            if not promo_obj:
                 try:
                     promo_obj = Promotions.objects.get(code="NO_PROMO")
                 except Promotions.DoesNotExist:
@@ -155,8 +169,10 @@ def process_checkout(request):
                         description="Không áp dụng",
                         discount_percent=0,
                         min_order_value=0,
-                        start_date=timezone.now(),
-                        end_date=timezone.now() + timezone.timedelta(days=3650)
+                        start_date=timezone.now().date(),
+                        end_date=timezone.now().date() + timezone.timedelta(days=3650),
+                        quantity=999999,
+                        state='active'
                     )
 
             fullname = request.POST.get('fullname')
@@ -221,6 +237,19 @@ def process_checkout(request):
                 if 'coupon_code' in request.session:
                     del request.session['coupon_code']
                     del request.session['discount_percent']
+
+                # Nếu dùng mã khuyến mãi thực sự (không phải NO_PROMO), cập nhật số lượng còn lại
+                try:
+                    if promo_obj and promo_obj.code != 'NO_PROMO':
+                        try:
+                            promo_obj.quantity = max(0, int(promo_obj.quantity) - 1)
+                            if promo_obj.quantity == 0:
+                                promo_obj.state = 'inactive'
+                            promo_obj.save()
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
                 # Kiểm tra xem khách chọn bank hay cod
                 if payment_method.name == 'bank':
