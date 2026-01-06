@@ -13,72 +13,65 @@ def prepare_checkout(request):
         if not selected_ids:
             messages.warning(request, "Bạn chưa chọn sản phẩm nào!")
             return redirect('cart')
-        checkout_data = {}
         
+        checkout_data = {}
         for p_id in selected_ids:
             qty_key = f"quantity_{p_id}" 
             qty = request.POST.get(qty_key, 1) 
-            
             checkout_data[p_id] = int(qty)
+            
         request.session['checkout_items'] = checkout_data
-
         return redirect('checkout')
     
     return redirect('cart')
 
 def apply_coupon(request):
-    code = request.POST.get('coupon_code')
+    code = request.POST.get('coupon_code', '').strip()
+    
+    # Tính tổng tiền hiện tại để check điều kiện
     checkout_data = request.session.get('checkout_items', {})
-
-    products = Products.objects.filter(
-        id__in=checkout_data.keys(),
-        state='active'
-    )
-
-    total = sum(
-        p.price * checkout_data[str(p.id)]
-        for p in products
-    )
-
-    today = timezone.now().date()
+    products = Products.objects.filter(id__in=checkout_data.keys())
+    current_total = Decimal(0)
+    for product in products:
+        qty = checkout_data[str(product.id)]
+        current_total += product.price * qty
 
     try:
-        promo = Promotions.objects.get(
+        coupon = Promotions.objects.get(
             code=code,
-            start_date__lte=today,
-            end_date__gte=today,
-            state='active',
-            quantity__gt=0
+            start_date__lte=timezone.now(),
+            end_date__gte=timezone.now()
         )
-
-        if total < promo.min_order_value:
-            messages.warning(request, 'Đơn hàng chưa đủ điều kiện.')
+        
+        if current_total < coupon.min_order_value:
+            messages.error(request, f"Đơn hàng chưa đạt giá trị tối thiểu ({coupon.min_order_value:,.0f}đ) để dùng mã này.")
         else:
-            request.session['coupon_code'] = promo.code
-            messages.success(request, 'Đã áp dụng mã giảm giá.')
-
+            request.session['coupon_id'] = coupon.id
+            request.session['discount_percent'] = float(coupon.discount_percent)
+            request.session['coupon_code'] = coupon.code
+            messages.success(request, f"Áp dụng mã {code} thành công! Giảm {coupon.discount_percent}%.")
+            
     except Promotions.DoesNotExist:
-        messages.error(request, 'Mã không hợp lệ.')
-
+        messages.error(request, "Mã giảm giá không hợp lệ hoặc đã hết hạn.")
+        
     return redirect('checkout')
-
 
 def remove_coupon(request):
-    if 'coupon_id' in request.session:
-        del request.session['coupon_id']
-        del request.session['discount_percent']
-        del request.session['coupon_code']
-    return redirect('checkout')
+    if 'coupon_code' in request.session:
+        del request.session['coupon_code'] # Xóa mã khỏi session
+    return redirect('checkout') # Load lại trang thanh toán
 
 def checkout_view(request):
     checkout_data = request.session.get('checkout_items', {})
     
     if not checkout_data:
+        messages.warning(request, "Không có sản phẩm nào để thanh toán.")
         return redirect('cart')
 
     display_items = []
     total_amount = Decimal(0)
 
+    # Lấy danh sách sản phẩm từ session
     products = Products.objects.filter(id__in=checkout_data.keys())
 
     for product in products:
@@ -91,15 +84,18 @@ def checkout_view(request):
             'quantity': qty,
             'subtotal': subtotal
         })
-    now = timezone.now().date()
-    valid_coupons = Promotions.objects.filter(start_date__lte=now, end_date__gte=now, state='active', quantity__gt=0)
+
+    # Tính toán giảm giá
     discount_percent_float = request.session.get('discount_percent', 0)
-    discount_percent = Decimal(str(discount_percent_float)) 
-    
+    discount_percent = Decimal(str(discount_percent_float))
     coupon_code = request.session.get('coupon_code', '')
     
     discount_amount = total_amount * (discount_percent / 100)
     final_total = total_amount - discount_amount
+
+    # Lấy danh sách coupon khả dụng để hiển thị
+    now = timezone.now()
+    valid_coupons = Promotions.objects.filter(start_date__lte=now, end_date__gte=now)
 
     context = {
         'items': display_items,
@@ -115,21 +111,34 @@ def checkout_view(request):
 def process_checkout(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
+        
+        # Bắt buộc đăng nhập (nếu hệ thống yêu cầu)
+        if not user_id:
+            messages.error(request, "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.")
+            return redirect('login')
+
         try:
             user = Users.objects.get(id=user_id)
-            
             checkout_session = request.session.get('checkout_items')
             
             if not checkout_session:
                 messages.error(request, "Không có sản phẩm để thanh toán.")
                 return redirect('cart')
 
+            # 1. Tính toán lại tiền và kiểm tra tồn kho
             items_to_process = []
-            total_amount = 0
+            total_amount = Decimal(0)
             
             products = Products.objects.filter(id__in=checkout_session.keys())
+            
             for product in products:
                 qty = checkout_session[str(product.id)]
+                
+                # Kiểm tra tồn kho
+                if product.stock < qty:
+                    messages.error(request, f"Sản phẩm {product.name} không đủ số lượng tồn kho (Còn: {product.stock}).")
+                    return redirect('checkout')
+
                 total = product.price * qty
                 items_to_process.append({
                     'product': product,
@@ -138,57 +147,61 @@ def process_checkout(request):
                 })
                 total_amount += total
 
+            # 2. Tính giảm giá
             discount_percent_float = request.session.get('discount_percent', 0)
             discount_percent = Decimal(str(discount_percent_float))
             coupon_code = request.session.get('coupon_code', '')
-
+            
             discount_amount = total_amount * (discount_percent / 100)
             final_amount = total_amount - discount_amount
 
+            # 3. Lấy hoặc tạo Promo "NO_PROMO" nếu không dùng mã
             promo_obj = None
-            today = timezone.now().date()
+            
+            # Tạo sẵn đối tượng NO_PROMO để fallback (dùng khi không có mã hoặc mã lỗi)
+            no_promo, _ = Promotions.objects.get_or_create(
+                code="NO_PROMO", 
+                defaults={'description': 'Không áp dụng', 'discount_percent': 0, 'min_order_value': 0}
+            )
+
             if coupon_code:
-                # Trường hợp khách có nhập mã: chỉ chấp nhận mã đang active và còn lượt
                 try:
-                    promo_obj = Promotions.objects.get(
-                        code=coupon_code,
-                        start_date__lte=today,
-                        end_date__gte=today,
-                        state='active',
-                        quantity__gt=0
-                    )
-                except Promotions.DoesNotExist:
-                    promo_obj = None
+                    # Dùng select_for_update() để khóa record này lại khi đang xử lý
+                    # Giúp tránh lỗi 2 người cùng đặt hàng 1 mã cuối cùng cùng lúc
+                    promo_obj = Promotions.objects.select_for_update().get(code=coupon_code)
+                    
+                    # --- KIỂM TRA VÀ TRỪ SỐ LƯỢNG ---
+                    if promo_obj.quantity > 0:
+                        promo_obj.quantity -= 1
+                        promo_obj.save()
+                    else:
+                        # Nếu mã hết lượt dùng -> Báo lỗi và hủy transaction (quay về checkout)
+                        messages.error(request, "Mã giảm giá đã hết lượt sử dụng.")
+                        return redirect('checkout')
+                    # --------------------------------
 
-            if not promo_obj:
-                try:
-                    promo_obj = Promotions.objects.get(code="NO_PROMO")
                 except Promotions.DoesNotExist:
-                    promo_obj = Promotions.objects.create(
-                        code="NO_PROMO",
-                        description="Không áp dụng",
-                        discount_percent=0,
-                        min_order_value=0,
-                        start_date=timezone.now().date(),
-                        end_date=timezone.now().date() + timezone.timedelta(days=3650),
-                        quantity=999999,
-                        state='active'
-                    )
+                    # Nếu session lưu mã bậy hoặc mã bị admin xóa -> Dùng NO_PROMO
+                    promo_obj = no_promo
+            else:
+                # Khách không nhập mã -> Dùng NO_PROMO
+                promo_obj = no_promo
 
+            # 4. Lấy thông tin form
             fullname = request.POST.get('fullname')
             phone = request.POST.get('phone')
-            
             address_detail = request.POST.get('address')
             ward = request.POST.get('ward')
             province = request.POST.get('province')
             country = request.POST.get('country', 'Vietnam')
-            
             note = request.POST.get('note', '')
             payment_method_code = request.POST.get('payment_method', 'cod')
 
             payment_method, _ = PaymentMethod.objects.get_or_create(name=payment_method_code)
 
+            # 5. Transaction: Lưu Orders -> OrderItems -> OrderAddresses -> Trừ kho -> Xóa giỏ hàng
             with transaction.atomic():
+                # Tạo đơn hàng
                 new_order = Orders.objects.create(
                     user=user,
                     payment_method=payment_method,
@@ -204,6 +217,7 @@ def process_checkout(request):
                     created_at=timezone.now()
                 )
                 
+                # Lưu địa chỉ
                 OrderAddresses.objects.create(
                     order=new_order,
                     country=country,
@@ -212,6 +226,7 @@ def process_checkout(request):
                     address=address_detail
                 )
 
+                # Lưu chi tiết đơn hàng và trừ kho
                 for item in items_to_process:
                     OrderItems.objects.create(
                         order=new_order,
@@ -219,11 +234,13 @@ def process_checkout(request):
                         price=item['price'],
                         quantity=item['quantity']
                     )
-                    product_obj = item['product']
-                    product_obj.stock -= item['quantity']
-                    product_obj.sold += item['quantity']
-                    product_obj.save()
+                    # Trừ kho
+                    p = item['product']
+                    p.stock -= item['quantity']
+                    p.sold += item['quantity']
+                    p.save()
 
+                # Xóa các item này trong giỏ hàng (nếu có)
                 try:
                     user_cart = Carts.objects.get(user=user)
                     CartItems.objects.filter(
@@ -233,35 +250,23 @@ def process_checkout(request):
                 except Carts.DoesNotExist:
                     pass
                 
+                # 6. Dọn dẹp session
                 del request.session['checkout_items']
                 if 'coupon_code' in request.session:
                     del request.session['coupon_code']
                     del request.session['discount_percent']
+                    del request.session['coupon_id']
 
-                # Nếu dùng mã khuyến mãi thực sự (không phải NO_PROMO), cập nhật số lượng còn lại
-                try:
-                    if promo_obj and promo_obj.code != 'NO_PROMO':
-                        try:
-                            promo_obj.quantity = max(0, int(promo_obj.quantity) - 1)
-                            if promo_obj.quantity == 0:
-                                promo_obj.state = 'inactive'
-                            promo_obj.save()
-                        except Exception:
-                            pass
-                except Exception:
-                    pass
-
-                # Kiểm tra xem khách chọn bank hay cod
+                # 7. Điều hướng
                 if payment_method.name == 'bank':
                     return redirect('payment_qr', order_id=new_order.id)
                 else:
                     messages.success(request, "Đặt hàng thành công!")
-                    return redirect('account')
-            return redirect('account')
+                    return redirect('account') # Chuyển về lịch sử đơn hàng
             
         except Exception as e:
-            messages.error(request, f"Lỗi thanh toán: {str(e)}")
-            print(e)
+            messages.error(request, f"Có lỗi xảy ra khi xử lý đơn hàng: {str(e)}")
+            print(f"Error processing checkout: {e}")
             return redirect('checkout')
 
     return redirect('index')
@@ -299,25 +304,37 @@ def cancel_order(request, order_id):
 
     try:
         with transaction.atomic():
+            # Lấy đơn hàng của user đó
             order = Orders.objects.get(id=order_id, user__id=user_id)
             
+            # Chỉ cho phép hủy nếu trạng thái là 'Chờ xử lý'
             if order.status == 'Chờ xử lý':
+                # 1. Hoàn trả tồn kho sản phẩm (Logic cũ)
                 order_items = order.orderitems_set.all()
-                
                 for item in order_items:
                     product = item.product
                     product.stock += item.quantity
                     product.sold -= item.quantity
-                    
                     product.save()
+                
+                # 2. Hoàn trả quantity cho Promotion (Logic MỚI)
+                # Kiểm tra xem đơn hàng có dùng mã không và mã đó không phải mã mặc định 'NO_PROMO'
+                if order.promo and order.promo.code != 'NO_PROMO':
+                    # Giả sử model Promotions có trường 'quantity' là số lượng mã còn lại
+                    order.promo.quantity += 1 
+                    order.promo.save()
+
+                # 3. Cập nhật trạng thái đơn hàng
                 order.status = 'Đã hủy'
                 order.save()
-                messages.success(request, "Đã hủy đơn hàng thành công.")
+                
+                messages.success(request, "Đã hủy đơn hàng thành công và hoàn lại mã giảm giá.")
             else:
-                messages.error(request, "Không thể hủy đơn hàng này.")
+                messages.error(request, "Không thể hủy đơn hàng này (Đã xử lý hoặc đang giao).")
             
     except Orders.DoesNotExist:
         messages.error(request, "Không tìm thấy đơn hàng.")
+        
     return redirect('account')
 
 @require_POST

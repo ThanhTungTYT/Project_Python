@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+{% load custom_filters %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="{% static 'main/css/payment.css' %}">
     <style>
         /* CSS cho thông báo lỗi */
-        .messages-box { margin-bottom: 20px; }
+        .messages-box { margin: 20px auto; max-width: 1200px; padding: 0 20px; }
         .alert { padding: 15px; border-radius: 4px; margin-bottom: 10px; font-weight: 500; }
         .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .alert.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .alert.info { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
     </style>
 </head>
 <body>
@@ -51,18 +52,18 @@
     </div>
 </header>
 
+{% if messages %}
+    <div class="messages-box">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="checkout-container">
     
-    {% if messages %}
-        <div class="messages-box">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <div class="back-link">
         <a href="{% url 'cart' %}"><i class="fas fa-arrow-left"></i> Quay lại giỏ hàng</a>
     </div>
@@ -86,17 +87,17 @@
             <form class="shipping-form" id="shipping-form" method="POST" action="{% url 'process_checkout' %}">
                 {% csrf_token %}
                 
-                <input type="text" name="fullname" id="fullname" placeholder="Họ và tên" required>
+                <input type="text" name="fullname" id="fullname" class="save-input" placeholder="Họ và tên" required>
                 
-                <input type="text" name="phone" id="phone" placeholder="Số điện thoại" required>
+                <input type="text" name="phone" id="phone" class="save-input" placeholder="Số điện thoại" required>
                 
-                <input type="text" name="country" id="country" placeholder="Quốc gia" value="Vietnam" required>
+                <input type="text" name="country" id="country" class="save-input" placeholder="Quốc gia" value="Vietnam" required>
                 
-                <input type="text" name="province" id="province" placeholder="Tỉnh/TP" required>
+                <input type="text" name="province" id="province" class="save-input" placeholder="Tỉnh/TP" required>
                 
-                <input type="text" name="ward" id="ward" placeholder="Quận/Huyện, Phường/Xã" required>
+                <input type="text" name="ward" id="ward" class="save-input" placeholder="Quận/Huyện, Phường/Xã" required>
                 
-                <input type="text" name="address" id="address" placeholder="Đường, Số nhà" required>
+                <input type="text" name="address" id="address" class="save-input" placeholder="Đường, Số nhà" required>
                 
                 <div class="payment-method" style="margin-top: 20px;">
                     <h3>Phương thức thanh toán</h3>
@@ -112,7 +113,7 @@
 
                 <div class="note-box" style="margin-top: 20px;">
                     <h3>Ghi chú</h3>
-                    <textarea name="note" placeholder="Nhập ghi chú cho đơn hàng (nếu có)"></textarea>
+                    <textarea name="note" id="note" class="save-input" placeholder="Nhập ghi chú cho đơn hàng (nếu có)"></textarea>
                 </div>
             </form>
         </section>
@@ -124,7 +125,7 @@
             <div id="cart-list">
                 {% for item in items %}
                 <div class="cart-item">
-                    {% with image_object=item.product.productimages_set.first %}
+                     {% with image_object=item.product.productimages_set.first %}
                         {% if image_object %}
                             {% if "http" in image_object.image_url %}
                                 <img src="{{ image_object.image_url }}" alt="{{ item.product.name }}">
@@ -135,11 +136,12 @@
                             <img src="{% static 'main/img/no-image.png' %}" alt="No Image">
                         {% endif %}
                     {% endwith %}
-<div class="cart-info">
+                    <div class="cart-info">
                         <p class="product-name">{{ item.product.name }}</p>
                         <p class="product-type">Loại: {{ item.product.category.name }}</p>
                         <p class="weight">Khối lượng: {{ item.product.weight_grams}}g</p>
-                        <p class="price">{{ item.subtotal }}đ</p>
+                        
+                        <p class="price">{{ item.subtotal|vn_currency }}đ</p>
                     </div>
                     <div class="quantity-box">
                         <p style="font-size: 14px;">Số lượng: {{ item.quantity }}</p>
@@ -153,12 +155,12 @@
 
         <section class="discount-box">
             <h3>Mã khuyến mãi</h3>
-            <form action="{% url 'apply_coupon' %}" method="POST">
+            <form action="{% url 'apply_coupon' %}" method="POST" id="coupon-form">
                 {% csrf_token %}
                 <select onchange="document.getElementById('discount-code').value = this.value">
                     <option value="">-- Chọn mã có sẵn --</option>
                     {% for c in coupons %}
-                    <option value="{{ c.code }}">{{ c.code }} - Giảm {{ c.discount_percent|stringformat:"d" }}%</option>
+                    <option value="{{ c.code }}">{{ c.code }} - Giảm {{ c.discount_percent|vn_currency }}%</option>
                     {% endfor %}
                 </select>
                 <div class="apply-row">
@@ -167,7 +169,10 @@
                 </div>
             </form>
             {% if coupon_code %}
-                <a href="{% url 'remove_coupon' %}" style="color: red; font-size: 0.8rem;">[Gỡ bỏ mã]</a>
+                <div style="margin-top: 10px;">
+                    <span style="color: green;">Đang dùng mã: <strong>{{ coupon_code }}</strong></span>
+                    <a href="{% url 'remove_coupon' %}" style="color: red; margin-left: 10px; font-size: 0.9rem; text-decoration: underline;">[Gỡ bỏ]</a>
+                </div>
             {% endif %}
         </section>
 
@@ -176,13 +181,13 @@
             
             <div class="summary-row">
                 <span>Tổng tiền hàng</span>
-                <span id="total-price">{{ total_amount|stringformat:"d" }}đ</span>
+                <span id="total-price">{{ total_amount|vn_currency }}đ</span>
             </div>
 
             {% if discount_amount > 0 %}
             <div class="summary-row" style="color: green;">
-                <span>Giảm giá ({{ discount_percent|stringformat:"d" }}%):</span>
-                <span>-{{ discount_amount|stringformat:"d" }}đ</span>
+                <span>Giảm giá ({{ discount_percent|vn_currency }}%):</span>
+                <span>-{{ discount_amount|vn_currency }}đ</span>
             </div>
             {% endif %}
 
@@ -194,47 +199,42 @@
             <div class="summary-row total">
                 <span>Tổng thanh toán: </span>
                 <span id="final-total" style="color: #d3b673; font-size: 1.2rem;">
-                    {{ final_total|stringformat:"d" }}đ
+                    {{ final_total|vn_currency }}đ
                 </span>
             </div>
             
-            <button class="checkout-btn" type="submit" form="shipping-form">Đặt hàng</button>
+            <button class="checkout-btn" type="submit" form="shipping-form" onclick="clearFormData()">Đặt hàng</button>
         </section>
     </div>
 </div>
 
 <footer class="footer">
-    <div class="footer-top">
-        <div class="foot-content left">
-            <h3>Aroma Café</h3>
-            <p>Địa chỉ: xxx, xxx, xxx.</p>
-            <p>Điện thoại: xxx-xxx-xxxx.</p>
-            <p>Email: example@gmail.com</p>
-        </div>
-        <div class="foot-content footer-links">
-            <h3>Quy định & Chính sách</h3>
-            <ul>
-                <li><a href="{% url 'shippingPolicies' %}">Chính sách vận chuyển</a></li>
-                <li><a href="{% url 'warrantyPolicies' %}">Chính sách bảo hành, đổi trả</a></li>
-                <li><a href="{% url 'termOfUse' %}">Điều khoản sử dụng</a></li>
-            </ul>
-        </div>
-        <div class="foot-content right">
-            <h3>Kết nối với chúng tôi</h3>
-            <div class="social">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-        </div>
-    </div>
     <div class="footer-bottom">
         <p>&copy; 2024 Aroma Café. All rights reserved.</p>
     </div>
 </footer>
 
-<button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i> </button>
 <script src="{% static 'main/js/script.js' %}"></script>
+
+<script>
+    const inputs = document.querySelectorAll('.save-input');
+    
+    inputs.forEach(input => {
+        const savedValue = sessionStorage.getItem(input.id);
+        if (savedValue) {
+            input.value = savedValue;
+        }
+
+        input.addEventListener('input', function() {
+            sessionStorage.setItem(this.id, this.value);
+        });
+    });
+
+    function clearFormData() {
+
+        sessionStorage.clear();
+    }
+</script>
+
 </body>
 </html>
