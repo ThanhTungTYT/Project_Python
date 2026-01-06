@@ -166,7 +166,6 @@ def delete_product(request, product_id):
             # 1. Lấy sản phẩm
             product = get_object_or_404(Products, id=product_id)
             
-            # Nếu sản phẩm đã tồn tại trong bảng OrderItems thì KHÔNG ĐƯỢC XÓA
             has_sold = OrderItems.objects.filter(product=product).exists()
             
             if has_sold:
@@ -174,7 +173,6 @@ def delete_product(request, product_id):
                 product.state = 'non active'  # cập nhật trạng thái để ẩn sản phẩm
                 product.stock = 0
                 product.save()
-                messages.info(request, f"Sản phẩm '{product.name}' đã có trong lịch sử đơn hàng; sản phẩm đã được ẩn và kho đặt về 0.")
             else:
                 # 3. Nếu chưa từng bán -> Xóa sạch
                 product_name = product.name 
@@ -185,11 +183,9 @@ def delete_product(request, product_id):
                 # Xóa sản phẩm
                 product.delete()
                 
-                messages.success(request, f"Đã xóa vĩnh viễn sản phẩm '{product_name}'.")
             
         except Exception as e:
             print(e)
-            messages.error(request, "Đã xảy ra lỗi hệ thống khi xóa sản phẩm.")
 
     return redirect('adminPage2')
 
@@ -218,13 +214,11 @@ def edit_product(request, product_id):
 
             # 4. Lưu vào DB
             product.save()
-            messages.success(request, f"Đã cập nhật '{product.name}' thành công!")
             
         except Exception as e:
             # In lỗi ra terminal để debug
             print("Lỗi Update:", e) 
             # Hiển thị thông báo lỗi lên màn hình web
-            messages.error(request, f"Lỗi không lưu được: {str(e)}")
     
     return redirect('adminPage2')
 
