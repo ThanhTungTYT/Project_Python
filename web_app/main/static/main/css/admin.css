@@ -1061,3 +1061,46 @@ input[type=number]::-webkit-outer-spin-button {
     background: #8c4828;
 
 }
+.action-btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Khoảng cách giữa 2 nút */
+}
+
+.btn-action {
+    width: 35px !important;
+    height: 35px !important;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    margin: 0 !important; 
+}
+
+.btn-edit {
+    background-color: #c76739; 
+}
+
+.btn-delete {
+    background-color: #c76739;
+}
+
+#add-btn { 
+    background-color: #c76739;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+#add-btn:hover {
+    background-color: #8c4828;
+}

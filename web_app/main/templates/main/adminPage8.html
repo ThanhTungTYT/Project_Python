@@ -5,14 +5,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý mã giảm giá</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
+    
+    <style>
+        /* === CSS ÉP FORM RA GIỮA MÀN HÌNH === */
+        /* Overlay làm tối nền */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 9998;
+        }
+
+        /* Ghi đè class form-add để nó nổi lên giữa màn hình */
+        .form-add {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 9999;
+            background: #fff;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            max-height: 90vh; /* Tránh form quá dài tràn màn hình */
+            overflow-y: auto; /* Cho phép cuộn nếu form dài */
+            width: 450px; /* Độ rộng vừa phải */
+        }
+        
+        /* Chỉnh lại nút đóng form */
+        #take-off {
+            cursor: pointer; font-weight: bold; font-size: 18px; border: none; background: transparent;
+        }
+        #take-off:hover { color: red; }
+
+        /* Style cho bảng và nút hành động */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #666; font-weight: 600; }
+        
+        .action-cell { display: flex; justify-content: center; gap: 15px; }
+        .btn-icon { border: none; background: none; cursor: pointer; font-size: 18px; transition: 0.2s; }
+        .btn-edit-icon { color: #A0522D; }
+        .btn-delete-icon { color: #dc3545; }
+        .btn-icon:hover { transform: scale(1.2); }
+    </style>
 </head>
 <body>
+
 <div class="left-menu" id="left-menu">
-        <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
-        </div>
+    <div class="logo">
+        <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+    </div>
     <div class="menu">
         <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
@@ -34,27 +77,28 @@
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ MÃ GIẢM GIÁ</p>
     </div>
-    <form class="search-bar">
-        <input type="text" placeholder="Tìm kiếm mã giảm giá" required>
-        <button><i class="fas fa-search"></i></button>
+    <form class="search-bar" action="{% url 'search' %}" method="GET">
+        <input type="text" name="q" placeholder="Tìm kiếm mã giảm giá" required>
+        <button type="submit"><i class="fas fa-search"></i></button>
     </form>
+    
     <div class="main-menu">
-        <button id="add">+ Thêm mã giảm giá</button>
+        <button id="add-btn" onclick="openAddModal()">+ Thêm mã giảm giá</button>
     </div>
+    
     <div class="list-discount">
         <h3 class="discount-title">DANH SÁCH MÃ GIẢM GIÁ</h3>
         <table>
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Mã</th>
+                <th>Mã Code</th>
                 <th>Mô tả</th>
                 <th>Điều kiện</th>
-                <th>Giảm</th>
+                <th>Mức giảm</th>
                 <th>Số lượng</th>
-                <th>Bắt đầu</th>
-                <th>Kết thúc</th>
                 <th>Trạng thái</th>
+                <th>Hạn sử dụng</th>
                 <th>Hành động</th>
             </tr>
             </thead>
@@ -67,20 +111,34 @@
                     <td>{{ item.min_order_value|vn_currency }}đ</td>
                     <td>{{ item.discount_percent }}%</td>
                     <td>{{ item.quantity }}</td>
-                    <td>{{ item.start_date|date:"d/m/Y" }}</td>
-                    <td>{{ item.end_date|date:"d/m/Y" }}</td>
                     <td>
                         {% if item.state == 'active' %}
-                            <span >active</span>
+                            <span style="color: green; font-weight: bold;">Active</span>
                         {% else %}
-                            <span >inactive</span>
+                            <span style="color: red; font-weight: bold;">Inactive</span>
                         {% endif %}
-                    </td>                    
-                    <td>
-                       <form action="{% url 'delete_discount' item.id %}" method="POST" style="display:inline;">
+                    </td>
+                    <td>{{ item.end_date|date:"d/m/Y" }}</td>
+                    <td class="action-cell">
+                        <button type="button" class="btn-icon btn-edit-icon" 
+                            onclick="openEditForm(
+                                '{{ item.id }}', 
+                                '{{ item.code|escapejs }}', 
+                                `{{ item.description|escapejs }}`, 
+                                '{{ item.min_order_value }}', 
+                                '{{ item.discount_percent }}', 
+                                '{{ item.quantity }}', 
+                                '{{ item.state }}', 
+                                '{{ item.start_date|date:'Y-m-d' }}', 
+                                '{{ item.end_date|date:'Y-m-d' }}'
+                            )" title="Sửa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+
+                        <form action="{% url 'delete_discount' item.id %}" method="POST" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" onclick="return confirm('Xóa mã này?')">
-                                <i class="fas fa-trash" style="color:rgb(255, 254, 254);"></i>
+                            <button type="submit" class="btn-icon btn-delete-icon" onclick="return confirm('Xóa mã này?')" title="Xóa">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </form>
                     </td>
@@ -90,60 +148,160 @@
         </table>
     </div>
 </div>
-    <div class="form-add" id="form-add" style="display: none">
-        <div class="form-title">
-            <p>THÊM MÃ KHUYẾN MÃI</p>
-            <button id="take-off">X</button>
-        </div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeAllModals()"></div>
+
+<div class="form-add" id="form-add" style="display: none">
+    <div class="form-title">
+        <p>THÊM MÃ GIẢM GIÁ</p>
+        <button id="take-off" onclick="closeAllModals()">X</button>
+    </div>
+
+    <form class="main-form" method="POST" action="{% url 'add_discount' %}">
+        {% csrf_token %} 
         
-        <form class="main-form" action="{% url 'add_discount' %}" method="POST">
-            {% csrf_token %}
-            
-            <div class="p name-p">
-                <label>Mã Code</label>
-                <input type="text" name="code" placeholder="Mã giảm giá" required>
-            </div>
-            <div class="price-p">
-                <label>Mô tả</label>
-                <input type="text" name="description" placeholder="Nhập thông tin" required>
-            </div>
+        <div class="p name-p">
+            <label>Mã Code</label>
+            <input type="text" name="code" placeholder="Ví dụ: SALE2024" required>
+        </div>
 
-            <div class="price-p">
-                <label>Điều kiện</label>
-                <input type="number" name="min_order_value" placeholder="Nhập số tiền tối thiểu" required>
-            </div>
+        <div class="p name-p">
+            <label>Mô tả</label>
+            <input type="text" name="description" placeholder="Mô tả chi tiết" required>
+        </div>
 
-            <div class="price-p">
-                <label>Giá trị giảm (%)</label>
-                <input type="number" name="discount_percent" placeholder="Phần trăm giảm" required>
-            </div>
-            
-            <div class="count-p">
-                <label>Số lượng</label>
-                <input type="number" name="quantity" required>
-            </div>
-            <div class="count-p">
-                <label>Ngày bắt đầu</label>
-                <input type="date" name="start_date" required>
-            </div>
-            <div class="count-p">
-                <label>Hạn sử dụng</label>
-                <input type="date" name="end_date" required>
-            </div>
+        <div class="state-p">
+            <label>Trạng thái</label>
+            <select name="state" required>
+                <option value="active">Active (Hoạt động)</option>
+                <option value="inactive">Inactive (Ngưng)</option>
+            </select>
+        </div>
 
-            <div class="state-p">
-                <label>Trạng thái</label>
-                <select name="state" required>
-                    <option value="active">active</option>
-                    <option value="inactive">inactive</option>
-                </select>
-            </div>
+        <div class="price-p">
+            <label>Điều kiện đơn (VNĐ)</label>
+            <input type="number" name="min_order_value" placeholder="Ví dụ: 100000" required>
+        </div>
 
-            <button class="submit" type="submit">Tạo Mã</button>
-        </form>
-    </div>  
+        <div class="price-p">
+            <label>Mức giảm (%)</label>
+            <input type="number" name="discount_percent" placeholder="Ví dụ: 10" step="0.1" required>
+        </div>
+
+        <div class="p name-p">
+            <label>Số lượng mã</label>
+            <input type="number" name="quantity" placeholder="Ví dụ: 100" required>
+        </div>
+
+        <div class="price-p">
+            <label>Ngày bắt đầu</label>
+            <input type="date" name="start_date" required>
+        </div>
+
+        <div class="price-p">
+            <label>Hạn sử dụng</label>
+            <input type="date" name="end_date" required>
+        </div>
+
+        <button class="submit" type="submit">Tạo Mã Mới</button>
+    </form>
 </div>
+
+<div class="form-add" id="form-remake" style="display: none">
+    <div class="form-title">
+        <p>CẬP NHẬT MÃ</p>
+        <button id="take-off" type="button" onclick="closeAllModals()">X</button>
+    </div>
+
+    <form class="main-form" id="edit-form-element" method="POST" action="">
+        {% csrf_token %} 
+        
+        <input type="hidden" id="edit-id-hidden">
+
+        <div class="p name-p">
+            <label>Mã Code</label>
+            <input type="text" name="code" id="edit-code" readonly style="background: #eee; cursor: not-allowed;">
+        </div>
+
+        <div class="p name-p">
+            <label>Mô tả</label>
+            <input type="text" name="description" id="edit-description" required>
+        </div>
+
+        <div class="state-p">
+            <label>Trạng thái</label>
+            <select name="state" id="edit-state" required>
+                <option value="active">Active (Hoạt động)</option>
+                <option value="inactive">Inactive (Ngưng)</option>
+            </select>
+        </div>
+
+        <div class="price-p">
+            <label>Điều kiện đơn (VNĐ)</label>
+            <input type="number" name="min_order_value" id="edit-min-order" required>
+        </div>
+
+        <div class="price-p">
+            <label>Mức giảm (%)</label>
+            <input type="number" name="discount_percent" id="edit-percent" step="0.1" required>
+        </div>
+
+        <div class="p name-p">
+            <label>Số lượng</label>
+            <input type="number" name="quantity" id="edit-quantity" required>
+        </div>
+
+        <div class="price-p">
+            <label>Ngày bắt đầu</label>
+            <input type="date" name="start_date" id="edit-start" required>
+        </div>
+
+        <div class="price-p">
+            <label>Hạn sử dụng</label>
+            <input type="date" name="end_date" id="edit-end" required>
+        </div>
+
+        <button class="submit" type="submit">Lưu Thay Đổi</button>
+    </form>
+</div>
+
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static 'main/js/admin.js' %}"></script>
+
+<script src="{% static 'main/js/admin.js' %}"></script>
+
+<script>
+    function openAddModal() {
+        document.getElementById('modal-overlay').style.display = 'block';
+        document.getElementById('form-add').style.display = 'block';
+    }
+
+    function closeAllModals() {
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('form-add').style.display = 'none';
+        document.getElementById('form-remake').style.display = 'none';
+    }
+
+    // Hàm điền dữ liệu vào form Edit
+    function openEditForm(id, code, desc, min, percent, qty, state, start, end) {
+        // Mở popup
+        document.getElementById('modal-overlay').style.display = 'block';
+        document.getElementById('form-remake').style.display = 'block';
+
+        // Điền dữ liệu
+        document.getElementById('edit-code').value = code;
+        document.getElementById('edit-description').value = desc;
+        document.getElementById('edit-min-order').value = parseFloat(min);
+        document.getElementById('edit-percent').value = parseFloat(percent);
+        document.getElementById('edit-quantity').value = qty;
+        document.getElementById('edit-state').value = state;
+        document.getElementById('edit-start').value = start;
+        document.getElementById('edit-end').value = end;
+
+        // Cập nhật action form
+        var form = document.getElementById('edit-form-element');
+        form.action = "/update_discount/" + id + "/";
+    }
+</script>
+
 </body>
 </html>

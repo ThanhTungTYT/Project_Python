@@ -114,11 +114,9 @@ def get_adminPage2(request):
     
     return render(request, 'main/adminPage2.html', context)
 
-
 def add_product(request):
     if request.method == 'POST':
         try:
-            # Lấy dữ liệu từ form
             ten_sp = request.POST.get('name')
             loai_sp_id = request.POST.get('category')
             trang_thai = request.POST.get('state')
@@ -128,10 +126,8 @@ def add_product(request):
             mo_ta = request.POST.get('description')
             list_anh = request.POST.get('image_url', '')
 
-            # Kiểm tra danh mục tồn tại
             cat = Categories.objects.get(id=loai_sp_id)
             
-            # Tạo sản phẩm mới
             new_product = Products.objects.create(
                 name=ten_sp,
                 category=cat,
@@ -144,7 +140,6 @@ def add_product(request):
                 created_at=timezone.now()
             )
             
-            # Xử lý thêm ảnh
             urls = list_anh.replace('\n', ',').split(',')
             for url in urls:
                 url_clean = url.strip()
@@ -162,24 +157,19 @@ def add_product(request):
 def delete_product(request, product_id):
     if request.method == 'POST':
         try:
-            # 1. Lấy sản phẩm
             product = get_object_or_404(Products, id=product_id)
             
             has_sold = OrderItems.objects.filter(product=product).exists()
             
             if has_sold:
-                # Nếu đã bán -> Không xóa vĩnh viễn, mà ẩn sản phẩm và đặt kho về 0
-                product.state = 'inactive'  # cập nhật trạng thái để ẩn sản phẩm
+                product.state = 'inactive' 
                 product.stock = 0
                 product.save()
             else:
-                # 3. Nếu chưa từng bán -> Xóa sạch
                 product_name = product.name 
                 
-                # Xóa ảnh liên quan trước (dù Django thường tự xử lý, viết rõ càng tốt)
                 product.productimages_set.all().delete()
                 
-                # Xóa sản phẩm
                 product.delete()
                 
             
@@ -192,10 +182,8 @@ def delete_product(request, product_id):
 def edit_product(request, product_id):
     if request.method == 'POST':
         try:
-            # 1. Lấy sản phẩm cần sửa
             product = get_object_or_404(Products, id=product_id)
             
-            # 2. Cập nhật thông tin cơ bản
             product.name = request.POST.get('name')
             product.price = request.POST.get('price')
             product.state = request.POST.get('state')
@@ -205,12 +193,10 @@ def edit_product(request, product_id):
             
             product.description = request.POST.get('description')
             
-            # 3. Cập nhật Loại sản phẩm 
             cat_id = request.POST.get('category')
             if cat_id:
                 product.category = get_object_or_404(Categories, id=cat_id)
 
-            # 4. Lưu vào DB
             product.save()
             
         except Exception as e:
@@ -219,23 +205,17 @@ def edit_product(request, product_id):
     return redirect('adminPage2')
 
 def get_adminPage3(request):
-    # 1. XỬ LÝ POST (Cập nhật trạng thái) - Đưa lên đầu để xử lý xong mới load lại dữ liệu
     if request.method == "POST" and 'btn_export_invoice' in request.POST:
         order_id_to_update = request.POST.get('order_id_hidden')
-            # Lấy đơn hàng
         order_update = Orders.objects.get(id=order_id_to_update)
             
-            # KIỂM TRA
         if order_update.status in ['Chờ xử lý']: 
             order_update.status = 'Đang giao'
             order_update.save()
-
-                      
-        # Redirect lại trang hiện tại để làm mới dữ liệu và tránh resubmit form
+        
         page_current = request.GET.get('page', 1)
         return redirect(f'/adminPage3/?page={page_current}')
 
-    # 2. QUERY DỮ LIỆU (Phần hiển thị)
     orders_list = Orders.objects.select_related('user').prefetch_related(
         'orderitems_set__product', 
         'orderaddresses_set'
@@ -355,7 +335,6 @@ def get_adminPage6(request):
 
     reviews_list = ProductsReview.objects.select_related('product', 'user').all().order_by('-created_at')
 
-
     search_query = request.GET.get('q', '')
     if search_query:
         reviews_list = reviews_list.filter(
@@ -437,34 +416,63 @@ def get_adminPage8(request):
     promotions = Promotions.objects.all().order_by('-id')
     return render(request, 'main/adminPage8.html', {'promotions': promotions})
 
-# 2. Thêm mã mới
 def add_discount(request):
-    code = request.POST.get('code')
+    if request.method == 'POST':
+        try:
+            code = request.POST.get('code')
+            
+            if Promotions.objects.filter(code=code).exists():
+                messages.error(request, 'Mã giảm giá này đã tồn tại!')
+                return redirect('adminPage8')
 
-    if Promotions.objects.filter(code=code).exists():
-        messages.error(request, 'Mã này đã tồn tại!')
-        return redirect('adminPage8')
+            description = request.POST.get('description')
+            min_order_value = request.POST.get('min_order_value')
+            discount_percent = request.POST.get('discount_percent')
+            quantity = request.POST.get('quantity')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
+            state = request.POST.get('state')
 
-    state = request.POST.get('state')
-    if state not in ['active', 'inactive']:
-        state = 'inactive'
+            Promotions.objects.create(
+                code=code,
+                description=description,
+                min_order_value=float(min_order_value),
+                discount_percent=float(discount_percent),
+                quantity=int(quantity),
+                start_date=start_date,
+                end_date=end_date,
+                state=state
+            )
+            messages.success(request, 'Thêm mã giảm giá thành công!')
+            
+        except Exception as e:
+            print(f"Lỗi thêm mã: {e}")
+            messages.error(request, 'Có lỗi xảy ra khi thêm mã.')
 
-    Promotions.objects.create(
-        code=code,
-        description=request.POST.get('description'),
-        min_order_value=request.POST.get('min_order_value'),
-        discount_percent=request.POST.get('discount_percent'),
-        quantity=request.POST.get('quantity'),
-        start_date=request.POST.get('start_date'),
-        end_date=request.POST.get('end_date'),
-        state=state
-    )
-
-    messages.success(request, 'Đã tạo mã giảm giá.')
     return redirect('adminPage8')
 
+def update_discount(request, promo_id):
+    if request.method == 'POST':
+        try:
+            promo = get_object_or_404(Promotions, id=promo_id)
+            
+            promo.description = request.POST.get('description')
+            promo.min_order_value = float(request.POST.get('min_order_value'))
+            promo.discount_percent = float(request.POST.get('discount_percent'))
+            promo.quantity = int(request.POST.get('quantity'))
+            promo.start_date = request.POST.get('start_date')
+            promo.end_date = request.POST.get('end_date')
+            promo.state = request.POST.get('state')
+            
+            promo.save()
+            messages.success(request, f'Cập nhật mã {promo.code} thành công!')
+            
+        except Exception as e:
+            print(f"Lỗi sửa mã: {e}")
+            messages.error(request, 'Lỗi cập nhật mã giảm giá.')
 
-# 3. Xóa mã
+    return redirect('adminPage8')
+
 def delete_discount(request, promo_id):
     if request.method == 'POST':
         try:
@@ -473,13 +481,16 @@ def delete_discount(request, promo_id):
             has_used = Orders.objects.filter(promo=promo).exists()
 
             if has_used:
-                promo.state = 'non active'
+                promo.state = 'inactive'
                 promo.quantity = 0
                 promo.save()
+                messages.warning(request, 'Mã đã được sử dụng nên chỉ chuyển sang trạng thái Inactive.')
             else:
                 promo.delete()
+                messages.success(request, 'Đã xóa mã giảm giá.')
 
         except Exception as e:
             print(e)
+            messages.error(request, 'Lỗi khi xóa mã.')
 
     return redirect('adminPage8')
