@@ -96,4 +96,25 @@ $(document).ready(function() {
         }
         return cookieValue;
     }
+    // --- XỬ LÝ FORM ĐỔI MẬT KHẨU (Event Delegation) ---
+    $(document).on('click', '#btn-submit-changepw', function(e) {
+        e.preventDefault(); 
+
+        var form = $('#form-changepw');
+        var url = form.attr('action'); 
+        
+        var formData = form.serialize(); 
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            success: function(responseHtml) {
+                $('#content-area').html(responseHtml);
+            },
+            error: function() {
+                alert("Có lỗi xảy ra khi kết nối đến server.");
+            }
+        });
+    });
 });
