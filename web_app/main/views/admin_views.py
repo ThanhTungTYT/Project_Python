@@ -139,7 +139,7 @@ def add_product(request):
                 sold=0,
                 created_at=timezone.now()
             )
-            
+            # cắt chuổi bằng xuống dòng hoặc dấu phẩy để lấy url ảnh
             urls = list_anh.replace('\n', ',').split(',')
             for url in urls:
                 url_clean = url.strip()
@@ -455,6 +455,7 @@ def update_discount(request, promo_id):
     if request.method == 'POST':
         try:
             promo = get_object_or_404(Promotions, id=promo_id)
+            
             
             promo.description = request.POST.get('description')
             promo.min_order_value = float(request.POST.get('min_order_value'))
