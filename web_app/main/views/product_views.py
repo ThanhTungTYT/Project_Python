@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Avg, Q
-from ..models import Banners, Products, Categories, ProductsReview, Users
+from ..models import Banners, Products, Categories, ProductsReview, Users, ProductImages
 from ai_model import filter_engine
 
 def get_index(request):
@@ -16,7 +16,7 @@ def get_index(request):
         return render(request, 'main/index.html', context)
     except:
         products = []
-    return render(request, 'main/index.html', {'products': products})
+    return render(request, 'main/index.html', context)
 
 def get_catalog(request):
     categories = Categories.objects.all()
@@ -67,6 +67,7 @@ def get_search(request):
 def get_product(request, product_id):
     try:
         product = Products.objects.get(state='active', id=product_id)
+        imagelist = ProductImages.objects.filter(product=product)
     except Products.DoesNotExist:
         return redirect('catalog')
 
@@ -120,6 +121,7 @@ def get_product(request, product_id):
 
     context = {
         'product': product,
+        'imagelist': imagelist,
         'reviews': reviews,
         'avg_rating': avg_rating,
         'review_count': reviews.count(),

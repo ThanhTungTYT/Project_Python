@@ -39,7 +39,7 @@
   <div class="bottom">
     <a href="{% url 'index' %}">Trang chủ</a>
     <a href="{% url 'catalog' %}">Sản phẩm</a>
-    <a href="help.html">Liên hệ</a>
+    <a href="{% url 'help' %}">Liên hệ</a>
     <a href="{% url 'aboutUs' %}">Giới thiệu</a>
   </div>
 </header>
@@ -63,6 +63,15 @@
                              <img src="{% static 'main/img/no-image.png' %}" alt="No Image">
                         {% endif %}
                     {% endwith %}
+                    <div class="thumbnail-gallery">
+                        {% for img in imagelist %}
+                            {% if "http" in img.image_url %}
+                                <img src="{{ img.image_url }}" alt="{{ product.name }}" class="thumbnail-item active">
+                            {% else %}
+                                <img src="/static/main/img/{{ img.image_url }}" alt="{{ product.name }}" class="thumbnail-item active">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="content">
                     <p class="price">{{product.price}} VND</p>
