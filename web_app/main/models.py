@@ -90,7 +90,7 @@ class Users(models.Model):
         db_table = 'users'
         
 class Banners(models.Model):
-    banner_url = models.CharField(max_length=255)
+    banner_url = models.TextField()
     status = models.CharField(max_length=20)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
