@@ -178,8 +178,7 @@ def generate_strong_password():
 def get_forgotpassword(request):
     if request.method == 'POST':
         email_input = request.POST.get('username', '').strip()
-        cache_key = f"reset_pass_{email_input}"
-        
+                
         cache_key = f"reset_pass_{email_input}"
         if cache.get(cache_key):
             messages.error(request, "Bạn vừa yêu cầu đổi mật khẩu. Vui lòng thử lại sau 1 tiếng.")

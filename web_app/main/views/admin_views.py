@@ -1,95 +1,167 @@
+# --- DJANGO CORE IMPORTS ---
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.utils import timezone
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
+from django.http import HttpResponse 
+
+# --- AUTHENTICATION ---
 from django.contrib.auth.hashers import make_password
-from django.conf import settings
+
+# --- TIME & DATE HANDLING ---
+from django.utils import timezone
 from django.utils.dateparse import parse_date
-from django.db.models import Q, Sum
+from datetime import timedelta, datetime 
+
+# --- DATABASE & MODELS ---
+from django.db.models import Sum, Count, Q 
+# Import Models 
+from ..models import (
+    Products, Categories, ProductImages, Contacts, Users, 
+    Orders, Banners, ProductsReview, OrderItems, OrderAddresses, Promotions
+)
+
+# --- DATA SCIENCE & VISUALIZATION ---
 import pandas as pd
-import matplotlib.pyplot as plt
-import io
-import urllib, base64
 import matplotlib
-matplotlib.use('Agg')
-from ..models import Products, Categories, ProductImages, Contacts, Users, Orders, Banners, ProductsReview, OrderItems, OrderAddresses, Promotions
+matplotlib.use('Agg') 
+import matplotlib.pyplot as plt
+
+# --- UTILITIES (XỬ LÝ ẢNH & ENCODING) ---
+import io
+import base64
+import urllib.parse 
 
 
 def get_adminPage1(request):
-    current_date = timezone.now().date()
-    current_month = timezone.now().month
+    # 1. XỬ LÝ BỘ LỌC THỜI GIAN
+    filter_type = request.GET.get('filter', 'today') 
+    
+    now = timezone.now()
+    today_date = now.date()
+    
+    # Xác định mốc thời gian bắt đầu
+    if filter_type == 'week':
+        start_date = now - timedelta(days=7)
+        label_filter = "7 ngày qua"
+    elif filter_type == 'month':
+        start_date = now - timedelta(days=30)
+        label_filter = "30 ngày qua"
+    elif filter_type == 'quarter':
+        start_date = now - timedelta(days=120) # 4 tháng
+        label_filter = "1 quý qua"
+    else: # today
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        label_filter = "Hôm nay"
 
-    orders_now = Orders.objects.filter(created_at__date=current_date)
-    users_now = Users.objects.filter(created_at__date=current_date)
-    orders_month = Orders.objects.filter(created_at__month=current_month)
-    
-    seven_days_ago = timezone.now() - timezone.timedelta(days=7)
-    orders_near = Orders.objects.filter(created_at__gte=seven_days_ago).order_by('-created_at')
-    
+    orders_filtered = Orders.objects.filter(created_at__gte=start_date).exclude(status='Đã hủy')
+    users_filtered = Users.objects.filter(created_at__gte=start_date)
+
+    # 2. TÍNH TOÁN KPI
+    orders_today = Orders.objects.filter(created_at__date=today_date).exclude(status='Đã hủy')
+    revenue_today = orders_today.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    count_orders_filter = orders_filtered.count()
+    pending_count = orders_filtered.filter(status='Chờ xử lý').count()
+    count_users_filter = users_filtered.count()
+    total_revenue_filter = orders_filtered.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    # 3. VẼ BIỂU ĐỒ TRÒN (TOP SẢN PHẨM)
     category_stats = OrderItems.objects.filter(
-        order__created_at__month=current_month
+        order__created_at__gte=start_date
     ).exclude(
-        order__status='Đã hủy' 
+        order__status='Đã hủy'
     ).values(
-        'product__category__name'         
+        'product__category__name'
     ).annotate(
-        total_qty=Sum('quantity')          
-    ).order_by('-total_qty')              
+        total_qty=Sum('quantity')
+    ).order_by('-total_qty')
 
-    data_category = []
-    for item in category_stats:
-        if item['total_qty'] > 0:
-            data_category.append({
-                'name': item['product__category__name'], 
-                'count': item['total_qty']
-            })
+    chart_pie_url = None
+    data_category = [{'name': item['product__category__name'], 'count': item['total_qty']} 
+                      for item in category_stats if item['total_qty'] > 0]
 
-    chart_url = None
     if data_category:
-        df = pd.DataFrame(data_category)
-        
-        fig, ax = plt.subplots(figsize=(5, 5))
-        
+        df_pie = pd.DataFrame(data_category)
+        fig_pie, ax_pie = plt.subplots(figsize=(5, 5))
         colors = ['#ff9999','#66b3ff','#99ff99','#ffcc99', '#c2c2f0']
         
-        ax.pie(
-            df['count'], 
-            labels=df['name'], 
-            autopct='%1.1f%%', 
-            startangle=90, 
-            colors=colors,
-            textprops={'fontsize': 13}, 
-            radius=1.0
+        ax_pie.pie(
+            df_pie['count'], labels=df_pie['name'], autopct='%1.1f%%',
+            startangle=90, colors=colors, textprops={'fontsize': 11}, radius=1.0
         )
+        ax_pie.axis('equal')
         
-        ax.axis('equal')
-
         buf = io.BytesIO()
         plt.savefig(buf, format='png', bbox_inches='tight', transparent=True)
         buf.seek(0)
-        string = base64.b64encode(buf.read())
-        chart_url = urllib.parse.quote(string)
-        plt.close(fig)
+        chart_pie_url = urllib.parse.quote(base64.b64encode(buf.read()))
+        plt.close(fig_pie)
 
-    count_users = users_now.count()
-    sum_date = orders_now.aggregate(Sum('total_amount'))['total_amount__sum'] or 0 
-    orders_count = orders_now.count()
-    sum_month = orders_month.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-    avg_month = sum_month / orders_month.count() if orders_month.count() > 0 else 0
+    # 4. VẼ BIỂU ĐỒ CỘT (DOANH THU)
+    chart_bar_url = None
+    
+    # Lấy dữ liệu từ query chung bên trên (orders_filtered)
+    data_revenue = list(orders_filtered.values('created_at', 'total_amount'))
+    
+    if data_revenue:
+        df_bar = pd.DataFrame(data_revenue)
+        df_bar['created_at'] = pd.to_datetime(df_bar['created_at'])
+        
+        # Xử lý gom nhóm dữ liệu theo loại lọc
+        if filter_type == 'today':
+            df_bar['period'] = df_bar['created_at'].dt.strftime('%H:00')
+            xlabel = 'Giờ trong ngày'
+        elif filter_type == 'week':
+            df_bar['period'] = df_bar['created_at'].dt.strftime('%d/%m')
+            xlabel = 'Ngày'
+        elif filter_type == 'month':
+            df_bar['period'] = df_bar['created_at'].dt.strftime('%d/%m')
+            xlabel = 'Ngày trong tháng'
+        else: # quarter
+            df_bar['period'] = df_bar['created_at'].dt.strftime('T%m')
+            xlabel = 'Tháng'
+
+        # Tính tổng tiền theo period (nhóm lại)
+        df_bar_grouped = df_bar.groupby('period')['total_amount'].sum().reset_index()
+
+        # Vẽ biểu đồ
+        fig_bar, ax_bar = plt.subplots(figsize=(10, 4))
+        
+        # Vẽ cột
+        ax_bar.bar(df_bar_grouped['period'], df_bar_grouped['total_amount'], color='#A0522D', width=0.5)
+        
+        # Trang trí
+        ax_bar.set_ylabel('Doanh thu (VND)')
+        ax_bar.set_xlabel(xlabel)
+        ax_bar.spines['top'].set_visible(False)
+        ax_bar.spines['right'].set_visible(False)
+        ax_bar.grid(axis='y', linestyle='--', alpha=0.5)
+        
+        # Format số tiền (vd: 1,000,000)
+        ax_bar.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+        
+        plt.xticks(rotation=0)
+        plt.tight_layout()
+
+        buf_bar = io.BytesIO()
+        plt.savefig(buf_bar, format='png', transparent=True)
+        buf_bar.seek(0)
+        chart_bar_url = urllib.parse.quote(base64.b64encode(buf_bar.read()))
+        plt.close(fig_bar)
 
     context = {
-        'orders_now': orders_now,
-        'orders_month': orders_month,
-        'orders_count': orders_count,
-        'sum_date': sum_date,
-        'sum_month': sum_month,
-        'users_now': users_now,
-        'count_users': count_users,
-        'avg_month': avg_month,
-        'orders_near': orders_near,
-        'chart_category': chart_url, 
+        'revenue_today': revenue_today,
+        'count_orders_filter': count_orders_filter,
+        'pending_count': pending_count,
+        'count_users_filter': count_users_filter,
+        'total_revenue_filter': total_revenue_filter,
+        'label_filter': label_filter,
+        'current_filter': filter_type,
+        'chart_pie_url': chart_pie_url,
+        'chart_bar_url': chart_bar_url,
     }
+    
     return render(request, 'main/adminPage1.html', context)
 
 def get_adminPage2(request):
