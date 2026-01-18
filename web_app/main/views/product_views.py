@@ -1,21 +1,33 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Avg, Q
+from django.db.models import Avg, Q, Sum
 from ..models import Banners, Products, Categories, ProductsReview, Users, ProductImages
 from ai_model import filter_engine
 
 def get_index(request):
+    context = {
+        'products': [],
+        'banners': []
+    }
     try:
-        products = Products.objects.filter(state='active').order_by('-sold')[:4]
+        products = Products.objects.filter(
+            state='active', 
+            orderitems__order__created_at__year=timezone.now().year,
+            orderitems__order__created_at__month=timezone.now().month,
+            orderitems__order__status='Đã nhận' 
+        ).annotate(
+            sold_in_month=Sum('orderitems__quantity')
+        ).order_by(
+            '-sold_in_month'
+        )[:4]
+        
         banners = Banners.objects.filter(status='active')
-        context = {
-            'products': products,
-            'banners': banners
-        }
+        context['products'] = products
+        context['banners'] = banners
         return render(request, 'main/index.html', context)
-    except:
-        products = []
+    except Exception as e:
+        print(f"Lỗi truy vấn trang chủ: {e}")
     return render(request, 'main/index.html', context)
 
 def get_catalog(request):

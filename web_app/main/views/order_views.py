@@ -160,8 +160,16 @@ def process_checkout(request):
             
             # Tạo sẵn đối tượng NO_PROMO để fallback (dùng khi không có mã hoặc mã lỗi)
             no_promo, _ = Promotions.objects.get_or_create(
-                code="NO_PROMO", 
-                defaults={'description': 'Không áp dụng', 'discount_percent': 0, 'min_order_value': 0}
+                code="NO_PROMO",
+                defaults={
+                    'description': 'Không áp dụng',
+                    'discount_percent': 0,
+                    'min_order_value': 0,
+                    'quantity': 999999,  # hoặc 0 nếu bạn muốn
+                    'start_date': timezone.now(),
+                    'end_date': timezone.datetime(2099, 12, 31, tzinfo=timezone.get_current_timezone()),
+                    'state': 'active'
+                }
             )
 
             if coupon_code:
