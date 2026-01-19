@@ -9,15 +9,86 @@
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
     
     <style>
-        /* === CSS ÉP FORM RA GIỮA MÀN HÌNH === */
-        /* Overlay làm tối nền */
+        /* === CSS CẤU TRÚC CHUNG === */
+        
+        /* === CSS CHO SEARCH BAR (CẬP NHẬT MỚI) === */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;       
+            margin-bottom: 20px;
+            gap: 15px;                
+        }
+
+        .right-content .search-bar {
+            width: 50% !important;
+            height: auto !important;
+            background: #fff;
+            border: 1px solid #ccc !important;
+            border-radius: 25px !important;
+            padding: 5px 20px !important;
+            display: flex;
+            align-items: center;
+            box-shadow: none !important;
+            margin: 0 !important; /* Quan trọng để flex align chuẩn */
+        }
+
+        .right-content .search-bar input {
+            border: none !important;
+            outline: none;
+            background: transparent;
+            width: 100% !important;
+            flex: 1;
+            height: auto !important;
+            padding: 5px !important;
+            font-size: 14px;
+            border-radius: 0 !important;
+        }
+
+        .right-content .search-bar button {
+            border: none !important;
+            background: transparent !important;
+            width: auto !important;
+            height: auto !important;
+            padding: 0 10px !important;
+            border-radius: 0 !important;
+            cursor: pointer;
+            color: #555;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .right-content .search-bar button:hover {
+            transform: none !important;
+            color: #333; 
+        }
+
+        .reset-btn {
+            text-decoration: none;
+            color: #999;      
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .reset-btn:hover {
+            color: #dc3545;     /* Hover chuyển đỏ */
+        }
+
+        /* === CSS MODAL & FORM (GIỮ NGUYÊN) === */
         .modal-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); z-index: 9998;
         }
 
-        /* Ghi đè class form-add để nó nổi lên giữa màn hình */
         .form-add {
             position: fixed !important;
             top: 50% !important;
@@ -27,18 +98,17 @@
             background: #fff;
             box-shadow: 0 5px 25px rgba(0,0,0,0.3);
             border-radius: 8px;
-            max-height: 90vh; /* Tránh form quá dài tràn màn hình */
-            overflow-y: auto; /* Cho phép cuộn nếu form dài */
-            width: 450px; /* Độ rộng vừa phải */
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 450px;
         }
         
-        /* Chỉnh lại nút đóng form */
         #take-off {
             cursor: pointer; font-weight: bold; font-size: 18px; border: none; background: transparent;
         }
         #take-off:hover { color: red; }
 
-        /* Style cho bảng và nút hành động */
+        /* === TABLE & ACTIONS === */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
         th { background-color: #f8f9fa; color: #666; font-weight: 600; }
@@ -77,11 +147,17 @@
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ MÃ GIẢM GIÁ</p>
     </div>
-    <form class="search-bar" action="{% url 'search' %}" method="GET">
-        <input type="text" name="q" placeholder="Tìm kiếm mã giảm giá" required>
-        <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
-    
+
+    <div class="search-container">
+        <form class="search-bar" action="{% url 'adminPage8' %}" method="GET">
+            <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Tìm theo Mã hoặc Mô tả..." required>
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+
+        <a href="{% url 'adminPage8' %}" class="reset-btn" title="Xóa bộ lọc">
+            Đặt lại </a>
+    </div>
+
     <div class="main-menu">
         <button id="add-btn" onclick="openAddModal()">+ Thêm mã giảm giá</button>
     </div>

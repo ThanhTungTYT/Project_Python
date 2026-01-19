@@ -290,7 +290,7 @@ table td {
 .right-content .search-bar input {
     width: 50%;
     height: 40px;
-    padding: 10px 30px;
+    padding: 10px 20px;
     border-radius: 20px 0 0 20px;
     border: 1px black solid;
     border-right: none;
@@ -303,7 +303,7 @@ table td {
 .right-content .search-bar button {
     width: 5%;
     height: 40px;
-    padding: 10px 30px;
+    padding: 10px 20px;
     border-radius: 0 20px 20px 0;
     border: 1px black solid;
     border-left: none;

@@ -84,7 +84,7 @@
             
             <button type="button" class="btn-increase">+</button>
         </div>
-        <div class="product-subtotal">{{item.product.price}}đ</div>
+        <div class="product-subtotal">{{item.product.price | vn_currency}} VND</div>
     </div>
     {% endfor %}
 </div>

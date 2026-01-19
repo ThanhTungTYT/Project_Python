@@ -86,7 +86,7 @@
                     <img src="{{ image_object.image_url }}" alt="{{ product.name }}">
                     {% endwith %}
                     <p>{{ product.name }}</p>
-                    <span>{{ product.price }} VND</span>
+                    <span>{{ product.price | vn_currency}} VND</span>
                     <label>Loại: {{ product.category.name }}</label>
                 </a>
             {% endfor %}

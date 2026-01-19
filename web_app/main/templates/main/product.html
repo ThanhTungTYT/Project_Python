@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="content">
-                    <p class="price">{{product.price}} VND</p>
+                    <p class="price">{{product.price | vn_currency}} VND</p>
                     <div class="sub-content">
                         <p>Thương hiệu: <span>Aroma Cafe</span></p>
                     </div>
@@ -239,7 +239,7 @@
                             {% endif %}
                         {% endwith %}
                         <p>{{ p.name }}</p>
-                        <span>{{ p.price}} VND</span>
+                        <span>{{ p.price | vn_currency}} VND</span>
                         <label>Loại: {{ product.category.name }}</label>
                     </a>
                 {% endfor %}

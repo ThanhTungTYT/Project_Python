@@ -63,7 +63,7 @@
                             <div style="flex-grow: 1;">
                                 <p style="margin: 0; font-weight: 500; color: #333;">{{ item.product.name }}</p>
                                 <p style="margin: 5px 0; font-size: 13px; color: #666;">
-                                    {{ item.price|stringformat:"d" }}đ x {{ item.quantity }}
+                                    {{ item.price| vn_currency }}đ x {{ item.quantity }}
                                 </p>
                             </div>
                             
@@ -111,12 +111,12 @@
                     <div style="text-align: right;">
                         {% if order.discount_percent > 0 %}
                             <div style="font-size: 13px; color: #28a745; margin-bottom: 5px;">
-                                <i class="fas fa-tag"></i> Giảm {{ order.discount_percent|stringformat:"d" }}%
+                                <i class="fas fa-tag"></i> Giảm {{ order.discount_percent| vn_currency }}%
                             </div>
                         {% endif %}
                         <span style="font-size: 14px; color: #666;">Tổng tiền:</span>
                         <span style="font-size: 18px; color: #d3b673; font-weight: bold; margin-left: 10px;">
-                            {{ order.final_amount|stringformat:"d" }}đ
+                            {{ order.final_amount| vn_currency }}đ
                         </span>
                     </div>
                 </div>

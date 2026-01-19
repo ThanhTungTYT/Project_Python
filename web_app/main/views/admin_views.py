@@ -485,8 +485,20 @@ def update_banner(request, banner_id):
     return redirect('adminPage7')
 
 def get_adminPage8(request):
-    promotions = Promotions.objects.all().order_by('-id')
-    return render(request, 'main/adminPage8.html', {'promotions': promotions})
+    query = request.GET.get('q', '')
+    
+    if query:
+        promotions = Promotions.objects.filter(
+            Q(code__icontains=query) | Q(description__icontains=query)
+        ).order_by('-id')
+    else:
+        promotions = Promotions.objects.all().order_by('-id')
+    
+    context = {
+        'promotions': promotions,
+        'query': query  
+    }
+    return render(request, 'main/adminPage8.html', context)
 
 def add_discount(request):
     if request.method == 'POST':
