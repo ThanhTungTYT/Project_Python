@@ -44,8 +44,8 @@
     </div>
 </header>
 <div class="img-home" id="img-home">
-<button class="left" onclick="showPreviousImage()"><</button>
-<button class="right" onclick="showNextImage()">></button>
+    <button class="left" onclick="handlePreviousClick()"></button>
+    <button class="right" onclick="handleNextClick()"></button>
 </div>
 <div class="hot-item slide-up">
 <div class="hot-title">
@@ -163,7 +163,7 @@ allowfullscreen>
     <script>
         window.BANNERS = [
         {% for banner in banners %}
-            "{{ banner.banner_url }}"{% if not forloop.last %},{% endif %}
+            "{{ banner.banner_url|escapejs }}"{% if not forloop.last %},{% endif %}
         {% endfor %}
         ];
     </script>

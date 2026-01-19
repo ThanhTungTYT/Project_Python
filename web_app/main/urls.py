@@ -72,4 +72,5 @@ urlpatterns = [
     
     path('add_banner/', views.add_banner, name='add_banner'),
     path('update_banner/', views.update_banner, name='update_banner'),
+    path('delete_banner/<int:banner_id>/', views.delete_banner, name='delete_banner'),
 ]

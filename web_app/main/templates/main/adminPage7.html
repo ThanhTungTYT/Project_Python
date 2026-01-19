@@ -4,15 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lí banner</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
+    <style>
+        /* CSS bổ sung để nút Xóa và Sửa nằm cạnh nhau đẹp mắt */
+        .action-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Style chung cho nút hành động */
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background-color: #c76739; /* Màu cam chủ đạo */
+            transition: 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #8c4828;
+            transform: scale(1.1);
+        }
+
+        /* Ảnh preview trong bảng */
+        .banner-preview {
+            width: 150px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f0f0f0;
+        }
+        
+        /* Đảm bảo form popup nằm trên cùng */
+        .form-add {
+            z-index: 1000;
+        }
+    </style>
 </head>
 
 <body>
 <div class="left-menu" id="left-menu">
-        <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
-        </div>
+    <div class="logo">
+        <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
+    </div>
     <div class="menu">
         <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
@@ -39,7 +84,7 @@
         <button id="add">+ Thêm banner</button>
     </div>
 
-    <div class="list-product">
+    <div class="list-product" style="padding: 20px;">
         <h3>DANH SÁCH BANNER</h3>
         <table>
             <thead>
@@ -49,18 +94,45 @@
                 <th>Trạng thái</th>
                 <th>Ngày bắt đầu</th>
                 <th>Ngày kết thúc</th>
-                <th></th>
+                <th>Hành động</th>
             </tr>
             </thead>
             <tbody>
             {% for banner in banners_list %}
             <tr>
                 <td>{{ banner.id }}</td>
-                <td><img src="{{ banner.banner_image_url }}" alt="Banner Image" width="200px"></td>
-                <td>{{ banner.status }}</td>
-                <td>{{ banner.start_date }}</td>
-                <td>{{ banner.end_date }}</td>
-                <td><button class="remake"><i class="fa-solid fa-pen"></i></button></td>
+                <td>
+                    <img src="{{ banner.banner_url }}" class="banner-preview" alt="Banner Image">
+                </td>
+                <td>
+                    {% if banner.status == 'active' %}
+                        <span style="color: green; font-weight: bold;">Active</span>
+                    {% else %}
+                        <span style="color: red; font-weight: bold;">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>{{ banner.start_date|date:"d/m/Y" }}</td>
+                <td>{{ banner.end_date|date:"d/m/Y" }}</td>
+                <td class="action-cell">
+                    <button class="remake btn-action" 
+                        onclick="fillEditForm(
+                            '{{ banner.id }}', 
+                            '{{ banner.banner_url|escapejs }}', 
+                            '{{ banner.status }}', 
+                            '{{ banner.start_date|date:'Y-m-d' }}', 
+                            '{{ banner.end_date|date:'Y-m-d' }}'
+                        )"
+                        title="Sửa">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                    <form action="{% url 'delete_banner' banner.id %}" method="POST" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-action" onclick="return confirm('Bạn có chắc chắn muốn xóa banner này?')" title="Xóa">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -68,7 +140,6 @@
     </div>
 </div>
 
-<!-- POPUP THÊM BANNER -->
 <div class="form-add" id="form-add" style="display: none">
     <div class="form-title">
         <p>THÊM BANNER</p>
@@ -79,68 +150,85 @@
         {% csrf_token %}
         <div class="p name-p">
             <label>URL Banner</label>
-            <input type="text" name="banner_image_url" placeholder="Link ảnh banner">
+            <input type="text" name="banner_image_url" placeholder="Link ảnh banner" required>
         </div>
 
         <div class="type-p">
             <label>Trạng thái</label>
             <select name="status">
-                <option>active</option>
-                <option>inactive</option>
+                <option value="active">Active (Hiển thị)</option>
+                <option value="inactive">Inactive (Ẩn)</option>
             </select>
         </div>
 
         <div class="p">
             <label>Ngày bắt đầu</label>
-            <input type="date" name="start_date">
+            <input type="date" name="start_date" required>
         </div>
 
         <div class="p">
             <label>Ngày kết thúc</label>
-            <input type="date" name="end_date">
+            <input type="date" name="end_date" required>
         </div>
 
         <button class="submit" type="submit">Thêm Banner</button>
     </form>
 </div>
 
-<!-- POPUP SỬA BANNER -->
 <div class="form-add" id="form-remake" style="display: none">
     <div class="form-title">
         <p>SỬA BANNER</p>
         <button id="close">X</button>
     </div>
 
-    <form class="main-form" method="post" action="{% url 'update_banner' %}">
+    <form class="main-form" id="edit-form-element" method="post" action="">
         {% csrf_token %}
 
         <div class="p name-p">
             <label>URL Banner</label>
-            <input type="text">
+            <input type="text" name="banner_image_url" id="edit-url" required>
         </div>
 
         <div class="type-p">
             <label>Trạng thái</label>
-            <select>
-                <option>active</option>
-                <option>inactive</option>
+            <select name="status" id="edit-status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
             </select>
         </div>
 
         <div class="p">
             <label>Ngày bắt đầu</label>
-            <input type="date">
+            <input type="date" name="start_date" id="edit-start" required>
         </div>
 
         <div class="p">
             <label>Ngày kết thúc</label>
-            <input type="date">
+            <input type="date" name="end_date" id="edit-end" required>
         </div>
 
         <button class="submit" type="submit">Lưu Thay Đổi</button>
     </form>
 </div>
+
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static 'main/js/admin.js' %}"></script>
+
+<script src="{% static 'main/js/admin.js' %}"></script>
+
+<script>
+    function fillEditForm(id, url, status, start, end) {
+        // 1. Điền dữ liệu cũ vào các ô input trong form Sửa
+        document.getElementById('edit-url').value = url;
+        document.getElementById('edit-status').value = status;
+        document.getElementById('edit-start').value = start;
+        document.getElementById('edit-end').value = end;
+
+        // 2. Cập nhật action cho form để gửi đúng ID
+        // URL phải khớp với urls.py, ví dụ: path('update_banner/<int:banner_id>/', ...)
+        const form = document.getElementById('edit-form-element');
+        form.action = "/update_banner/" + id + "/";
+    }
+</script>
+
 </body>
 </html>

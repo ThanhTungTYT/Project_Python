@@ -445,43 +445,43 @@ def delete_review(request, review_id):
     return redirect('adminPage6')
 
 def get_adminPage7(request):
-    banners_list = Banners.objects.all().order_by('id')
-    context = {
-        'banners_list': banners_list,
-    } 
+    banners_list = Banners.objects.all().order_by('-id')
+    context = {'banners_list': banners_list}
     return render(request, 'main/adminPage7.html', context)
 
 def add_banner(request):
     if request.method == 'POST':
         try:
-            banner_image_url = request.POST.get('banner_image_url')
-            banner_status = request.POST.get('status')
-            banner_start_date = request.POST.get('start_date')
-            banner_end_date = request.POST.get('end_date')
             Banners.objects.create(
-                banner_url=banner_image_url,
-                status=banner_status,
-                start_date=banner_start_date,   
-                end_date=banner_end_date,
+                banner_url=request.POST.get('banner_image_url'),
+                status=request.POST.get('status'),
+                start_date=request.POST.get('start_date'),
+                end_date=request.POST.get('end_date'),
             )
         except Exception as e:
-            print(e)
-        
+            print(f"Lỗi thêm: {e}")
     return redirect('adminPage7')
 
 def update_banner(request, banner_id):
     if request.method == 'POST':
         try:
             banner = get_object_or_404(Banners, id=banner_id)
-
             banner.banner_url = request.POST.get('banner_image_url')
             banner.status = request.POST.get('status')
             banner.start_date = request.POST.get('start_date')
             banner.end_date = request.POST.get('end_date')
             banner.save()
         except Exception as e:
-            print(e)
-        
+            print(f"Lỗi sửa: {e}")
+    return redirect('adminPage7')
+
+def delete_banner(request, banner_id):
+    if request.method == 'POST':
+        try:
+            banner = get_object_or_404(Banners, id=banner_id)
+            banner.delete()
+        except Exception as e:
+            print(f"Lỗi xóa: {e}")
     return redirect('adminPage7')
 
 def get_adminPage8(request):
