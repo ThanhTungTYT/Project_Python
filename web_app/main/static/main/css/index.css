@@ -11,7 +11,6 @@
     .img-home button {
         position: absolute;
         display: none;
-        /* Sửa: Căn giữa theo chiều dọc tự động thay vì fix cứng 450px */
         top: 50%;
         transform: translateY(-50%); 
         
@@ -20,9 +19,9 @@
         background-color: rgba(0, 0, 0, 0.5);
         color: white;
         border: none;
-        border-radius: 50%; /* Tròn hẳn */
+        border-radius: 50%; 
         cursor: pointer;
-        z-index: 10; /* Đảm bảo nút nổi lên trên */
+        z-index: 10; 
     }
 
     .img-home:hover button {

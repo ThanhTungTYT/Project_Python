@@ -35,6 +35,40 @@
         }
         .edit-btn { background-color: #2196F3; }
         .delete-btn { background-color: #F44336; }
+
+        /* --- CSS PHÂN TRANG MỚI (SIMPLE STYLE) --- */
+        .pagination-custom { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-top: 25px; 
+            gap: 10px; 
+            font-size: 14px;
+        }
+        
+        .pagination-custom .current-page { 
+            background: #c76739; /* Màu cam theo yêu cầu */
+            color: white; 
+            padding: 6px 15px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .pagination-custom .page-link { 
+            background: white; 
+            color: #333; 
+            padding: 6px 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            transition: all 0.2s;
+        }
+
+        .pagination-custom .page-link:hover {
+            background-color: #eee;
+            border-color: #bbb;
+        }
     </style>
 </head>
 <body>
@@ -63,18 +97,34 @@
         <p>QUẢN LÍ SẢN PHẨM</p>
     </div>
 
-    <form class="search-bar">
-        <input type="text" placeholder="Tìm kiếm sản phẩm..." required>
-        <button><i class="fas fa-search"></i></button>
+    <form class="search-bar" method="GET" action="">
+        {% if category_filter != 'all' %}
+            <input type="hidden" name="category_filter" value="{{ category_filter }}">
+        {% endif %}
+        
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Tìm kiếm sản phẩm..." required>
+        <button type="submit"><i class="fas fa-search"></i></button>
     </form>
 
     <div class="main-menu">
-        <select>
-            <option>- Lọc theo loại -</option>
-            <option>Cà phê hữu cơ</option>
-            <option>Cà phê rang nguyên hạt</option>
-            <option>Cà phê xay nguyên chất</option>
-        </select>
+        <form method="GET" action="" style="display: inline-block; float: left;">
+            <input type="hidden" name="q" value="{{ search_query }}">
+            
+            <select name="category_filter" onchange="this.form.submit()">
+                <option value="all" {% if category_filter == 'all' %}selected{% endif %}>- Tất cả sản phẩm -</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if category_filter == cat.id %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <a href="{% url 'adminPage2' %}" 
+        style="float: left; margin-left: 15px; margin-top: 12px; color: #888; text-decoration: none; font-size: 14px; cursor: pointer;">
+        Đặt lại
+        </a>
+
         <button id="add">+ Thêm sản phẩm</button>
     </div>
 
@@ -98,8 +148,6 @@
             <tbody>
             {% for p in products %}
             <tr>
-
-                
                 <td>{{ p.id }}</td>
                 <td>
                     {% if p.productimages_set.first.image_url %}
@@ -116,20 +164,21 @@
                 <td>{{ p.stock }}</td>
                 <td>{{ p.sold }}</td>
                 <td class="bt-act" >
-                    <button type="button" class="remake " 
+                    <button type="button" class="remake" 
                         onclick="openEditModal(
                             '{{ p.id }}', 
                             '{{ p.name }}', 
                             '{{ p.category.id }}', 
-                            '{{ p.price|vn_currency }}', 
+                            '{{ p.price }}', 
                             '{{ p.weight_grams }}', 
                             '{{ p.stock }}', 
-                            `{{ p.description|default:''|escapejs }}` 
+                            `{{ p.description|default:''|escapejs }}`,
+                            '{{ p.state }}'
                         )">
                         <i class="fas fa-edit"></i>
                     </button>
 
-                    <form method="POST" action="{% url 'delete_product' p.id %}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');">
+                    <form method="POST" action="{% url 'delete_product' p.id %}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="action-btn delete-btn" title="Xóa">
                             <i class="fas fa-trash"></i>
@@ -139,14 +188,26 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="9" style="text-align: center; padding: 20px;">
-                    Hiện chưa có sản phẩm nào. Hãy bấm "Thêm sản phẩm" để tạo mới!
+                <td colspan="10" style="text-align: center; padding: 20px;">
+                    Không tìm thấy sản phẩm nào.
                 </td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
-    </div>
+
+        <div class="pagination-custom">
+            {% if products.has_previous %}
+                <a href="?page={{ products.previous_page_number }}&q={{ search_query }}&category_filter={{ category_filter }}" class="page-link">&laquo;</a>
+            {% endif %}
+            
+            <span class="current-page">Trang {{ products.number }} / {{ products.paginator.num_pages }}</span>
+            
+            {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}&q={{ search_query }}&category_filter={{ category_filter }}" class="page-link">&raquo;</a>
+            {% endif %}
+        </div>
+        </div>
 </div>
 
 <div class="form-add" id="form-add" style="display: none">

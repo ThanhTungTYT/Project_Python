@@ -165,22 +165,33 @@ def get_adminPage1(request):
     return render(request, 'main/adminPage1.html', context)
 
 def get_adminPage2(request):
+    # Lấy danh sách danh mục để đổ vào thẻ <select>
     categories = Categories.objects.all()
 
-    products_query = Products.objects.select_related('category').prefetch_related('productimages_set').all().order_by('-id')
+    # 1. Query gốc: Lấy tất cả sản phẩm, sắp xếp mới nhất lên đầu
+    products_list = Products.objects.select_related('category').prefetch_related('productimages_set').all().order_by('-id')
 
+    # 2. Xử lý Tìm kiếm (Search)
     search_query = request.GET.get('q', '')
     if search_query:
-        products_query = products_query.filter(name__icontains=search_query)
+        products_list = products_list.filter(name__icontains=search_query)
 
+    # 3. Xử lý Bộ lọc (Filter)
     category_filter = request.GET.get('category_filter', '')
     if category_filter and category_filter != 'all':
-        products_query = products_query.filter(category_id=category_filter)
+        products_list = products_list.filter(category_id=category_filter)
 
+    # 4. PHÂN TRANG (Paginator) - Code giống mẫu bạn yêu cầu
+    paginator = Paginator(products_list, 25) # Mỗi trang 25 sản phẩm
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 5. Truyền context
     context = {
-        'products': products_query,
+        'products': page_obj,  # Quan trọng: Truyền page_obj thay vì products_list
         'categories': categories,
-        'search_query': search_query,
+        'search_query': search_query, # Để giữ lại chữ trong ô tìm kiếm
+        # Chuyển category_filter về int để so sánh trong template (nếu có)
         'category_filter': int(category_filter) if category_filter.isdigit() else 'all'
     }
     
