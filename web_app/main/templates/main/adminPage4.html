@@ -7,16 +7,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
     <style>
-        /* Thêm style để đảm bảo bố cục hoạt động */
-        body {
-            display: flex;
-            flex-direction: row;
+        /* --- CÁC STYLE CŨ GIỮ NGUYÊN --- */
+        
+        .locked-input {
+            background-color: #eee !important;
+            cursor: not-allowed;
+            color: #777;
         }
 
-        .right-content {
-            width: 80%; /* Hoặc 100% nếu menu bị ẩn */
-            transition: width 0.3s ease;
+        .pagination-custom { display: flex; justify-content: center; align-items: center; margin-top: 25px; gap: 10px; font-size: 14px; }
+        .pagination-custom .current-page { background: #c76739; color: white; padding: 6px 15px; border-radius: 4px; font-weight: bold; }
+        .pagination-custom .page-link { background: white; color: #333; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; }
+        .pagination-custom .page-link:hover { background-color: #eee; }
+
+        .btn-reset {
+            padding: 0 10px;        
+            background-color: transparent; 
+            color: #999;            
+            text-decoration: none;
+            border: none;           
+            white-space: nowrap; 
+            transition: 0.3s;
+            height: 38px;           
+            display: flex;
+            align-items: center;
+            font-size: 14px;
         }
+        .btn-reset:hover { color: #333; background-color: transparent; }
+
+        .action-cell {
+            display: flex;
+            /* Sửa thành center để căn giữa ô, thẳng hàng với cột */
+            justify-content: center; 
+            align-items: center;
+            gap: 10px; /* Tăng khoảng cách giữa 2 nút cho thoáng */
+            width: 100%;
+        }
+
+        .btn-action {
+            width: 30px !important;   
+            height: 30px !important;  
+            padding: 0 !important;   
+            background-color: #c76739 !important;
+            display: inline-flex !important; 
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-action:hover {
+            background-color: #a0400b !important; 
+            opacity: 1;
+        }
+
+        .action-cell form {
+            margin: 0;
+            display: flex;
+        }
+
     </style>
 </head>
 <body>
@@ -39,11 +90,13 @@
         <p>2024 Aroma Café. All rights reserved.</p>
     </div>
 </div>
+
 <div class="right-content" id="right-content">
     <div class="title">
         <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ TÀI KHOẢN</p>
     </div>
+    
     <div class="notify">
         <h3>THÔNG BÁO</h3>
         <div class="notify-main">
@@ -52,46 +105,91 @@
             {% endfor %}
         </div>
     </div>
-    <form class="search-bar">
-        <input type="text" placeholder="Tìm kiếm người dùng" required>
-        <button><i class="fas fa-search"></i></button>
+
+    <form class="search-bar" method="GET" action="">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Tìm theo ID hoặc Tên người dùng..." required>
+        
+        <button type="submit"><i class="fas fa-search"></i></button>
+
+        <a href="{% url 'adminPage4' %}" class="btn-reset">
+        Đặt lại
+        </a>
     </form>
+
     <div class="main-menu">
-        <button id="add">+ Thêm tài khoản</button>
+        <button id="add" style="float: right;">+ Thêm tài khoản</button>
     </div>
+
     <div class="list-account">
         <h3>DANH SÁCH TÀI KHOẢN</h3>
         <table>
             <thead>
             <tr>
-                <th>ID</th>
+                <th style="width: 50px;">ID</th>
                 <th>Họ và tên</th>
                 <th>Email</th>
                 <th>Số điện thoại</th>
-                <th>Role</th>
-                <th></th>
+                <th style="width: 100px;">Role</th>
+                <th style="width: 120px;">Hành động</th>
             </tr>
             </thead>
             <tbody>
             {% for account in accounts %}
             <tr>
                 <td>{{ account.id }}</td>
-                <td>{{ account.full_name }}</td>
+                <td style="font-weight: bold; color: #444;">{{ account.full_name }}</td>
                 <td>{{ account.email }}</td>
                 <td>{{ account.phone }}</td>
-                <td>{{ account.role }}</td>
                 <td>
-                    <form method="post" action="{% url 'delete_account' account.id %}">
+                {% if account.role == 'admin' %}
+                    <span style="color:red; font-weight:bold;">Admin</span>
+                {% else %}
+                    Customer
+                {% endif %}
+            </td>
+            <td>
+                <div class="action-cell">
+                    <button type="button" class="btn-action"
+                        onclick="openEditAccountModal(
+                            '{{ account.id }}',
+                            '{{ account.full_name }}',
+                            '{{ account.email }}',
+                            '{{ account.phone }}',
+                            '{{ account.role }}'
+                        )">
+                        <i class="fas fa-edit"></i>
+                    </button>
+
+                    <form method="post" action="{% url 'delete_account' account.id %}" onsubmit="return confirm('Xóa tài khoản này?');">
                         {% csrf_token %}
-                        <button class="delete-btn" type="submit"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-action" type="submit"><i class="fa-solid fa-trash"></i></button>
                     </form>
-                </td>
+                </div>
+            </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">Không tìm thấy tài khoản nào.</td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
+
+        <div class="pagination-custom">
+            {% if accounts.has_previous %}
+                <a href="?page={{ accounts.previous_page_number }}&q={{ search_query }}" class="page-link">&laquo;</a>
+            {% endif %}
+            
+            <span class="current-page">Trang {{ accounts.number }} / {{ accounts.paginator.num_pages }}</span>
+            
+            {% if accounts.has_next %}
+                <a href="?page={{ accounts.next_page_number }}&q={{ search_query }}" class="page-link">&raquo;</a>
+            {% endif %}
+        </div>
+
     </div>
 </div>
+
 <div class="form-add" id="form-add" style="display: none">
     <div class="form-title">
         <p>THÊM TÀI KHOẢN</p>
@@ -101,7 +199,7 @@
         {% csrf_token %}
         <div class="p name-p">
             <label>Tên người dùng</label>
-            <input type="text" name="full_name" placeholder="Tên người dùng">
+            <input type="text" name="full_name" placeholder="Tên người dùng" required>
         </div>
         <div class="price-p">
             <label>Email</label>
@@ -118,15 +216,75 @@
         <div class="type-p">
             <label>Role</label>
             <select name="role">
-                <option>-Chọn vai trò-</option>
-                <option>admin</option>
-                <option>customer</option>
+                <option value="customer">customer</option>
+                <option value="admin">admin</option>
             </select>
         </div>
         <button class="submit" type="submit">Thêm</button>
     </form>
 </div>
+
+<div class="form-add" id="form-remake" style="display: none">
+    <div class="form-title">
+        <p>SỬA TÀI KHOẢN</p>
+        <button type="button" onclick="closeEditAccountModal()">X</button>
+    </div>
+    <form class="main-form" id="edit-account-form" method="post" action="">
+        {% csrf_token %}
+        
+        <div class="p name-p">
+            <label>ID</label>
+            <input type="text" id="edit-id" class="locked-input" readonly>
+        </div>
+
+        <div class="p name-p">
+            <label>Tên người dùng</label>
+            <input type="text" id="edit-fullname" class="locked-input" readonly>
+        </div>
+        <div class="price-p">
+            <label>Email</label>
+            <input type="text" id="edit-email" class="locked-input" readonly>
+        </div>
+        <div class="count-p">
+            <label>Số điện thoại</label>
+            <input type="text" id="edit-phone" class="locked-input" readonly>
+        </div>
+        
+        <div class="type-p">
+            <label style="color: #c76739; font-weight: bold;">Role (Có thể sửa)</label>
+            <select name="role" id="edit-role">
+                <option value="customer">customer</option>
+                <option value="admin">admin</option>
+            </select>
+        </div>
+        
+        <button class="submit" type="submit">Cập nhật Role</button>
+    </form>
+</div>
+
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static 'main/js/admin.js' %}"></script>
+<script src="{% static 'main/js/admin.js' %}"></script>
+
+<script>
+    function openEditAccountModal(id, fullname, email, phone, role) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('edit-fullname').value = fullname;
+        document.getElementById('edit-email').value = email;
+        document.getElementById('edit-phone').value = phone;
+        document.getElementById('edit-role').value = role;
+
+        var form = document.getElementById('edit-account-form');
+        form.action = "/quan-ly/tai-khoan/sua/" + id + "/"; 
+
+        document.getElementById('form-remake').style.display = 'block';
+        document.getElementById('right-content').style.filter = 'blur(5px)';
+    }
+
+    function closeEditAccountModal() {
+        document.getElementById('form-remake').style.display = 'none';
+        document.getElementById('right-content').style.filter = 'none';
+    }
+</script>
+
 </body>
 </html>

@@ -28,15 +28,8 @@
         .img-preview {
             width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;
         }
-        
-        /* Chỉnh lại nút hành động cho đẹp hơn */
-        .action-btn {
-            border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;
-        }
-        .edit-btn { background-color: #2196F3; }
-        .delete-btn { background-color: #F44336; }
 
-        /* --- CSS PHÂN TRANG MỚI (SIMPLE STYLE) --- */
+        /* --- CSS PHÂN TRANG --- */
         .pagination-custom { 
             display: flex; 
             justify-content: center; 
@@ -68,6 +61,27 @@
         .pagination-custom .page-link:hover {
             background-color: #eee;
             border-color: #bbb;
+        }
+
+        .bt-act {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            gap: 10px;
+        }
+
+        .bt-act button {
+            width: 30px !important;   
+            height: 30px !important;  
+            padding: 0 !important;   
+            display: inline-flex !important; 
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
         }
     </style>
 </head>
@@ -163,7 +177,7 @@
                 <td style="color: #d32f2f; font-weight: bold;">{{ p.price|vn_currency }}đ</td>
                 <td>{{ p.stock }}</td>
                 <td>{{ p.sold }}</td>
-                <td class="bt-act" >
+                <td class="bt-act">
                     <button type="button" class="remake" 
                         onclick="openEditModal(
                             '{{ p.id }}', 

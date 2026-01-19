@@ -22,6 +22,7 @@ urlpatterns = [
     path('history/', views.get_history, name='history'),
     path('delete_account/<int:user_id>/', views.delete_account, name='delete_account'),
     path('add_account/', views.add_account, name='add_account'),
+    path('edit_account/<int:user_id>/', views.edit_account, name='edit_account'),
 
     # --- Giỏ hàng (Cart) ---
     path('cart/', views.get_cart, name='cart'),

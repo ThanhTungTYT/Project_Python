@@ -334,23 +334,28 @@ def get_adminPage3(request):
 
     
     
-def get_adminPage4(request): 
-    accounts = Users.objects.all().order_by('id')
+def get_adminPage4(request):
+    accounts_list = Users.objects.all().order_by('id')
+    
+    search_query = request.GET.get('q', '')
+    if search_query:
+        if search_query.isdigit():
+            accounts_list = accounts_list.filter(Q(full_name__icontains=search_query) | Q(id=search_query))
+        else:
+            accounts_list = accounts_list.filter(full_name__icontains=search_query)
+
+    paginator = Paginator(accounts_list, 25)
+    page_number = request.GET.get('page')
+    accounts = paginator.get_page(page_number)
+
     accounts_now = Users.objects.filter(created_at__date=timezone.now().date()).order_by('id')
+
     context = {
         'accounts': accounts,
-        'accounts_now': accounts_now
+        'accounts_now': accounts_now,
+        'search_query': search_query
     }
     return render(request, 'main/adminPage4.html', context)
-
-def delete_account(request, user_id):
-    if request.method == 'POST':
-        try:
-            user = Users.objects.get(id=user_id)
-            user.delete()
-        except Exception:
-            pass
-    return redirect('adminPage4')
 
 def add_account(request):
     if request.method == 'POST':
@@ -369,9 +374,31 @@ def add_account(request):
                 role=role,
                 created_at=timezone.now()
             )
-        except Exception as e:
+        except Exception:
             pass
         
+    return redirect('adminPage4')
+
+def edit_account(request, user_id):
+    if request.method == 'POST':
+        try:
+            user = Users.objects.get(id=user_id)
+            new_role = request.POST.get('role')
+            
+            if new_role:
+                user.role = new_role
+                user.save()
+        except Exception:
+            pass
+    return redirect('adminPage4')
+
+def delete_account(request, user_id):
+    if request.method == 'POST':
+        try:
+            user = Users.objects.get(id=user_id)
+            user.delete()
+        except Exception:
+            pass
     return redirect('adminPage4')
 
 def get_adminPage5(request):
