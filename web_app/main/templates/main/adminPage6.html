@@ -4,16 +4,154 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lí đánh giá</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'main/css/admin.css' %}">
+    
+    <style>
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 0 20px; 
+        }
+
+        .filter-row input[type="date"] {
+            padding: 8px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            outline: none;
+            height: 40px;
+        }
+
+        .filter-row button.btn-filter {
+            height: 40px;
+            padding: 0 20px;
+            background-color: #c76739;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .filter-row button.btn-filter:hover {
+            background-color: #8c4828;
+        }
+
+        .btn-reset {
+            color: #888;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-reset:hover {
+            color: #555;
+            text-decoration: underline;
+        }
+
+        .action-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;  
+        }
+        
+        .action-group button {
+            margin: 0 !important; 
+            width: 35px !important;
+            height: 35px !important;
+            border-radius: 8px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            width: 600px; 
+            max-width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-overlay {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000; 
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+        #m-comment {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 5px;
+            border: 1px solid #e9ecef;
+            color: #333;
+            width: 100%;                
+            box-sizing: border-box;      
+            
+            white-space: pre-wrap;      
+            
+            word-wrap: break-word;       
+            overflow-wrap: break-word;   
+            word-break: break-word;     
+            
+            max-height: 300px;
+            overflow-y: auto;          
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        .pagination-container a, .pagination-container span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+        }
+        .pagination-container .current-page {
+            background-color: #c76739;
+            color: white;
+            border-color: #c76739;
+        }
+    </style>
 </head>
+
 <body>
-<div class="left-menu" id="left-menu">
-        <div class="logo">
-            <img src="/static/main/img/logo.png" onclick="location.href='{% url 'index' %}'" width="300px" height="100px">
-        </div>
+<div class="left-menu">
+    <div class="logo">
+        <img src="{% static 'main/img/logo.png' %}" onclick="location.href='{% url 'index' %}'">
+    </div>
     <div class="menu">
-        <a href="{% url 'adminPage1' %}" class="menu-item ">Tổng quan</a>
+        <a href="{% url 'adminPage1' %}" class="menu-item">Tổng quan</a>
         <a href="{% url 'adminPage2' %}" class="menu-item">Quản lí sản phẩm</a>
         <a href="{% url 'adminPage3' %}" class="menu-item">Quản lí đơn hàng</a>
         <a href="{% url 'adminPage4' %}" class="menu-item">Quản lí tài khoản</a>
@@ -28,145 +166,153 @@
     </div>
 </div>
 
-<div class="right-content" id="right-content">
+<div class="right-content">
     <div class="title">
-        <button class="slider-menu" id="slider-menu"><i class="fa-solid fa-bars"></i></button>
+        <button class="slider-menu"><i class="fa-solid fa-bars"></i></button>
         <p>QUẢN LÍ ĐÁNH GIÁ</p>
     </div>
-    <form class="search-bar" method="GET" action="{% url 'adminPage6' %}">
-        <input type="text" name="q" placeholder="Tìm người dùng hoặc sản phẩm" value="{{ search_query|default:'' }}">
+
+    <form class="search-bar" method="GET" action="">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Tìm theo tên khách hoặc sản phẩm...">
         <button type="submit"><i class="fas fa-search"></i></button>
     </form>
-    
-    <div class="main-content">
-        <form class="main-menu-date" method="GET" action="{% url 'adminPage6' %}">
-            <input type="hidden" name="q" value="{{ search_query|default:'' }}">
-            
-            <div class="start">
-                <label>Start date</label>
-                <input type="date" name="start_date" value="{{ start_date|default:'' }}">
-            </div>
-            <div class="end">
-                <label>End date</label>
-                <input type="date" name="end_date" value="{{ end_date|default:'' }}">
-            </div>
-            <button type="submit">Xác nhận</button>
-        </form>
 
-        <div class="review">
-            <h3 class="review-title">DANH SÁCH ĐÁNH GIÁ ({{ reviews.count }})</h3>
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <div style="padding: 10px; color: white; background-color: {% if message.tags == 'error' %}#e74c3c{% else %}#2ecc71{% endif %}; margin-bottom: 10px; border-radius: 5px;">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+    <form method="GET" action="" class="filter-row">
+        <input type="hidden" name="q" value="{{ search_query }}">
+        
+        <label>Từ:</label>
+        <input type="date" name="start_date" value="{{ start_date }}">
+        
+        <label>Đến:</label>
+        <input type="date" name="end_date" value="{{ end_date }}">
+        
+        <button type="submit" class="btn-filter">Lọc</button>
+        
+        <a href="{% url 'adminPage6' %}" class="btn-reset">Đặt lại</a>
+    </form>
 
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Sản phẩm</th>
-                    <th>Khách hàng</th>
-                    <th>Xếp hạng</th>
-                    <th>Ngày đánh giá</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for rv in reviews %}
-                <tr>
-                    <td>#{{ rv.id }}</td>
-                    <td title="{{ rv.product.name }}">{{ rv.product.name|truncatechars:30 }}</td>
-                    <td>{{ rv.user.full_name }}</td>
-                    <td>
-                        {{ rv.rating }} <i class="fas fa-star" style="color: gold;"></i>
-                    </td>
-                    <td>{{ rv.created_at|date:"d/m/Y H:i" }}</td>
-                    <td>
-                        <button class="detail view-review-btn" 
-                                style="border: none; background: none; cursor: pointer; color: blue;"
-                                data-id="{{ rv.id }}"
-                                data-product="{{ rv.product.name }}"
-                                data-user="{{ rv.user.full_name }}"
-                                data-date="{{ rv.created_at|date:'d/m/Y H:i' }}"
-                                data-rating="{{ rv.rating }}"
-                                data-comment="{{ rv.comment }}">
+    <div class="list-product" style="margin: 0 20px;">
+        <h3>DANH SÁCH ĐÁNH GIÁ</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ngày</th>
+                <th>Khách hàng</th>
+                <th>Sản phẩm</th>
+                <th>Sao</th>
+                <th>Nội dung</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in reviews %}
+            <tr>
+                <td>#{{ r.id }}</td>
+                <td>{{ r.created_at|date:"d/m/Y" }}</td>
+                <td style="font-weight:600;">{{ r.user.full_name }}</td>
+                <td>{{ r.product.name }}</td>
+                <td style="color: #ffc107; font-size: 12px;">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= r.rating %}
+                            <i class="fas fa-star"></i>
+                        {% else %}
+                            <i class="far fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ r.comment|truncatechars:30 }}
+                </td>
+                <td>
+                    <div class="action-group">
+                        <button type="button" 
+                                onclick="openDetailModal('{{ r.user.full_name }}', '{{ r.product.name }}', '{{ r.rating }}', `{{ r.comment|escapejs }}`)">
                             <i class="fas fa-eye"></i>
                         </button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" style="text-align: center;">Không tìm thấy đánh giá nào.</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+
+                        <form method="POST" action="{% url 'delete_review' r.id %}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?');" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="padding: 20px;">Không có đánh giá nào phù hợp.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if reviews.has_other_pages %}
+        <div class="pagination-container">
+            {% if reviews.has_previous %}
+                <a href="?page=1&q={{ search_query }}&start_date={{ start_date }}&end_date={{ end_date }}">&laquo;</a>
+                <a href="?page={{ reviews.previous_page_number }}&q={{ search_query }}&start_date={{ start_date }}&end_date={{ end_date }}">&lsaquo;</a>
+            {% endif %}
+
+            <span class="current-page">Trang {{ reviews.number }} / {{ reviews.paginator.num_pages }}</span>
+
+            {% if reviews.has_next %}
+                <a href="?page={{ reviews.next_page_number }}&q={{ search_query }}&start_date={{ start_date }}&end_date={{ end_date }}">&rsaquo;</a>
+                <a href="?page={{ reviews.paginator.num_pages }}&q={{ search_query }}&start_date={{ start_date }}&end_date={{ end_date }}">&raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="reviewDetailModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeDetailModal()">×</button>
+        
+        <h3 style="color: #c76739; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            Chi tiết Đánh giá
+        </h3>
+        
+        <div style="font-size: 15px; line-height: 1.8;">
+            <p><strong>Khách hàng:</strong> <span id="m-user"></span></p>
+            <p><strong>Sản phẩm:</strong> <span id="m-product"></span></p>
+            <p><strong>Đánh giá:</strong> <span id="m-rating" style="color:#ffc107; font-weight:bold;"></span> / 5 sao</p>
+            
+            <div style="margin-top: 15px;">
+                <strong>Nội dung:</strong>
+                <p id="m-comment"></p>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="detail-p" id="detail-p" style="display: none">
-    <button id="close">X</button>
-    <h3>CHI TIẾT ĐÁNH GIÁ #<span id="popup-rv-id"></span></h3>
-    
-    <div style="margin-bottom: 10px;"><strong>Sản phẩm:</strong> <span id="popup-rv-product"></span></div>
-    <div style="margin-bottom: 10px;"><strong>Khách hàng:</strong> <span id="popup-rv-user"></span></div>
-    <div style="margin-bottom: 10px;"><strong>Ngày:</strong> <span id="popup-rv-date"></span></div>
-    <div style="margin-bottom: 10px;"><strong>Xếp hạng:</strong> <span id="popup-rv-rating" style="color: #d35400; font-weight: bold;"></span>/5</div>
-    
-    <div class="detail-full">
-        <p><strong>Nội dung:</strong></p>
-        <p class="review-text" id="popup-rv-comment" style="background: #f1f1f1; padding: 10px; border-radius: 5px; margin-top: 5px;"></p>
-    </div>
-
-    <form id="delete-review-form" method="POST" action="" style="margin-top: 20px; text-align: center;">
-        {% csrf_token %}
-        <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác.')" 
-                style="background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-            <i class="fas fa-trash"></i> Xóa đánh giá này
-        </button>
-    </form>
-</div>
-
 <button class="slide-top" id="slide-top"><i class="fas fa-angle-up"></i></button>
-    <script src="{% static 'main/js/admin.js' %}"></script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const viewBtns = document.querySelectorAll('.view-review-btn');
-        const detailPopup = document.getElementById('detail-p');
+
+<script src="{% static 'main/js/admin.js' %}"></script>
+<script>
+    // JS xử lý Modal
+    function openDetailModal(user, product, rating, comment) {
+        document.getElementById('m-user').innerText = user;
+        document.getElementById('m-product').innerText = product;
+        document.getElementById('m-rating').innerText = rating;
+        document.getElementById('m-comment').innerText = comment;
         
-        const pId = document.getElementById('popup-rv-id');
-        const pProduct = document.getElementById('popup-rv-product');
-        const pUser = document.getElementById('popup-rv-user');
-        const pDate = document.getElementById('popup-rv-date');
-        const pRating = document.getElementById('popup-rv-rating');
-        const pComment = document.getElementById('popup-rv-comment');
-        const deleteForm = document.getElementById('delete-review-form');
+        document.getElementById('reviewDetailModal').style.display = 'flex';
+    }
 
-        viewBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.getAttribute('data-id');
-                const product = this.getAttribute('data-product');
-                const user = this.getAttribute('data-user');
-                const date = this.getAttribute('data-date');
-                const rating = this.getAttribute('data-rating');
-                const comment = this.getAttribute('data-comment');
+    function closeDetailModal() {
+        document.getElementById('reviewDetailModal').style.display = 'none';
+    }
 
-                pId.textContent = id;
-                pProduct.textContent = product;
-                pUser.textContent = user;
-                pDate.textContent = date;
-                pRating.textContent = rating;
-                pComment.textContent = comment;
-
-                deleteForm.action = `/quan-ly/xoa-danh-gia/${id}/`;
-            });
-        });
-    });
+    // Đóng khi click ra ngoài
+    window.onclick = function(event) {
+        let modal = document.getElementById('reviewDetailModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 </script>
+
 </body>
 </html>

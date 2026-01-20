@@ -442,7 +442,6 @@ def get_adminPage5(request):
     return render(request, 'main/adminPage5.html', context)
 
 def get_adminPage6(request):
-
     reviews_list = ProductsReview.objects.select_related('product', 'user').all().order_by('-created_at')
 
     search_query = request.GET.get('q', '')
@@ -452,9 +451,9 @@ def get_adminPage6(request):
             Q(product__name__icontains=search_query)
         )
 
-
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
+
     if start_date_str and end_date_str:
         try:
             start_date = parse_date(start_date_str)
@@ -464,8 +463,12 @@ def get_adminPage6(request):
         except Exception as e:
             print(f"Lỗi parse date: {e}")
 
+    paginator = Paginator(reviews_list, 25) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'reviews': reviews_list,
+        'reviews': page_obj, 
         'search_query': search_query,
         'start_date': start_date_str,
         'end_date': end_date_str
