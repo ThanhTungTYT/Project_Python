@@ -283,6 +283,7 @@ class ProductsReview(models.Model):
     rating = models.IntegerField()
     comment = models.CharField(max_length=255)
     created_at = models.DateTimeField()
+    status = models.CharField(max_length=20)
 
     class Meta:
         managed = False

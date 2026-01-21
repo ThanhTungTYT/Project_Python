@@ -167,8 +167,10 @@
                             <div class="review-header">
                                 <strong>{{ review.user.full_name }}</strong>
                                 <span>{{ review.created_at|date:"d/m/Y H:i" }}</span>
+                                {% if review.status == "Tích cực" %}<span style="background-color: #00ff6a; color: white; border-radius: 8px; padding: 4px; font-weight: 500;">{{ review.status }}</span>{% endif %}
+                                {% if review.status == "Tiêu cực" %}<span style="background-color: #ff0000; color: white; border-radius: 8px; padding: 4px; font-weight: 500;">{{ review.status }}</span>{% endif %}
                             </div>
-                            <div class="review-stars" style="color: #FFD700; font-size: 18px;">
+                            <div class="review-stars" style="color: #FFD700; font-size: 30px;">
                                 {% if review.rating == 1 %}★☆☆☆☆{% endif %}
                                 {% if review.rating == 2 %}★★☆☆☆{% endif %}
                                 {% if review.rating == 3 %}★★★☆☆{% endif %}

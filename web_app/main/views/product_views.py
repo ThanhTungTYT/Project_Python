@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Avg, Q, Sum
-from ..models import Banners, Products, Categories, ProductsReview, Users, ProductImages
+from ..models import Banners, Products, Categories, ProductsReview, Users, ProductImages, OrderItems, Orders
 from ai_model import filter_engine
 
 def get_index(request):
@@ -80,6 +80,8 @@ def get_product(request, product_id):
     try:
         product = Products.objects.get(state='active', id=product_id)
         imagelist = ProductImages.objects.filter(product=product)
+        order_items = OrderItems.objects.filter(product=product)
+        orders = Orders.objects.filter(id__in=order_items.values_list('order_id', flat=True), status='Đã nhận')
     except Products.DoesNotExist:
         return redirect('catalog')
 
@@ -88,6 +90,11 @@ def get_product(request, product_id):
         if not user_id:
             messages.error(request, "Bạn cần đăng nhập để viết đánh giá!")
             return redirect(f'/product/{product_id}/')
+        
+        for order in orders:
+            if order.user_id != user_id:
+                messages.error(request, "Bạn chưa mua sản phẩm này nên không thể đánh giá!")
+                return redirect(f'/product/{product_id}/')
 
         try:
             rating_val = request.POST.get('rating')
@@ -97,6 +104,8 @@ def get_product(request, product_id):
             if is_toxic:
                 messages.error(request, f"Bình luận không hợp lệ: {reason}")
                 return redirect(f'/product/{product_id}/')
+            
+            status_val = filter_engine.sentiment_analysis(comment_val)
             
             user_id = request.session.get('user_id')
             if not user_id:
@@ -113,7 +122,8 @@ def get_product(request, product_id):
                     user=user_instance,
                     rating=int(rating_val),
                     comment=comment_val,
-                    created_at=timezone.now()
+                    created_at=timezone.now(),
+                    status=status_val
                 )
                 messages.success(request, "Cảm ơn bạn đã đánh giá sản phẩm!")
                 
