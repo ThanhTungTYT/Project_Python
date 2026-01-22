@@ -81,7 +81,6 @@ def get_product(request, product_id):
         product = Products.objects.get(state='active', id=product_id)
         imagelist = ProductImages.objects.filter(product=product)
         order_items = OrderItems.objects.filter(product=product)
-        orders = Orders.objects.filter(id__in=order_items.values_list('order_id', flat=True), status='Đã nhận')
     except Products.DoesNotExist:
         return redirect('catalog')
 
@@ -90,12 +89,15 @@ def get_product(request, product_id):
         if not user_id:
             messages.error(request, "Bạn cần đăng nhập để viết đánh giá!")
             return redirect(f'/product/{product_id}/')
-        
-        for order in orders:
-            if order.user_id != user_id:
-                messages.error(request, "Bạn chưa mua sản phẩm này nên không thể đánh giá!")
-                return redirect(f'/product/{product_id}/')
 
+        has_purchased = OrderItems.objects.filter(
+            product=product,
+            order__user_id=user_id,
+            order__status='Đã nhận'
+        ).exists()
+        if not has_purchased:
+            messages.error(request, "Bạn chưa mua sản phẩm này nên không thể đánh giá!")
+            return redirect(f'/product/{product_id}/')
         try:
             rating_val = request.POST.get('rating')
             comment_val = request.POST.get('comment')
