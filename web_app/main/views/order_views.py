@@ -57,9 +57,20 @@ def apply_coupon(request):
     return redirect('checkout')
 
 def remove_coupon(request):
+    # Xóa tất cả các key liên quan đến khuyến mãi
     if 'coupon_code' in request.session:
-        del request.session['coupon_code'] # Xóa mã khỏi session
-    return redirect('checkout') # Load lại trang thanh toán
+        del request.session['coupon_code']
+    
+    if 'discount_percent' in request.session:
+        del request.session['discount_percent']
+        
+    if 'coupon_id' in request.session:
+        del request.session['coupon_id']
+
+    # Thông báo cho người dùng biết đã gỡ
+    messages.info(request, "Đã gỡ bỏ mã giảm giá.")
+    
+    return redirect('checkout')
 
 def checkout_view(request):
     checkout_data = request.session.get('checkout_items', {})
