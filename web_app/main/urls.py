@@ -66,12 +66,15 @@ urlpatterns = [
     path('quanly/delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
     path('quan-ly/sua-san-pham/<int:product_id>/', views.edit_product, name='edit_product'),
     path('quan-ly/xoa-danh-gia/<int:review_id>/', views.delete_review, name='delete_review'),
+
+    path('edit_account/<int:user_id>/', views.edit_account, name='edit_account'),
+    path('add_account/', views.add_account, name='add_account'),
     
     path('add_discount/', views.add_discount, name='add_discount'),
     path('update_discount/<int:promo_id>/', views.update_discount, name='update_discount'),
     path('delete_discount/<int:promo_id>/', views.delete_discount, name='delete_discount'),
     
     path('add_banner/', views.add_banner, name='add_banner'),
-    path('update_banner/', views.update_banner, name='update_banner'),
+    path('update_banner/<int:banner_id>/', views.update_banner, name='update_banner'),
     path('delete_banner/<int:banner_id>/', views.delete_banner, name='delete_banner'),
 ]
