@@ -108,27 +108,36 @@ def get_adminPage1(request):
         df_bar = pd.DataFrame(data_revenue)
         df_bar['created_at'] = pd.to_datetime(df_bar['created_at'])
         
-        # Xử lý gom nhóm dữ liệu theo loại lọc
+        # Tạo cột 'sort_date' để sắp xếp đúng thời gian và 'period' để hiển thị
         if filter_type == 'today':
-            df_bar['period'] = df_bar['created_at'].dt.strftime('%H:00')
+            # Làm tròn xuống theo giờ
+            df_bar['sort_date'] = df_bar['created_at'].dt.floor('h')
+            df_bar['period'] = df_bar['sort_date'].dt.strftime('%H:00')
             xlabel = 'Giờ trong ngày'
-        elif filter_type == 'week':
-            df_bar['period'] = df_bar['created_at'].dt.strftime('%d/%m')
+            
+        elif filter_type == 'week' or filter_type == 'month':
+            # Làm tròn xuống theo ngày
+            df_bar['sort_date'] = df_bar['created_at'].dt.floor('d')
+            # Thêm năm vào label nếu muốn rõ ràng, hoặc giữ %d/%m
+            df_bar['period'] = df_bar['sort_date'].dt.strftime('%d/%m') 
             xlabel = 'Ngày'
-        elif filter_type == 'month':
-            df_bar['period'] = df_bar['created_at'].dt.strftime('%d/%m')
-            xlabel = 'Ngày trong tháng'
-        else: # quarter
-            df_bar['period'] = df_bar['created_at'].dt.strftime('T%m')
-            xlabel = 'Tháng'
+            
+        else: # quarter (quý)
+            # Làm tròn xuống theo tháng (để ngày là mùng 1)
+            df_bar['sort_date'] = df_bar['created_at'].dt.to_period('M').dt.to_timestamp()
+            df_bar['period'] = df_bar['sort_date'].dt.strftime('T%m/%Y')
+            xlabel = 'Tháng/Năm'
 
-        # Tính tổng tiền theo period (nhóm lại)
-        df_bar_grouped = df_bar.groupby('period')['total_amount'].sum().reset_index()
+        # Gom nhóm theo cả 'period' (để hiển thị) và 'sort_date' (để sắp xếp)
+        df_bar_grouped = df_bar.groupby(['period', 'sort_date'])['total_amount'].sum().reset_index()
+
+        df_bar_grouped = df_bar_grouped.sort_values('sort_date')
+        
 
         # Vẽ biểu đồ
         fig_bar, ax_bar = plt.subplots(figsize=(10, 4))
         
-        # Vẽ cột
+        # Vẽ cột (Trục X là period, Trục Y là total_amount)
         ax_bar.bar(df_bar_grouped['period'], df_bar_grouped['total_amount'], color='#A0522D', width=0.5)
         
         # Trang trí
