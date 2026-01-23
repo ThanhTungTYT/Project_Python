@@ -75,8 +75,4 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCartTotal();
     });
 
-    // ĐỊNH DẠNG GIÁ
-    function formatPrice(value) {
-        return value.toLocaleString("vi-VN") + "đ";
-    }
 });
