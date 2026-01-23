@@ -25,20 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const mainImg = document.getElementById('img-main');
-    const thumbnails = document.querySelectorAll('.thumbnail-item');
-    
-    if (mainImg && thumbnails.length > 0) {
-        thumbnails.forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                thumbnails.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                const src = this.getAttribute('data-full-image');
-                if (src) mainImg.src = src;
-            });
-        });
-    }
 
     const toggleBtn = document.getElementById('readMoreBtn');
     const content = document.getElementById('contentToCollapse');

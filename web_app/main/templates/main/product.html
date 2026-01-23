@@ -54,25 +54,36 @@
             <div class="product-content">
                 <div class="product-img">
                     {% with image_object=product.productimages_set.first %}
-                        {% if image_object %}
-                             {% if "http" in image_object.image_url %}
-                                <img src="{{ image_object.image_url }}" alt="{{ product.name }}">
-                             {% else %}
-                                <img src="/static/main/img/{{ image_object.image_url }}" alt="{{ product.name }}">
-                             {% endif %}
-                        {% else %}
-                             <img src="{% static 'main/img/no-image.png' %}" alt="No Image">
-                        {% endif %}
-                    {% endwith %}
-                    <div class="thumbnail-gallery">
-                        {% for img in imagelist %}
-                            {% if "http" in img.image_url %}
-                                <img src="{{ img.image_url }}" alt="{{ product.name }}" class="thumbnail-item active">
-                            {% else %}
-                                <img src="/static/main/img/{{ img.image_url }}" alt="{{ product.name }}" class="thumbnail-item active">
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+    {% if image_object %}
+        {% with main_image=image_object.image_url %}
+            <!-- MAIN IMAGE -->
+            {% if "http" in image_object.image_url %}
+                <img id="main-image" src="{{ image_object.image_url }}" alt="{{ product.name }}">
+            {% else %}
+                <img id="main-image" src="/static/main/img/{{ image_object.image_url }}" alt="{{ product.name }}">
+            {% endif %}
+
+            <!-- THUMBNAILS -->
+            <div class="thumbnail-gallery">
+                {% for img in imagelist %}
+                    {% if "http" in img.image_url %}
+                        <img
+                            src="{{ img.image_url }}"
+                            class="thumbnail-item {% if img.image_url == main_image %}active{% endif %}"
+                        >
+                    {% else %}
+                        <img
+                            src="/static/main/img/{{ img.image_url }}"
+                            class="thumbnail-item {% if img.image_url == main_image %}active{% endif %}"
+                        >
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endwith %}
+    {% else %}
+        <img id="main-image" src="{% static 'main/img/no-image.png' %}">
+    {% endif %}
+{% endwith %}
                 </div>
                 <div class="content">
                     <p class="price">{{product.price | vn_currency}} VND</p>
@@ -103,9 +114,16 @@
                             <span id="num-count">1</span>
                             <button id="count-add" type="button">+</button>
                         </div>
+                        {% if product.stock > 0 %}
                         <button type="submit" class="btn-buy" id="btn-buy">
                             Thêm vào giỏ
                         </button>
+                        {% endif %}
+                        {% if product.stock == 0 %}
+                        <button type="button" class="btn-buy" id="btn-buy" disabled>
+                            Hết hàng
+                        </button>
+                        {% endif %}
                     </div>
                 </form>
                 </div>
@@ -291,5 +309,19 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{% static 'main/js/product.js' %}"></script>
   <script src="{% static 'main/js/script.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const thumbnails = document.querySelectorAll(".thumbnail-item");
+    const mainImage = document.getElementById("main-image");
+
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener("click", function () {
+            mainImage.src = this.src;
+            thumbnails.forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+    });
+  </script>
 </body>
 </html>
