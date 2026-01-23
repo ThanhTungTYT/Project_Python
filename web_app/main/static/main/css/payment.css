@@ -1,3 +1,4 @@
+
 .back-link {
     margin-bottom: 10px;
 }
@@ -89,6 +90,24 @@ section {
     border: 1px solid #ddd;
     border-radius: 8px;
     margin-bottom: 10px;
+    background-color: #fff; 
+    font-family: inherit;   
+    font-size: 1rem;
+}
+
+.shipping-form select {
+    width: 100%;
+    padding: 12px 10px; 
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+    appearance: none; /* (Tùy chọn) Giúp giao diện select phẳng hơn trên một số trình duyệt */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
 }
 
 .note-box textarea {
