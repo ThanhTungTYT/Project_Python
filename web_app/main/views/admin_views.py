@@ -8,6 +8,7 @@ from django.http import HttpResponse
 
 # --- AUTHENTICATION ---
 from django.contrib.auth.hashers import make_password
+from functools import wraps
 
 # --- TIME & DATE HANDLING ---
 from django.utils import timezone
@@ -33,7 +34,25 @@ import io
 import base64
 import urllib.parse 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        # 1. Kiểm tra xem đã đăng nhập chưa (dựa vào session)
+        if 'user_id' not in request.session:
+            return redirect('login') # Chưa đăng nhập thì đá về login
+        
+        # 2. Lấy role từ session ra kiểm tra
+        # Chuyển về chữ thường để so sánh cho chính xác (admin == Admin)
+        role = request.session.get('role', '').lower()
+        
+        if role != 'admin':
+            # Nếu đã đăng nhập nhưng không phải admin -> đá về trang chủ hoặc trang báo lỗi
+            return redirect('index') 
+            
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
+@admin_required
 def get_adminPage1(request):
     # 1. XỬ LÝ BỘ LỌC THỜI GIAN
     filter_type = request.GET.get('filter', 'today') 
@@ -133,7 +152,6 @@ def get_adminPage1(request):
 
         df_bar_grouped = df_bar_grouped.sort_values('sort_date')
         
-
         # Vẽ biểu đồ
         fig_bar, ax_bar = plt.subplots(figsize=(10, 4))
         
@@ -173,6 +191,7 @@ def get_adminPage1(request):
     
     return render(request, 'main/adminPage1.html', context)
 
+@admin_required
 def get_adminPage2(request):
     # Lấy danh sách danh mục để đổ vào thẻ <select>
     categories = Categories.objects.all()
@@ -206,6 +225,7 @@ def get_adminPage2(request):
     
     return render(request, 'main/adminPage2.html', context)
 
+@admin_required
 def add_product(request):
     if request.method == 'POST':
         try:
@@ -238,7 +258,6 @@ def add_product(request):
                 if url_clean:
                     ProductImages.objects.create(product=new_product, image_url=url_clean)
             
-
         except Categories.DoesNotExist:
             messages.error(request, "Lỗi: Loại sản phẩm không hợp lệ.")
         except Exception as e:
@@ -246,6 +265,7 @@ def add_product(request):
 
     return redirect('adminPage2')
 
+@admin_required
 def delete_product(request, product_id):
     if request.method == 'POST':
         try:
@@ -264,13 +284,12 @@ def delete_product(request, product_id):
                 
                 product.delete()
                 
-            
         except Exception as e:
             print(e)
 
     return redirect('adminPage2')
 
-
+@admin_required
 def edit_product(request, product_id):
     if request.method == 'POST':
         try:
@@ -296,6 +315,7 @@ def edit_product(request, product_id):
     
     return redirect('adminPage2')
 
+@admin_required
 def get_adminPage3(request):
     if request.method == "POST" and 'btn_export_invoice' in request.POST:
         order_id_to_update = request.POST.get('order_id_hidden')
@@ -341,8 +361,7 @@ def get_adminPage3(request):
     }
     return render(request, 'main/adminPage3.html', context)
 
-    
-    
+@admin_required    
 def get_adminPage4(request):
     accounts_list = Users.objects.all().order_by('id')
     
@@ -366,6 +385,7 @@ def get_adminPage4(request):
     }
     return render(request, 'main/adminPage4.html', context)
 
+@admin_required
 def add_account(request):
     if request.method == 'POST':
         try:
@@ -388,6 +408,7 @@ def add_account(request):
         
     return redirect('adminPage4')
 
+@admin_required
 def edit_account(request, user_id):
     if request.method == 'POST':
         try:
@@ -401,6 +422,7 @@ def edit_account(request, user_id):
             pass
     return redirect('adminPage4')
 
+@admin_required
 def delete_account(request, user_id):
     if request.method == 'POST':
         try:
@@ -410,6 +432,7 @@ def delete_account(request, user_id):
             pass
     return redirect('adminPage4')
 
+@admin_required
 def get_adminPage5(request):
     if request.method == 'POST':
         
@@ -450,6 +473,7 @@ def get_adminPage5(request):
     
     return render(request, 'main/adminPage5.html', context)
 
+@admin_required
 def get_adminPage6(request):
     reviews_list = ProductsReview.objects.select_related('product', 'user').all().order_by('-created_at')
 
@@ -484,6 +508,7 @@ def get_adminPage6(request):
     }
     return render(request, 'main/adminPage6.html', context)
 
+@admin_required
 def delete_review(request, review_id):
     if request.method == 'POST':
         try:
@@ -494,11 +519,13 @@ def delete_review(request, review_id):
             messages.error(request, f"Lỗi khi xóa: {e}")
     return redirect('adminPage6')
 
+@admin_required
 def get_adminPage7(request):
     banners_list = Banners.objects.all().order_by('-id')
     context = {'banners_list': banners_list}
     return render(request, 'main/adminPage7.html', context)
 
+@admin_required
 def add_banner(request):
     if request.method == 'POST':
         try:
@@ -512,6 +539,7 @@ def add_banner(request):
             print(f"Lỗi thêm: {e}")
     return redirect('adminPage7')
 
+@admin_required
 def update_banner(request, banner_id):
     if request.method == 'POST':
         try:
@@ -525,6 +553,7 @@ def update_banner(request, banner_id):
             print(f"Lỗi sửa: {e}")
     return redirect('adminPage7')
 
+@admin_required
 def delete_banner(request, banner_id):
     if request.method == 'POST':
         try:
@@ -534,6 +563,7 @@ def delete_banner(request, banner_id):
             print(f"Lỗi xóa: {e}")
     return redirect('adminPage7')
 
+@admin_required
 def get_adminPage8(request):
     query = request.GET.get('q', '')
     
@@ -550,6 +580,7 @@ def get_adminPage8(request):
     }
     return render(request, 'main/adminPage8.html', context)
 
+@admin_required
 def add_discount(request):
     if request.method == 'POST':
         try:
@@ -585,6 +616,7 @@ def add_discount(request):
 
     return redirect('adminPage8')
 
+@admin_required
 def update_discount(request, promo_id):
     if request.method == 'POST':
         try:
@@ -608,6 +640,7 @@ def update_discount(request, promo_id):
 
     return redirect('adminPage8')
 
+@admin_required
 def delete_discount(request, promo_id):
     if request.method == 'POST':
         try:
